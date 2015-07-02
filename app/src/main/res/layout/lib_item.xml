@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="85dp"
+    android:background="@mipmap/lib_cell_bg"
+    android:layout_marginLeft="@dimen/lib_cell_margin_left"
+    android:layout_marginRight="@dimen/lib_cell_margin_right">
+
+<view
+    android:id="@+id/app_icon"
+    android:layout_width="65dp"
+    android:layout_height="65dp"
+    android:layout_centerVertical="true"
+    android:layout_marginLeft="@dimen/lib_cell_margin_left"
+    android:scaleType="centerInside"
+    class="com.app.gridcategory.SquareImageView"
+    android:src="@mipmap/games"/>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@+id/app_icon"
+        android:layout_marginLeft="@dimen/lib_cell_margin_left">
+
+        <TextView
+            android:id="@+id/app_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:paddingTop="@dimen/lib_cell_margin_right"
+            android:text="Subway Surf"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+        <TextView
+            android:id="@+id/app_cat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/app_name"
+            android:layout_alignParentLeft="true"
+            android:text="Subway Surf"
+            android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+        <view
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:scaleType="centerInside"
+            android:src="@mipmap/fav_icon"
+            android:layout_below="@+id/app_cat"
+            android:layout_alignParentBottom="true"
+            class="com.app.gridcategory.SquareImageView"
+            android:id="@+id/fav_icon" />
+
+        <view
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:scaleType="centerInside"
+            android:src="@mipmap/fav_icon"
+            android:layout_below="@+id/app_cat"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@+id/fav_icon"
+            class="com.app.gridcategory.SquareImageView"
+            android:id="@+id/fav_icon1" />
+
+        <view
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:scaleType="centerInside"
+            android:src="@mipmap/fav_icon"
+            android:layout_below="@+id/app_cat"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@+id/fav_icon1"
+            class="com.app.gridcategory.SquareImageView"
+            android:id="@+id/fav_icon2" />
+
+        <view
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:scaleType="centerInside"
+            android:src="@mipmap/fav_icon"
+            android:layout_below="@+id/app_cat"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@+id/fav_icon2"
+            class="com.app.gridcategory.SquareImageView"
+            android:id="@+id/fav_icon3" />
+
+        <view
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:scaleType="centerInside"
+            android:src="@mipmap/fav_icon"
+            android:layout_below="@+id/app_cat"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@+id/fav_icon3"
+            class="com.app.gridcategory.SquareImageView"
+            android:id="@+id/fav_icon4" />
+    </RelativeLayout>
+
+</RelativeLayout>
+</LinearLayout>

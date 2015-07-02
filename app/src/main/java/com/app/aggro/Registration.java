@@ -1,17 +1,23 @@
 package com.app.aggro;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 
 
-public class Registration extends ActionBarActivity {
+public class Registration extends Activity {
 
+    private ImageView signIn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
+        init();
     }
 
     @Override
@@ -34,5 +40,16 @@ public class Registration extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void init() {
+        signIn = (ImageView)findViewById(R.id.signin);
+        signIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Registration.this, com.app.aggro.Menu.class));
+                finish();
+            }
+        });
     }
 }
