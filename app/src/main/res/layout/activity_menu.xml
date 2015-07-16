@@ -11,13 +11,32 @@
         android:background="?attr/colorPrimary"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        android:elevation="4dp" />
+        android:elevation="4dp"/>
+
+
 
     <FrameLayout
+        android:layout_above="@+id/footer"
         android:layout_below="@id/toolbar"
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">s
+        android:layout_height="match_parent">
 
     </FrameLayout>
+
+    <RelativeLayout
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_alignParentBottom="true">
+
+
+        <include
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            layout="@layout/copyright" />
+    </RelativeLayout>
+
+
+
 </RelativeLayout>

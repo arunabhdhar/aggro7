@@ -23,4 +23,8 @@
 
    <color name="slider_bar">#004D9E</color>
 
+    <color name="drawer_item_text_color">#343434</color>
+    <color name="drawer_text_sec_line_divider">#999999</color>
+    <color name="badge_text_color">#ffffff</color>
+
 </resources>

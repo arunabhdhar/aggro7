@@ -7,28 +7,127 @@
 
     <style name="CustomTheme" parent="MaterialDrawerTheme.TranslucentStatus">
         <!-- ...and here we setting appcompat’s color theme attrs -->
-        <item name="colorPrimary">#F1433C</item>
-        <item name="colorPrimaryDark">#D03033</item>
+        <item name="colorPrimary">#003165</item>
+        <item name="colorPrimaryDark">#000000</item>
         <item name="colorAccent">#02A8F3</item>
+        <item name="android:windowBackground">@color/app_background</item>
 
         <!-- MaterialDrawer specific values -->
-        <item name="material_drawer_background">@color/material_drawer_dark_background</item>
+        <item name="material_drawer_background">#f2f8ff</item>
         <item name="material_drawer_icons">@color/material_drawer_dark_icons</item>
-        <item name="material_drawer_primary_text">@color/material_drawer_dark_primary_text</item>
-        <item name="material_drawer_secondary_text">@color/material_drawer_dark_secondary_text
-        </item>
+        <item name="material_drawer_primary_text">#343434</item>
+        <item name="material_drawer_secondary_text">#343434</item>
         <item name="material_drawer_hint_text">@color/material_drawer_dark_hint_text</item>
-        <item name="material_drawer_divider">@color/material_drawer_dark_divider</item>
-        <item name="material_drawer_selected">@color/material_drawer_dark_selected</item>
-        <item name="material_drawer_selected_text">#F1433C</item>
-        <item name="material_drawer_header_selection_text">
-            @color/material_drawer_dark_primary_text
-        </item>
+        <item name="material_drawer_divider">@color/drawer_text_sec_line_divider</item>
+        <item name="material_drawer_selected">#ffffff</item>
+        <item name="material_drawer_selected_text">#ffffff</item>
+        <item name="material_drawer_header_selection_text">#ffffff</item>
 
         <!-- CAB :D -->
         <item name="windowActionModeOverlay">true</item>
     </style>
 
     <style name="FullscreenTheme" parent="MaterialDrawerTheme.Light.DarkToolbar.TranslucentStatus"></style>
+
+    <!-- Edit Box Style -->
+    <style name="edit_box_text_style">
+        <item name="android:layout_width">250dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:textSize">13dp</item>
+        <item name="android:paddingLeft">38dp</item>
+        <item name="android:layout_marginTop">6dp</item>
+        <item name="android:paddingRight">20dp</item>
+        <item name="android:textColor">#6f7173</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+
+    <!-- SignIn Button Style -->
+    <style name="sign_in_button_style">
+        <item name="android:layout_width">250dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_marginTop">30dp</item>
+        <item name="android:scaleType">fitXY</item>
+        <item name="android:src">@mipmap/sign_in</item>
+    </style>
+
+    <!-- Update Button Style -->
+    <style name="update_button_style">
+        <item name="android:layout_width">160dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_marginTop">30dp</item>
+        <item name="android:scaleType">centerCrop</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:textSize">13dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
+        <item name="android:text">@string/my_detail_update</item>
+        <item name="android:background">@mipmap/blue_button</item>
+    </style>
+
+    <!-- My detail Fragement Edit Box Style -->
+    <style name="my_detail_editbox_text_style">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:textSize">13dp</item>
+        <item name="android:layout_weight">1.90</item>
+        <item name="android:gravity">left|center</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColor">#003165</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <!-- My detail Fragement text Box Black Style -->
+    <style name="my_detail_text_style_black">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">13dp</item>
+        <item name="android:layout_weight">0.75</item>
+        <item name="android:gravity">center|left</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColor">#000000</item>
+        <item name="android:paddingLeft">@dimen/my_detail_content_padding_left</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <!-- My detail Fragement text Box Blue Style -->
+    <style name="my_detail_text_style_pencil">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">13dp</item>
+        <item name="android:layout_weight">0.75</item>
+        <item name="android:gravity">center|left</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:paddingLeft">@dimen/my_detail_content_padding_left</item>
+        <item name="android:textColor">#6d7073</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <!-- My detail Fragement image Style -->
+    <style name="my_detail_image_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">0.35</item>
+        <item name="android:gravity">center</item>
+        <item name="android:scaleType">centerInside</item>
+        <item name="android:src">@mipmap/pencil</item>
+    </style>
+
+
+    <!-- My detail Fragement Spinner Style -->
+    <style name="mydetail_spinnertheme" parent="@android:style/Theme.Light">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:layout_weight">2.0</item>
+    </style>
+
+    <style name="spinnertheme" parent="@android:style/Theme.Light">
+        <item name="android:layout_width">250dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_marginTop">6dp</item>
+        <item name="android:paddingLeft">38dp</item>
+    </style>
+
 
 </resources>

@@ -36,6 +36,7 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:paddingTop="@dimen/lib_cell_margin_right"
+            android:textColor="#343434"
             android:text="Subway Surf"
             android:textAppearance="?android:attr/textAppearanceMedium"/>
 
@@ -46,6 +47,7 @@
             android:layout_below="@+id/app_name"
             android:layout_alignParentLeft="true"
             android:text="Subway Surf"
+            android:textColor="#9f9f9f"
             android:textAppearance="?android:attr/textAppearanceSmall"/>
 
         <view

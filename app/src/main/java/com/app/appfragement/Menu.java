@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +35,7 @@ public class Menu extends Fragment {
 
     // TODO: Rename and change types of parameters
     private String mParam1;
-    private String mParam2;
+    private int mParam2;
 
     private OnFragmentInteractionListener mListener;
 
@@ -51,11 +52,11 @@ public class Menu extends Fragment {
      * @return A new instance of fragment Menu.
      */
     // TODO: Rename and change types and number of parameters
-    public static Menu newInstance(String param1, String param2) {
+    public static Menu newInstance(String param1, int param2) {
         Menu fragment = new Menu();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putInt(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -69,7 +70,7 @@ public class Menu extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mParam2 = getArguments().getInt(ARG_PARAM2);
         }
     }
 
@@ -83,10 +84,10 @@ public class Menu extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-//        setUpPager(view);
         setUpFragementPager(view);
         setUpTabColor();
     }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -127,32 +128,42 @@ public class Menu extends Fragment {
         public void onFragmentInteraction(Uri uri);
     }
 
-    void setUpPager(View view){
-        mViewPager = (ViewPager) view.findViewById(R.id.viewpager);
-        mViewPager.setAdapter(new TabsPagerAdapter(getActivity()));
-        mSlidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.sliding_tabs);
-        mSlidingTabLayout.setViewPager(mViewPager);
-    }
-
     void setUpFragementPager(View view) {
         List<Fragment> fragments = new Vector<Fragment>();
         MyFragmentAdapter mPagerAdapter;
 //for each fragment you want to add to the pager
         Bundle page = new Bundle();
         page.putString("url", "d");
+
         fragments.add(Fragment.instantiate(getActivity(), AppFragement.class.getName(), page));
         fragments.add(Fragment.instantiate(getActivity(), CatFragement.class.getName(), page));
         fragments.add(Fragment.instantiate(getActivity(),FavFragement.class.getName(),page));
 
 //after adding all the fragments write the below lines
         mViewPager = (ViewPager) view.findViewById(R.id.viewpager);
-        mPagerAdapter  = new MyFragmentAdapter(super.getFragmentManager(), fragments);
+        mPagerAdapter  = new MyFragmentAdapter(getActivity(),super.getFragmentManager(), fragments);
 
         mViewPager.setAdapter(mPagerAdapter);
+        mViewPager.setCurrentItem(0);
+        MyFragmentAdapter.setPos(mParam2);
+        mViewPager.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mParam2 == MyFragmentAdapter.CENTERED_PAGE)
+                    mViewPager.setCurrentItem(mParam2);
+                else if (mParam2 == MyFragmentAdapter.RIGHT_PAGE)
+                    mViewPager.setCurrentItem(mParam2);
+                else if (mParam2 == MyFragmentAdapter.LEFT_PAGE)
+                    mViewPager.setCurrentItem(mParam2);
+            }
+        });
 
         mSlidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.sliding_tabs);
         mSlidingTabLayout.setViewPager(mViewPager);
+
     }
+
+
     void setUpTabColor(){
         mSlidingTabLayout.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
@@ -165,6 +176,7 @@ public class Menu extends Fragment {
                 // TODO Auto-generated method stub
                 return Menu.this.getResources().getColor(R.color.slider_bar);
             }
+
         });
     }
 

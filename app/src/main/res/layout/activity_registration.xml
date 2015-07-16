@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -6,152 +6,76 @@
     tools:context=".Registration">
 
     <LinearLayout
+        android:layout_above="@+id/footer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_gravity="center"
         android:background="@color/app_background">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:scaleType="centerInside"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:src="@mipmap/logo"/>
-
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="@dimen/activity_vertical_margin">
+            android:layout_height="match_parent">
 
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:layout_marginLeft="@dimen/scroll_view_margin_left"
+                android:layout_marginRight="@dimen/scroll_view_margin_right"
                 android:gravity="center">
+
+                <ImageView
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:scaleType="centerInside"
+                    android:layout_marginTop="@dimen/aggro_image_margin_top"
+                    android:src="@mipmap/logo"/>
 
                 <EditText
                     android:id="@+id/name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    style="@style/edit_box_text_style"
                     android:hint="@string/name"
-                    android:singleLine="true"
-                    android:paddingLeft="@dimen/content_left_padding"
-                    android:paddingRight="@dimen/content_right_padding"
+                    android:layout_marginTop="20dp"
                     android:background="@mipmap/name"/>
 
                 <EditText
                     android:id="@+id/username"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    style="@style/edit_box_text_style"
                     android:hint="@string/username"
-                    android:singleLine="true"
-                    android:layout_marginTop="@dimen/content_top_margin"
-                    android:paddingLeft="@dimen/content_left_padding"
-                    android:paddingRight="@dimen/content_right_padding"
                     android:background="@mipmap/username"/>
 
                 <EditText
                     android:id="@+id/age"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    style="@style/edit_box_text_style"
                     android:hint="@string/age"
-                    android:singleLine="true"
-                    android:layout_marginTop="@dimen/content_top_margin"
-                    android:paddingLeft="@dimen/content_left_padding"
-                    android:paddingRight="@dimen/content_right_padding"
+                    android:digits="0123456789"
+                    android:inputType="phone"
                     android:background="@mipmap/age"/>
 
-                <EditText
+                <Spinner
                     android:id="@+id/gender"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="@string/gender"
-                    android:singleLine="true"
-                    android:layout_marginTop="@dimen/content_top_margin"
-                    android:paddingLeft="@dimen/content_left_padding"
-                    android:paddingRight="@dimen/content_right_padding"
+                    style="@style/spinnertheme"
+                    android:prompt="@string/spinner_prompt"
+                    android:entries="@array/spinner_aray"
                     android:background="@mipmap/gender"/>
 
                 <EditText
                     android:id="@+id/loacation"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    style="@style/edit_box_text_style"
                     android:hint="@string/location"
-                    android:singleLine="true"
-                    android:layout_marginTop="@dimen/content_top_margin"
-                    android:paddingLeft="@dimen/content_left_padding"
-                    android:paddingRight="@dimen/content_right_padding"
                     android:background="@mipmap/location"/>
 
                 <EditText
                     android:id="@+id/email"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    style="@style/edit_box_text_style"
                     android:hint="@string/email"
-                    android:singleLine="true"
-                    android:layout_marginTop="@dimen/content_top_margin"
-                    android:paddingLeft="@dimen/content_left_padding"
-                    android:paddingRight="@dimen/content_right_padding"
                     android:background="@mipmap/email"/>
 
                 <ImageView
                     android:id="@+id/signin"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginTop="@dimen/sign_in_top_margin"
-                    android:scaleType="centerInside"
-                    android:src="@mipmap/sign_in"/>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginLeft="@dimen/activity_left_margin"
-                    android:layout_marginRight="@dimen/activity_left_margin"
-                    android:layout_marginTop="@dimen/forgot_rel_top_margin">
-
-
-                    <TextView
-                        android:id="@+id/forgot_password"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/forgot_password"
-                        android:layout_alignParentLeft="true"
-                        android:layout_centerVertical="true"/>
-
-                    <RelativeLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_toRightOf="@+id/forgot_password"
-                        android:layout_alignParentRight="true">
-
-                        <TextView
-                            android:id="@+id/sign_up"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/new_here"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"/>
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="2dp"
-                            android:background="@color/nwe_here_sign_up_line_background"
-                            android:layout_below="@+id/sign_up"
-                            android:layout_alignLeft="@+id/sign_up"
-                            android:layout_alignRight="@+id/sign_up"/>
-
-                    </RelativeLayout>
-                </RelativeLayout>
+                    style="@style/sign_in_button_style"/>
 
             </LinearLayout>
         </ScrollView>
@@ -160,4 +84,25 @@
 
     </LinearLayout>
 
-</LinearLayout>
+    <RelativeLayout
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="#003165"
+        android:layout_alignParentBottom="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:textSize="9dp"
+            android:textStyle="bold|italic"
+            android:layout_marginRight="10dp"
+            android:text="@string/name_copywrite"
+            />
+
+    </RelativeLayout>
+
+</RelativeLayout>
