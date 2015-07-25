@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.app.appfragement.MyDetailsFragement;
+import com.app.getterAndSetter.MyToolBar;
 import com.app.slideradapter.MyFragmentAdapter;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
@@ -47,6 +48,9 @@ public class Menu extends AppCompatActivity implements com.app.appfragement.Menu
     private boolean isSearchOpened = false;
     private EditText edtSeach;
 
+
+    Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,8 +60,11 @@ public class Menu extends AppCompatActivity implements com.app.appfragement.Menu
         //getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
 
         // Handle Toolbar
+//        MyToolBar myToolBar = new MyToolBar();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        MyToolBar.setToolbar(toolbar);
+        setSupportActionBar(MyToolBar.getToolbar());
+
 
         // Create the AccountHeader
         headerResult = new AccountHeaderBuilder()

@@ -27,13 +27,13 @@ public class ThreeWayGrid extends BaseAdapter{
         mItems.add(new Item(context.getResources().getString(R.string.cat_games),R.mipmap.games));
         mItems.add(new Item(context.getResources().getString(R.string.cat_entertainment),R.mipmap.entertainment));
         mItems.add(new Item(context.getResources().getString(R.string.cat_sports), R.mipmap.sports));
-        mItems.add(new Item(context.getResources().getString(R.string.cat_teaching),R.mipmap.teaching));
+        mItems.add(new Item(context.getResources().getString(R.string.cat_education),R.mipmap.teaching));
         mItems.add(new Item(context.getResources().getString(R.string.cat_news),   R.mipmap.news));
         mItems.add(new Item(context.getResources().getString(R.string.cat_health),  R.mipmap.health));
         mItems.add(new Item(context.getResources().getString(R.string.cat_games),R.mipmap.games));
         mItems.add(new Item(context.getResources().getString(R.string.cat_entertainment),R.mipmap.entertainment));
         mItems.add(new Item(context.getResources().getString(R.string.cat_sports), R.mipmap.sports));
-        mItems.add(new Item(context.getResources().getString(R.string.cat_teaching),R.mipmap.teaching));
+        mItems.add(new Item(context.getResources().getString(R.string.cat_education),R.mipmap.teaching));
         mItems.add(new Item(context.getResources().getString(R.string.cat_news),   R.mipmap.news));
         mItems.add(new Item(context.getResources().getString(R.string.cat_health),  R.mipmap.health));
     }

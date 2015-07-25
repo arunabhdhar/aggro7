@@ -14,6 +14,8 @@
 
     <dimen name="lib_cell_margin_left">5dp</dimen>
     <dimen name="lib_cell_margin_right">5dp</dimen>
+    <dimen name="lib_cell_image_margin_bottom">10dp</dimen>
+    <dimen name="lib_cell_image_margin_left">15dp</dimen>
 
     <dimen name="aggro_image_margin_top">20dp</dimen>
 

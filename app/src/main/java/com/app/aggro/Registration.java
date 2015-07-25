@@ -40,7 +40,7 @@ public class Registration extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
         init();
-        trackLocation();
+//        trackLocation();
         addItemToSpinner();
         addListenerToSpinner();
     }

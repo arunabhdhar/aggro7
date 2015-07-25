@@ -35,12 +35,18 @@
     <string name="app_fav">Favourite</string>
 
     <!-- TODO: Ctaegory Item List -->
+    <string name="cat_all_apps">APPS</string>
+    <string name="cat_bussiness">BUSINESS</string>
+    <string name="cat_lifestyle">LIFESTYLE</string>
+    <string name="cat_news">NEWS_AND_MAGAZINES</string>
+    <string name="cat_education">EDUCATION</string>
+    <string name="cat_transporation">TRANSPORTATION</string>
+    <string name="cat_productiity">PRODUCTIVITY</string>
     <string name="cat_games">GAMES</string>
-    <string name="cat_entertainment">ENTERTAINMENT</string>
+    <string name="cat_travel">TRAVEL_AND_LOCAL</string>
     <string name="cat_sports">SPORTS</string>
-    <string name="cat_teaching">TEACHING</string>
-    <string name="cat_news">NEWS</string>
-    <string name="cat_health">HEALTH</string>
+    <string name="cat_health">HEALTH_AND_FITNESS</string>
+    <string name="cat_entertainment">MUSIC_AND_AUDIO</string>
 
     <!-- TODO: Ctaegory GAME -->
     <string name="name_one">Subway Sutfer</string>
@@ -79,7 +85,16 @@
     <string name="my_detail_email">Email :</string>
     <string name="my_detail_update">Update</string>
 
+    <!-- TODO: Access token -->
+    <string name="aggro_access_token">89fec42eca7a714827b15d97e766a9480c88db5c</string>
 
-
+    <!-- TODO: Volley error helper -->
+    <string name="no_network_connection" translatable="false">No network connection found</string>
+    <string name="generic_server_down" translatable="false">Server down</string>
+    <string name="generic_server_timeout" translatable="false">Server Timeout</string>
+    <string name="generic_error" translatable="false">No internet</string>
+    <string name="no_internet" translatable="false">No internet</string>
+    <string name="parsing_failed" translatable="false">Parsing Failure</string>
+    <string name="auth_failed" translatable="false">Authentication Failure</string>
 
 </resources>
