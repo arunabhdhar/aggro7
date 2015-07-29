@@ -35,7 +35,7 @@ import java.util.List;
 public class SimpleAdapter extends UltimateViewAdapter<SimpleAdapter.SimpleAdapterViewHolder> {
     private List<AppList> stringList;
 
-    private int mDuration = 500;
+    private int mDuration = 300;
     private Interpolator mInterpolator = new LinearInterpolator();
     private int mLastPosition = 5;
 
@@ -53,6 +53,7 @@ public class SimpleAdapter extends UltimateViewAdapter<SimpleAdapter.SimpleAdapt
 
             ((SimpleAdapterViewHolder) holder).appName.setText(stringList.get(customHeaderView != null ? position - 1 : position).getTitle());
             ((SimpleAdapterViewHolder) holder).appCategory.setText(stringList.get(customHeaderView != null ? position - 1 : position).getCategory());
+            if((Double) stringList.get(customHeaderView != null ? position - 1 : position).getRating()!=null)
             ((SimpleAdapterViewHolder) holder).coloredRatingBar.setRating(((Double) stringList.get(customHeaderView != null ? position - 1 : position).getRating()).floatValue());
             String url = stringList.get(customHeaderView != null ? position - 1 : position).getIcon();
             ((SimpleAdapterViewHolder) holder).imageViewSample.setImageUrl(url, ((SimpleAdapterViewHolder) holder).mImageLoader);

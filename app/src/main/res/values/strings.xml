@@ -86,7 +86,7 @@
     <string name="my_detail_update">Update</string>
 
     <!-- TODO: Access token -->
-    <string name="aggro_access_token">89fec42eca7a714827b15d97e766a9480c88db5c</string>
+    <string name="aggro_access_token">b48337314a94c3accd6fa0de6deb6b11aeca53e5</string>
 
     <!-- TODO: Volley error helper -->
     <string name="no_network_connection" translatable="false">No network connection found</string>
