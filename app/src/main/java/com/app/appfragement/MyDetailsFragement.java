@@ -5,10 +5,16 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.method.KeyListener;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -17,6 +23,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.aggro.R;
 import com.app.aggro.Registration;
@@ -54,6 +61,10 @@ public class MyDetailsFragement extends Fragment {
     private ImageView img_name, img_age, img_gender, img_location, img_email;
     private Button btn_update;
 
+    private MenuItem mSearchAction;
+    private boolean isSearchOpened = false;
+    private EditText edtSeach;
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -79,6 +90,7 @@ public class MyDetailsFragement extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -102,6 +114,86 @@ public class MyDetailsFragement extends Fragment {
         setDummyDataOnLoad();
 
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(android.view.Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(android.view.Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        mSearchAction = menu.findItem(R.id.action_search);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_settings:
+                return true;
+            case R.id.action_search:
+                handleMenuSearch();
+                return true;
+        }
+
+        return false;
+    }
+
+    protected void handleMenuSearch(){
+        ActionBar action = ((AppCompatActivity)getActivity()).getSupportActionBar(); //get the actionbar
+
+        if(isSearchOpened){ //test if the search is open
+
+            action.setDisplayShowCustomEnabled(false); //disable a custom view inside the actionbar
+            action.setDisplayShowTitleEnabled(true); //show the title in the action bar
+
+            //hides the keyboard
+            InputMethodManager inputMethodManager = (InputMethodManager)  getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(((Activity)getActivity()).getCurrentFocus().getWindowToken(), 0);
+
+            //add the search icon in the action bar
+            mSearchAction.setIcon(getResources().getDrawable(R.drawable.ic_open_search));
+
+            isSearchOpened = false;
+        } else { //open the search entry
+
+            action.setDisplayShowCustomEnabled(true); //enable it to display a
+            // custom view in the action bar.
+            action.setCustomView(R.layout.search_bar);//add the custom view
+            action.setDisplayShowTitleEnabled(false); //hide the title
+
+            edtSeach = (EditText)action.getCustomView().findViewById(R.id.edtSearch); //the text editor
+
+            //this is a listener to do a search when the user clicks on search button
+            edtSeach.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                        doSearch();
+                        return true;
+                    }
+                    return false;
+                }
+            });
+
+            edtSeach.requestFocus();
+
+            //open the keyboard focused in the edtSearch
+            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(edtSeach, InputMethodManager.SHOW_IMPLICIT);
+
+            //add the close icon
+            mSearchAction.setIcon(getResources().getDrawable(R.mipmap.ic_action));
+
+            isSearchOpened = true;
+        }
+    }
+
+    private void doSearch() {
+        Toast.makeText(getActivity(), "LENGTH", Toast.LENGTH_LONG).show();
     }
 
     // TODO: Rename method, update argument and hook method into UI event

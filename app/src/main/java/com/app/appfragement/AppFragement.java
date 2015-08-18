@@ -1,11 +1,18 @@
 package com.app.appfragement;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.view.*;
+import android.view.Menu;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.adapter.AppLibrary;
@@ -24,6 +31,8 @@ public class AppFragement extends Fragment {
     private GroupItem groupItem;
     private AppLibrary adpapter;
     private ListView listView;
+
+
     public static AppFragement newInstance(String imageUrl) {
 
         final AppFragement mf = new AppFragement();
@@ -41,6 +50,7 @@ public class AppFragement extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         String data = getArguments().getString("somedata");
     }
 
@@ -55,6 +65,8 @@ public class AppFragement extends Fragment {
         setListviewToAdapter();
         return v;
     }
+
+
 
     private void init(View view) {
         groupItem = new GroupItem();
@@ -85,7 +97,7 @@ public class AppFragement extends Fragment {
 
             for (int i = 0; i < list.size(); i++) {
                 ChildItem childItem = new ChildItem();
-                childItem.mAppIcon = imageList.get(i);
+//                childItem.mAppIcon = imageList.get(i);
                 childItem.mAppname = list.get(i).toString();
                 childItem.mAppCategory = "Games";
                 groupItem.items.add(childItem);

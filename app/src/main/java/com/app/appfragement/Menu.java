@@ -1,23 +1,61 @@
 package com.app.appfragement;
 
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.app.adapter.SimpleAnimationAdapter;
 import com.app.aggro.R;
+import com.app.appfragement.fragment.RecyclerViewFragment;
+import com.app.appfragement.fragment.RecyclerViewGridFragment;
+import com.app.appfragement.fragment.RecyclerViewThreeWayGridFragment;
+import com.app.getterAndSetter.MyToolBar;
+import com.app.gridcategory.ImageItem;
+import com.app.holder.GroupItem;
 import com.app.slideradapter.MyFragmentAdapter;
 import com.app.slideradapter.TabsPagerAdapter;
 import com.app.viewslider.SlidingTabLayout;
+import com.crashlytics.android.Crashlytics;
+import com.github.florent37.materialviewpager.BuildConfig;
+import com.github.florent37.materialviewpager.MaterialViewPager;
+import com.github.florent37.materialviewpager.header.HeaderDesign;
+import com.marshalchen.ultimaterecyclerview.ObservableScrollState;
+import com.marshalchen.ultimaterecyclerview.ObservableScrollViewCallbacks;
+import com.marshalchen.ultimaterecyclerview.URLogs;
+import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 
+
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,7 +80,18 @@ public class Menu extends Fragment {
     private SlidingTabLayout mSlidingTabLayout;
 
 
-    private ViewPager mViewPager;
+    private MaterialViewPager mViewPager;
+
+    private MenuItem mSearchAction;
+    private boolean isSearchOpened = false;
+    private EditText edtSeach;
+
+    UltimateRecyclerView ultimateRecyclerView;
+    SimpleAnimationAdapter simpleRecyclerViewAdapter = null;
+    LinearLayoutManager linearLayoutManager ;
+
+    private Toolbar toolbar;
+    private GroupItem groupItem;
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -68,9 +117,10 @@ public class Menu extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getInt(ARG_PARAM2);
+            mParam1 = getArguments().getString(ARG_PARAM1);
         }
     }
 
@@ -84,10 +134,58 @@ public class Menu extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+//        init(view);
+
+        MyToolBar.getToolbar().setTitle("");
+        MyToolBar.getToolbar().setTitle(getActivity().getResources().getString(R.string.app_menu));
         setUpFragementPager(view);
-        setUpTabColor();
+//        setUpTabColor();
     }
 
+    @Override
+    public void onCreateOptionsMenu(android.view.Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        inflater.inflate(R.menu.menu_main, menu);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(android.view.Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        mSearchAction = menu.findItem(R.id.action_search);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_settings:
+                return true;
+            case R.id.action_search:
+//                handleMenuSearch();
+                selectsearchAppFragement("","");
+                return true;
+        }
+
+        return false;
+    }
+
+
+
+    public void selectsearchAppFragement(String local, String level) {
+        // update the main content by replacing fragments
+        Fragment fragment = SearchAppFragement.newInstance("", "");
+        android.support.v4.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        android.support.v4.app.FragmentTransaction transaction  = fragmentManager.beginTransaction();
+//        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack so the user can navigate back
+        transaction.replace(R.id.content_frame, fragment);
+        transaction.addToBackStack(null);
+
+        // Commit the transaction
+        transaction.commit();
+    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -111,6 +209,7 @@ public class Menu extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        mViewPager = null;
     }
 
     /**
@@ -135,31 +234,57 @@ public class Menu extends Fragment {
         Bundle page = new Bundle();
         page.putString("url", "d");
 
-        fragments.add(Fragment.instantiate(getActivity(), AppFragement.class.getName(), page));
-        fragments.add(Fragment.instantiate(getActivity(), CatFragement.class.getName(), page));
-        fragments.add(Fragment.instantiate(getActivity(),FavFragement.class.getName(),page));
+        fragments.add(Fragment.instantiate(getActivity(), RecyclerViewFragment.class.getName(), page));
+        fragments.add(Fragment.instantiate(getActivity(), RecyclerViewGridFragment.class.getName(), page));
+        fragments.add(Fragment.instantiate(getActivity(), RecyclerViewThreeWayGridFragment.class.getName(), page));
 
 //after adding all the fragments write the below lines
-        mViewPager = (ViewPager) view.findViewById(R.id.viewpager);
-        mPagerAdapter  = new MyFragmentAdapter(getActivity(),super.getFragmentManager(), fragments);
+        mViewPager = (MaterialViewPager) view.findViewById(R.id.materialViewPager);
+        mPagerAdapter  = new MyFragmentAdapter(getActivity(),super.getChildFragmentManager(), fragments);
+        mViewPager.getToolbar().setVisibility(View.GONE);
+        mViewPager.getViewPager().setAdapter(mPagerAdapter);
+        if (mParam2 == MyFragmentAdapter.CENTERED_PAGE){
+            mViewPager.getViewPager().setCurrentItem(mParam2);
+        }
 
-        mViewPager.setAdapter(mPagerAdapter);
-        mViewPager.setCurrentItem(0);
-        MyFragmentAdapter.setPos(mParam2);
-        mViewPager.post(new Runnable() {
+        else if (mParam2 == MyFragmentAdapter.RIGHT_PAGE){
+            mViewPager.getViewPager().setCurrentItem(mParam2);
+        }
+
+        else if (mParam2 == MyFragmentAdapter.LEFT_PAGE){
+            mViewPager.getViewPager().setCurrentItem(mParam2);
+        }
+
+        mViewPager.setMaterialViewPagerListener(new MaterialViewPager.Listener() {
             @Override
-            public void run() {
-                if (mParam2 == MyFragmentAdapter.CENTERED_PAGE)
-                    mViewPager.setCurrentItem(mParam2);
-                else if (mParam2 == MyFragmentAdapter.RIGHT_PAGE)
-                    mViewPager.setCurrentItem(mParam2);
-                else if (mParam2 == MyFragmentAdapter.LEFT_PAGE)
-                    mViewPager.setCurrentItem(mParam2);
+            public HeaderDesign getHeaderDesign(int page) {
+                switch (page) {
+                    case 0:
+                        return HeaderDesign.fromColorResAndUrl(
+                                R.color.green,
+                                "https://fs01.androidpit.info/a/63/0e/android-l-wallpapers-630ea6-h900.jpg");
+                    case 1:
+                        return HeaderDesign.fromColorResAndUrl(
+                                R.color.blue,
+                                "http://cdn1.tnwcdn.com/wp-content/blogs.dir/1/files/2014/06/wallpaper_51.jpg");
+                    case 2:
+                        return HeaderDesign.fromColorResAndUrl(
+                                R.color.cyan,
+                                "http://www.droid-life.com/wp-content/uploads/2014/10/lollipop-wallpapers10.jpg");
+                    case 3:
+                        return HeaderDesign.fromColorResAndUrl(
+                                R.color.red,
+                                "http://www.tothemobile.com/wp-content/uploads/2014/07/original.jpg");
+                }
+
+                //execute others actions if needed (ex : modify your header logo)
+
+                return null;
             }
         });
 
-        mSlidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.sliding_tabs);
-        mSlidingTabLayout.setViewPager(mViewPager);
+        mViewPager.getViewPager().setOffscreenPageLimit(mViewPager.getViewPager().getAdapter().getCount());
+        mViewPager.getPagerTitleStrip().setViewPager(mViewPager.getViewPager());
 
     }
 
@@ -180,5 +305,21 @@ public class Menu extends Fragment {
         });
     }
 
+
+    /**
+     * Prepare some dummy data for gridview
+     */
+    private ArrayList<ImageItem> getData() {
+        final ArrayList<ImageItem> mItems = new ArrayList<>();
+//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_bussiness),R.mipmap.games));
+        return mItems;
+    }
+
+    private void init(){
+        if (!BuildConfig.DEBUG)
+            Fabric.with(getActivity(), new Crashlytics());
+
+
+    }
 
 }

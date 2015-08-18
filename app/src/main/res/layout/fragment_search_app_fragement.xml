@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_background">
+
+    <RelativeLayout
+        android:id="@+id/card_view"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:background="#003165">
+
+
+
+        <EditText
+            android:id="@+id/search"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginRight="@dimen/activity_right_margin"
+            android:layout_toRightOf="@+id/rel_arrow_back"
+            android:background="@null"
+            android:ems="10"
+            android:hint="@string/search"
+            android:textColor="@android:color/white"
+            android:layout_centerVertical="true"
+            android:paddingLeft="@dimen/search_box_left_padding"
+            android:singleLine="true"
+            android:imeOptions="actionSearch"
+            android:visibility="visible" >
+
+            <requestFocus />
+        </EditText>
+
+
+
+        <RelativeLayout
+            android:id="@+id/rel_arrow_back"
+            android:layout_width="45dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true">
+
+            <ImageView
+                android:id="@+id/drawer_logo"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/arrow_left"
+                android:layout_marginLeft="@dimen/back_arrow_left_margin"
+                android:layout_marginTop="8dp" />
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <com.marshalchen.ultimaterecyclerview.UltimateRecyclerView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/ultimate_recycler_view"
+        app:recyclerviewScrollbars="vertical"
+        app:recyclerviewFloatingActionView="@layout/floating_view"
+        app:recyclerviewEmptyView="@layout/empty_search_view">
+    </com.marshalchen.ultimaterecyclerview.UltimateRecyclerView>
+</LinearLayout>

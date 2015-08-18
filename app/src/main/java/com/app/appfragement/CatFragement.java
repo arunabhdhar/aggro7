@@ -1,18 +1,41 @@
 package com.app.appfragement;
 
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.Toolbar;
+import android.view.*;
+import android.view.Menu;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.app.adapter.SimpleAdapter;
+import com.app.adapter.SimpleAnimationAdapter;
 import com.app.aggro.R;
 import com.app.api.Category;
+import com.app.getterAndSetter.MyToolBar;
 import com.app.gridcategory.GridViewAdapter;
 import com.app.gridcategory.ImageItem;
 import com.app.gridcategory.TwoWayGrid;
+import com.app.holder.GroupItem;
+import com.app.modal.AppList;
+import com.marshalchen.ultimaterecyclerview.ObservableScrollState;
+import com.marshalchen.ultimaterecyclerview.ObservableScrollViewCallbacks;
+import com.marshalchen.ultimaterecyclerview.URLogs;
+import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 
 import java.util.ArrayList;
 
@@ -22,6 +45,18 @@ import java.util.ArrayList;
 public class CatFragement extends Fragment{
 
     private GridViewAdapter gridAdapter;
+    private MenuItem mSearchAction;
+    private boolean isSearchOpened = false;
+    private EditText edtSeach;
+
+    UltimateRecyclerView ultimateRecyclerView;
+    SimpleAnimationAdapter simpleRecyclerViewAdapter = null;
+    GridLayoutManager gridLayoutManager;
+
+    private Toolbar toolbar;
+    private GroupItem groupItem;
+
+    private int count = 1;
 
     public static CatFragement newInstance(String imageUrl) {
 
@@ -40,6 +75,7 @@ public class CatFragement extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         String data = getArguments().getString("somedata");
     }
 
@@ -48,11 +84,13 @@ public class CatFragement extends Fragment{
                              Bundle savedInstanceState) {
         // Inflate and locate the main ImageView
         final View v = inflater.inflate(R.layout.fragement_cat, container, false);
-        init(v);
+        init1(v);
         return v;
     }
 
-    private void init(View view){
+
+
+    private void init1(View view){
         GridView gridView = (GridView)view.findViewById(R.id.gridview);
 //        gridView.setAdapter(new TwoWayGrid(getActivity()));
 
@@ -66,6 +104,106 @@ public class CatFragement extends Fragment{
                 selectItem(item.getTitle());
             }
         });
+    }
+
+
+   private void init(View view){
+       toolbar = MyToolBar.getToolbar();
+       toolbar.setTitle(getString(R.string.app_cat));
+       groupItem = new GroupItem();
+       groupItem.gridList = getData();
+
+       ultimateRecyclerView = (UltimateRecyclerView)view. findViewById(R.id.ultimate_recycler_view);
+       ultimateRecyclerView.setHasFixedSize(false);
+
+       simpleRecyclerViewAdapter = new SimpleAnimationAdapter(groupItem.gridList, getActivity());
+       gridLayoutManager=new GridLayoutManager(getActivity(),2);
+       ultimateRecyclerView.setLayoutManager(gridLayoutManager);
+       ultimateRecyclerView.setAdapter(simpleRecyclerViewAdapter);
+
+       ultimateRecyclerView.disableLoadmore();
+       simpleRecyclerViewAdapter.setCustomLoadMoreView(LayoutInflater.from(getActivity())
+               .inflate(R.layout.custom_bottom_progressbar, null));
+       ultimateRecyclerView.setParallaxHeader(getActivity().getLayoutInflater().inflate(R.layout.parallax_recyclerview_header, ultimateRecyclerView.mRecyclerView, false));
+       ultimateRecyclerView.setOnParallaxScroll(new UltimateRecyclerView.OnParallaxScroll() {
+           @Override
+           public void onParallaxScroll(float percentage, float offset, View parallax) {
+//                Drawable c = toolbar.getBackground();
+//                c.setAlpha(Math.round(127 + percentage * 128));
+               toolbar.setBackgroundDrawable(toolbar.getBackground());
+           }
+       });
+
+       ultimateRecyclerView.setRecylerViewBackgroundColor(Color.parseColor("#ffffff"));
+       ultimateRecyclerView.setDefaultOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+           @Override
+           public void onRefresh() {
+               new Handler().postDelayed(new Runnable() {
+                   @Override
+                   public void run() {
+//                       simpleRecyclerViewAdapter.insert(new ImageItem(getString(R.string.cat_all_apps),R.mipmap.games), simpleRecyclerViewAdapter.getAdapterItemCount());
+                       ultimateRecyclerView.setRefreshing(false);
+                       //   ultimateRecyclerView.scrollBy(0, -50);
+                       gridLayoutManager.scrollToPosition(0);
+//                        ultimateRecyclerView.setAdapter(simpleRecyclerViewAdapter);
+//                        simpleRecyclerViewAdapter.notifyDataSetChanged();
+                   }
+               }, 1000);
+           }
+       });
+
+       ultimateRecyclerView.setOnLoadMoreListener(new UltimateRecyclerView.OnLoadMoreListener() {
+           @Override
+           public void loadMore(int itemsCount, final int maxLastVisiblePosition) {
+               Handler handler = new Handler();
+               handler.postDelayed(new Runnable() {
+                   public void run() {
+//                       count = count + 1;
+                       // linearLayoutManager.scrollToPositionWithOffset(maxLastVisiblePosition,-1);
+                       //   linearLayoutManager.scrollToPosition(maxLastVisiblePosition);
+                   }
+               }, 1000);
+           }
+       });
+
+
+       ultimateRecyclerView.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
+           @Override
+           public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+
+           }
+
+           @Override
+           public void onDownMotionEvent() {
+
+           }
+
+           @Override
+           public void onUpOrCancelMotionEvent(ObservableScrollState observableScrollState) {
+//                if (observableScrollState == ObservableScrollState.DOWN) {
+//                    ultimateRecyclerView.showToolbar(toolbar, ultimateRecyclerView, getScreenHeight());
+//                    ultimateRecyclerView.showFloatingActionMenu();
+//                } else if (observableScrollState == ObservableScrollState.UP) {
+//                    ultimateRecyclerView.hideToolbar(toolbar, ultimateRecyclerView, getScreenHeight());
+//                    ultimateRecyclerView.hideFloatingActionMenu();
+//                } else if (observableScrollState == ObservableScrollState.STOP) {
+//                }
+               URLogs.d("onUpOrCancelMotionEvent");
+               if (observableScrollState == ObservableScrollState.UP) {
+                   ultimateRecyclerView.showToolbar(toolbar, ultimateRecyclerView, getScreenHeight());
+                   ultimateRecyclerView.hideFloatingActionMenu();
+               } else if (observableScrollState == ObservableScrollState.DOWN) {
+                   ultimateRecyclerView.showToolbar(toolbar, ultimateRecyclerView, getScreenHeight());
+                   ultimateRecyclerView.showFloatingActionMenu();
+               }
+           }
+       });
+
+       ultimateRecyclerView.showFloatingButtonView();
+   }
+
+    public int getScreenHeight() {
+        return getActivity().findViewById(android.R.id.content).getHeight();
     }
 
     /**
@@ -100,6 +238,8 @@ public class CatFragement extends Fragment{
 
         // Commit the transaction
         transaction.commit();
+
+        getActivity().invalidateOptionsMenu();
     }
 
     private void selectItem(String category) {

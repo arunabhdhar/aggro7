@@ -91,6 +91,8 @@ public class AppList {
     @SerializedName("what_is_new")
     @Expose
     private String whatIsNew;
+    @Expose
+    private boolean isInstalled;
 
     /**
      *
@@ -666,6 +668,17 @@ public class AppList {
      */
     public void setWhatIsNew(String whatIsNew) {
         this.whatIsNew = whatIsNew;
+    }
+
+    /**
+     * retutn the bollean if appp is installed or not
+     */
+    public boolean isInstalled() {
+        return isInstalled;
+    }
+
+    public void setIsInstalled(boolean isInstalled) {
+        this.isInstalled = isInstalled;
     }
 
 }

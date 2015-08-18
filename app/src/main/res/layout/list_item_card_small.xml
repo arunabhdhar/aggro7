@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:rb="http://schemas.android.com/tools">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_view"
+        android:layout_width="match_parent"
+        android:layout_height="85dp"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="2dp"
+        android:layout_marginBottom="@dimen/cardMarginVertical"
+        android:layout_marginTop="@dimen/cardMarginVertical"
+        android:background="@mipmap/lib_cell_bg"
+        app:cardPreventCornerOverlap="false"
+        app:contentPadding="0dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="85dp"
+            android:background="@mipmap/lib_cell_bg"
+            android:layout_marginLeft="@dimen/lib_cell_margin_left"
+            android:layout_marginRight="@dimen/lib_cell_margin_right">
+
+            <com.android.volley.toolbox.NetworkImageView
+                android:id="@+id/app_icon"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/lib_cell_image_margin_left"
+                android:scaleType="centerInside"
+                class="com.app.gridcategory.SquareImageView"
+                android:src="@mipmap/games"/>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/app_icon"
+                android:layout_marginLeft="@dimen/lib_cell_margin_left">
+
+                <TextView
+                    android:id="@+id/app_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:paddingTop="@dimen/lib_cell_margin_right"
+                    android:textColor="#343434"
+                    android:textSize="@dimen/lib_item_app_name_text_size"
+                    android:text="Subway Surf"
+                    android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+                <TextView
+                    android:id="@+id/app_cat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/app_name"
+                    android:textSize="@dimen/lib_item_app_category_text_size"
+                    android:layout_alignParentLeft="true"
+                    android:text="Subway Surf"
+                    android:textColor="#9f9f9f"
+                    android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+                <com.app.Utility.ColoredRatingBar
+                    android:id="@+id/coloredRatingBar1"
+                    style="@style/coloredRatingBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="@dimen/lib_cell_image_margin_bottom"
+                    android:background="@android:color/transparent"
+                    rb:rating="3.8" />
+
+                <RelativeLayout
+                    android:id="@+id/rel_add_app"
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentRight="true">
+
+                    <ImageView
+                        android:id="@+id/plus_circle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@mipmap/checkbox_marked_circle_outline"
+                        android:layout_marginRight="10dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"/>
+
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:id="@+id/progressbar" android:visibility="gone"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true" />
+
+        </RelativeLayout>
+
+
+    </android.support.v7.widget.CardView>
+</FrameLayout>

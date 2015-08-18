@@ -1,9 +1,11 @@
 package com.app.aggro;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -18,7 +20,9 @@ import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.app.Utility.Utility;
 import com.app.appfragement.MyDetailsFragement;
 import com.app.getterAndSetter.MyToolBar;
 import com.app.slideradapter.MyFragmentAdapter;
@@ -28,11 +32,17 @@ import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
 import com.mikepenz.materialdrawer.accountswitcher.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import com.mikepenz.materialdrawer.model.interfaces.OnCheckedChangeListener;
+import com.quinny898.library.persistentsearch.SearchBox;
+import com.quinny898.library.persistentsearch.SearchResult;
+
+import java.util.ArrayList;
 
 /**
  * Created by ericbasendra on 01/07/15.
@@ -42,41 +52,48 @@ public class Menu extends AppCompatActivity implements com.app.appfragement.Menu
     private static final int PROFILE_SETTING = 1;
 
     //save our header or result
-    private AccountHeader headerResult = null;
     private Drawer result = null;
     private MenuItem mSearchAction;
     private boolean isSearchOpened = false;
     private EditText edtSeach;
 
-
-    Toolbar toolbar;
+    Activity mContext;
+    private SearchBox search;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
-
-        //Remove line to test RTL support
-        //getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+        mContext = Menu.this;
 
         // Handle Toolbar
-//        MyToolBar myToolBar = new MyToolBar();
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        MyToolBar.setToolbar(toolbar);
-        setSupportActionBar(MyToolBar.getToolbar());
+         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+         MyToolBar.setToolbar(toolbar);
+         setSupportActionBar(MyToolBar.getToolbar());
 
 
         // Create the AccountHeader
-        headerResult = new AccountHeaderBuilder()
+        AccountHeader headerResult = new AccountHeaderBuilder()
                 .withActivity(this)
-                .withHeaderBackground(android.R.color.transparent)
-                .withSavedInstance(savedInstanceState)
+                .withHeaderBackground(R.drawable.header)
+                .addProfiles(
+                        new ProfileDrawerItem().withName(Utility.readUserInfoFromPrefs(mContext,getResources().getString(R.string.username))).withEmail(Utility.readUserInfoFromPrefs(mContext,getResources().getString(R.string.email))).withIcon(getResources().getDrawable(R.drawable.profile))
+                )
+                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
+                    @Override
+                    public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
+                        return false;
+                    }
+                })
                 .build();
+
+
 
         //Create the drawer
         result = new DrawerBuilder().
                  withFullscreen(false)
                 .withActivity(this)
+                .withAccountHeader(headerResult)
                 .withSliderBackgroundDrawable(getResources().getDrawable(R.mipmap.drawer_bg))
                 .withDisplayBelowToolbar(true)
                 .withSelectedItem(-1)
@@ -140,10 +157,10 @@ public class Menu extends AppCompatActivity implements com.app.appfragement.Menu
 
     @Override
     public void onBackPressed() {
-        if(isSearchOpened) {
-            handleMenuSearch();
-            return;
-        }
+//        if(isSearchOpened) {
+//            handleMenuSearch();
+//            return;
+//        }
         if (getFragmentManager().getBackStackEntryCount() == 0) {
             Log.e("GET FRAGEMENT MANAGER", "" + getFragmentManager().getBackStackEntryCount());
             Menu.this.finish();
@@ -167,20 +184,19 @@ public class Menu extends AppCompatActivity implements com.app.appfragement.Menu
         return super.onPrepareOptionsMenu(menu);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        switch (id) {
-            case R.id.action_settings:
-                return true;
-            case R.id.action_search:
-                handleMenuSearch();
-                return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        int id = item.getItemId();
+//        switch (id) {
+//            case R.id.action_settings:
+//                return true;
+//            case R.id.action_search:
+//                handleMenuSearch();
+//                return true;
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 
     protected void handleMenuSearch(){
         ActionBar action = getSupportActionBar(); //get the actionbar
@@ -263,6 +279,7 @@ public class Menu extends AppCompatActivity implements com.app.appfragement.Menu
 //        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
         // Replace whatever is in the fragment_container view with this fragment,
         // and add the transaction to the back stack so the user can navigate back
+        fragmentManager.executePendingTransactions();
         transaction.replace(R.id.content_frame, fragment);
         transaction.addToBackStack(null);
 
@@ -288,4 +305,5 @@ public class Menu extends AppCompatActivity implements com.app.appfragement.Menu
     public void onFragmentInteraction(Uri uri) {
 
     }
+
 }

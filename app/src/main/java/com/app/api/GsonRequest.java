@@ -88,9 +88,9 @@ public class GsonRequest<T> extends Request<T> {
             return Response.success(
                     mGson.fromJson(json, clazz), HttpHeaderParser.parseCacheHeaders(response));
         } catch (UnsupportedEncodingException e) {
-            return Response.error(new ParseError(e));
+            return Response.error(new ParseError(e.getCause()));
         } catch (JsonSyntaxException e) {
-            return Response.error(new ParseError(e));
+            return Response.error(new ParseError(e.getCause()));
         }
     }
 }

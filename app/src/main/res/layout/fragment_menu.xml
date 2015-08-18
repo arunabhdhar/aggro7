@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.app.appfragement.Menu">
 
 
@@ -10,17 +11,25 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <view
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/slider_bar"
-            class="com.app.viewslider.SlidingTabLayout"
-            android:id="@+id/sliding_tabs" />
 
-        <view
+        <com.github.florent37.materialviewpager.MaterialViewPager
+            android:id="@+id/materialViewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            class="android.support.v4.view.ViewPager"
-            android:id="@+id/viewpager" />
+            app:viewpager_logo="@layout/header_logo"
+            app:viewpager_pagerTitleStrip="@layout/material_view_pager_pagertitlestrip_newstand"
+            app:viewpager_logoMarginTop="100dp"
+            app:viewpager_color="@color/colorPrimary"
+            android:background ="@color/app_background"
+            app:viewpager_headerHeight="200dp"
+            app:viewpager_headerAlpha="0.6"
+            app:viewpager_hideLogoWithFade="false"
+            app:viewpager_hideToolbarAndTitle="true"
+            app:viewpager_enableToolbarElevation="true"
+            app:viewpager_parallaxHeaderFactor="1.5"
+            app:viewpager_headerAdditionalHeight="20dp"
+            app:viewpager_displayToolbarWhenSwipe="true"
+            app:viewpager_transparentToolbar="true"
+            app:viewpager_animatedHeaderImage="true"   />
     </LinearLayout>
 </FrameLayout>

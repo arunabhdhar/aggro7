@@ -67,7 +67,7 @@ public class AppLibrary extends BaseAdapter {
 		holder.mAppName = (TextView)convertView.findViewById(R.id.app_name);
 		holder.mAppCategory = (TextView)convertView.findViewById(R.id.app_cat);
 
-		holder.mAppImageView.setImageResource(item.mAppIcon);
+//		holder.mAppImageView.setImageResource(item.mAppIconUrl);
 		holder.mAppName.setText(item.mAppname);
 		holder.mAppCategory.setText(item.mAppCategory);
 

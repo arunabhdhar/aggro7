@@ -1,19 +1,34 @@
 package com.app.appfragement;
 
+import android.app.Activity;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
-import android.view.ActionMode;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
+import android.view.Menu;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.webkit.MimeTypeMap;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -21,6 +36,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+import com.app.BroadcastListener;
+import com.app.OnClick;
+import com.app.Utility.Utility;
 import com.app.adapter.AppLibrary;
 import com.app.adapter.SimpleAdapter;
 import com.app.aggro.*;
@@ -29,41 +47,67 @@ import com.app.api.GsonRequest;
 import com.app.api.VolleyErrorHelper;
 import com.app.getterAndSetter.MyToolBar;
 import com.app.holder.GroupItem;
+import com.app.local.database.AppTracker;
 import com.app.modal.AppDetail;
 import com.app.modal.AppList;
+import com.app.modal.Result;
+import com.app.modal.SearchDetail;
+import com.app.test.RevealActivity;
+import com.app.thin.downloadmanager.DownloadManager;
+import com.app.thin.downloadmanager.DownloadRequest;
+import com.app.thin.downloadmanager.DownloadStatusListener;
+import com.app.thin.downloadmanager.ThinDownloadManager;
+import com.library.storage.SimpleStorage;
+import com.library.storage.Storage;
 import com.marshalchen.ultimaterecyclerview.ObservableScrollState;
 import com.marshalchen.ultimaterecyclerview.ObservableScrollViewCallbacks;
+import com.marshalchen.ultimaterecyclerview.RecyclerItemClickListener;
 import com.marshalchen.ultimaterecyclerview.URLogs;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by sonal on 7/2/2015.
  */
-public class ShowCatAppFragement extends Fragment{
+public class ShowCatAppFragement extends Fragment implements OnClick{
 
+    final static String DIRECTORY_NAME = "aggro";
+    final static String SUBDIRECTORY_NAME = "apk";
+    final static String FILE_CONTENT = "some file content";
 
     private GroupItem groupItem;
-    private AppLibrary adpapter;
-    private ListView listView;
-    private static String CATEGORY = "CATEGORY";
-    private static String CATEGORYLEVEL = "CATEGORYLEVEL";
+    public static String CATEGORY = "CATEGORY";
+    public static String CATEGORYLEVEL = "CATEGORYLEVEL";
     private String data = null;
     Category.AggroCategory aggroCategory;
 
     UltimateRecyclerView ultimateRecyclerView;
     SimpleAdapter simpleRecyclerViewAdapter = null;
     LinearLayoutManager linearLayoutManager;
-    int moreNum = 2;
-    private ActionMode actionMode;
-    private ItemTouchHelper mItemTouchHelper;
 
     private int count = 1;
     private AppList appList;
 
     private Toolbar toolbar;
+
+    private MenuItem mSearchAction;
+    private boolean isSearchOpened = false;
+    private EditText edtSeach;
+
+    Storage storage = null;
+
+    int downloadId1;
+    private ThinDownloadManager downloadManager;
+    private static final int DOWNLOAD_THREAD_POOL_SIZE = 4;
+    MyDownloadStatusListener myDownloadStatusListener = new MyDownloadStatusListener();
+
+
+    private NotificationManager mNotifyManager;
+    private NotificationCompat.Builder mBuilder;
+
 
     public static ShowCatAppFragement newInstance(String imageUrl, Category.AggroCategory aggroCategory) {
 
@@ -71,7 +115,7 @@ public class ShowCatAppFragement extends Fragment{
 
         final Bundle args = new Bundle();
         args.putString(CATEGORY, imageUrl);
-        args.putSerializable(CATEGORYLEVEL,aggroCategory);
+        args.putSerializable(CATEGORYLEVEL, aggroCategory);
         mf.setArguments(args);
 
         return mf;
@@ -83,6 +127,7 @@ public class ShowCatAppFragement extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         if (getArguments()!=null){
             data = getArguments().getString(CATEGORY);
             aggroCategory = (Category.AggroCategory)getArguments().getSerializable(CATEGORYLEVEL);
@@ -94,24 +139,146 @@ public class ShowCatAppFragement extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate and locate the main ImageView
-        final View v = inflater.inflate(R.layout.fragement_show_cat_app, container, false);
 
+        final View v = inflater.inflate(R.layout.fragement_show_cat_app, container, false);
         init(v);
         showCategorizedApp();
-        return v;
+         return v;
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        System.out.println("######## onDestroy ######## ");
+        downloadManager.release();
+        count = 0;
+    }
+
+
+
+    @Override
+    public void onCreateOptionsMenu(android.view.Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        inflater.inflate(R.menu.menu_main, menu);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        mSearchAction = menu.findItem(R.id.action_search);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_settings:
+                return true;
+            case R.id.action_search:
+//                handleMenuSearch();
+                selectsearchAppFragement(data,"");
+                return true;
+        }
+
+        return false;
+    }
+
+
+
+    public void selectsearchAppFragement(String local, String level) {
+        // update the main content by replacing fragments
+        Fragment fragment = SearchAppFragement.newInstance("", "");
+        android.support.v4.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        android.support.v4.app.FragmentTransaction transaction  = fragmentManager.beginTransaction();
+//        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack so the user can navigate back
+        transaction.replace(R.id.content_frame, fragment);
+        transaction.addToBackStack(null);
+
+        // Commit the transaction
+        transaction.commit();
+    }
+
+    protected void handleMenuSearch(){
+        ActionBar action = ((AppCompatActivity)getActivity()).getSupportActionBar(); //get the actionbar
+
+        if(isSearchOpened){ //test if the search is open
+
+            action.setDisplayShowCustomEnabled(false); //disable a custom view inside the actionbar
+            action.setDisplayShowTitleEnabled(true); //show the title in the action bar
+
+            //hides the keyboard
+            InputMethodManager inputMethodManager = (InputMethodManager)  getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(((Activity)getActivity()).getCurrentFocus().getWindowToken(), 0);
+
+            //add the search icon in the action bar
+            mSearchAction.setIcon(getResources().getDrawable(R.drawable.ic_open_search));
+
+            isSearchOpened = false;
+        } else { //open the search entry
+
+            action.setDisplayShowCustomEnabled(true); //enable it to display a
+            // custom view in the action bar.
+            action.setCustomView(R.layout.search_bar);//add the custom view
+            action.setDisplayShowTitleEnabled(false); //hide the title
+
+            edtSeach = (EditText)action.getCustomView().findViewById(R.id.edtSearch); //the text editor
+
+            //this is a listener to do a search when the user clicks on search button
+            edtSeach.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                        doSearch();
+                        return true;
+                    }
+                    return false;
+                }
+            });
+
+            edtSeach.requestFocus();
+
+            //open the keyboard focused in the edtSearch
+            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(edtSeach, InputMethodManager.SHOW_IMPLICIT);
+
+            //add the close icon
+            mSearchAction.setIcon(getResources().getDrawable(R.mipmap.ic_action));
+
+            isSearchOpened = true;
+        }
+    }
+
+    private void doSearch() {
+//        searchForApp();
     }
 
     private void init(View view) {
+        if (SimpleStorage.isExternalStorageWritable()) {
+            storage = SimpleStorage.getExternalStorage();
+        }
+        else {
+            storage = SimpleStorage.getInternalStorage(getActivity());
+        }
+        boolean dirExists = storage.isDirectoryExists(DIRECTORY_NAME + "/" + SUBDIRECTORY_NAME);
+        if (!dirExists)
+        storage.createDirectory(DIRECTORY_NAME + "/" + SUBDIRECTORY_NAME);
+
+        downloadManager = new ThinDownloadManager(DOWNLOAD_THREAD_POOL_SIZE);
         toolbar = MyToolBar.getToolbar();
+        toolbar.setTitle(data);
         appList = new AppList();
         groupItem = new GroupItem();
-        listView = (ListView)view.findViewById(R.id.app_lib_list);
+//        listView = (ListView)view.findViewById(R.id.app_lib_list);
         ultimateRecyclerView = (UltimateRecyclerView)view. findViewById(R.id.ultimate_recycler_view);
         ultimateRecyclerView.setHasFixedSize(false);
 //        final List<String> stringList = new ArrayList<>();
 //        appList.setTitle("efefre");
 //        groupItem.appLists.add(appList);
-        simpleRecyclerViewAdapter = new SimpleAdapter(groupItem.appLists, getActivity());
+        simpleRecyclerViewAdapter = new SimpleAdapter(groupItem.appLists, getActivity(),this);
 
         linearLayoutManager = new LinearLayoutManager(getActivity());
         ultimateRecyclerView.setLayoutManager(linearLayoutManager);
@@ -156,13 +323,9 @@ public class ShowCatAppFragement extends Fragment{
                 handler.postDelayed(new Runnable() {
                     public void run() {
                         count = count + 1;
-//                        simpleRecyclerViewAdapter.insert(appList, simpleRecyclerViewAdapter.getAdapterItemCount());
-//                        simpleRecyclerViewAdapter.insert(appList, simpleRecyclerViewAdapter.getAdapterItemCount());
-//                        simpleRecyclerViewAdapter.insert(appList, simpleRecyclerViewAdapter.getAdapterItemCount());
                         getAppsByCategory();
                         // linearLayoutManager.scrollToPositionWithOffset(maxLastVisiblePosition,-1);
                         //   linearLayoutManager.scrollToPosition(maxLastVisiblePosition);
-
                     }
                 }, 1000);
             }
@@ -220,7 +383,8 @@ public class ShowCatAppFragement extends Fragment{
         int limit = 5;
         String country = "IN";
         RequestQueue mRequestQueue = Volley.newRequestQueue(getActivity());
-        String url = "https://42matters.com/api/1/apps/top_google_charts.json?" + "list_name=topselling_free"+ "&cat_key=" + category + "&country=" + country + "&limit=" + limit + "&page=" + count + "&access_token=" + getActivity().getResources().getString(R.string.aggro_access_token);
+        String url = "http://jarvisme.com/api/json.php?" + "list_name=topselling_free"+ "&cat_key=" + category + "&country=" + country + "&limit=" + limit + "&page=" + count + "&access_token=" + getActivity().getResources().getString(R.string.aggro_access_token);
+//        String url = "https://42matters.com/api/1/apps/top_google_charts.json?" + "list_name=topselling_free"+ "&cat_key=" + category + "&country=" + country + "&limit=" + limit + "&page=" + count + "&access_token=" + getActivity().getResources().getString(R.string.aggro_access_token);
         Log.e("URL","" + url);
         GsonRequest<AppDetail> myReq = new GsonRequest<AppDetail>(
                 Request.Method.GET,
@@ -241,15 +405,19 @@ public class ShowCatAppFragement extends Fragment{
             @Override
             public void onResponse(AppDetail response) {
                 try {
-                    Log.e("APP NAME", response.getCategoryName());
                     appList = new AppList();
                     GroupItem groupItem = new GroupItem();
                     List<AppList> lists= response.getAppList();
                     for (int i = 0; i< lists.size();i++){
                         AppList appList = lists.get(i);
                         String appname = appList.getPackageName();
-                        Log.e("APPNAMe","" + appname);
+                        Log.e("APPNAMe", "" + appname);
+                        if (createLocalTraceOfApp(appList))
+                            appList.setIsInstalled(true);
+                        else
+                            appList.setIsInstalled(false);
                         simpleRecyclerViewAdapter.insert(appList, simpleRecyclerViewAdapter.getAdapterItemCount());
+                        simpleRecyclerViewAdapter.notifyDataSetChanged();
                     }
 
                 } catch (Exception e) {
@@ -264,13 +432,31 @@ public class ShowCatAppFragement extends Fragment{
             @Override
             public void onErrorResponse(VolleyError error) {
                 String errorMsg = VolleyErrorHelper.getMessage(error, getActivity());
-//                Log.e("EROOR MESSG","" + error.getMessage().toString());
+//                if (error.getLocalizedMessage().toString()!=null || !(error.getLocalizedMessage().toString().equals("null")))
+//                Log.e("EROOR MESSG","" + error.getLocalizedMessage().toString());
                 Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_LONG)
                         .show();
             }
         };
     }
 
+    public boolean createLocalTraceOfApp(AppList appList){
+      AppTracker appTracker = AppTracker.getSingleEntry(appList.getPackageName());
+        if (appTracker!=null){
+            AppTracker appLocalTracker = appTracker.load(AppTracker.class,appTracker.getId());
+            appLocalTracker.appName = appList.getTitle();
+            appLocalTracker.catName = appList.getCategory();
+            appLocalTracker.packageName = appList.getPackageName();
+            appLocalTracker.appIconUrl = appList.getIcon();
+            appLocalTracker.isInstalled = appTracker.isInstalled;
+            appLocalTracker.rating = appTracker.rating;
+            appLocalTracker.save();
+            return true;
+        }else{
+            return false;
+        }
+
+    }
     public void getAppsByCategory(){
         switch (aggroCategory){
             case APPS:
@@ -317,9 +503,131 @@ public class ShowCatAppFragement extends Fragment{
         }
     }
 
-    private void getTopSellingApps(String string) {
-        loadApiGetMethod(string);
+    private void getTopSellingApps(String category) {
+       loadApiGetMethod(category);
     }
 
 
+    /*--
+    Interface listener for Adding app
+     */
+    @Override
+    public void downloadApp(int downloadId,AppList appList) {
+        Utility.writePackageNameToPrefs(getActivity(), appList.getPackageName());
+        Utility.writePrefs(getActivity(), appList.getTitle(), getResources().getString(R.string.aggro_downloaded_app_name));
+        Utility.writePrefs(getActivity(),appList.getCategory(),getResources().getString(R.string.aggro_downloaded_app_category));
+        Utility.writePrefs(getActivity(),appList.getMarketUrl(),getResources().getString(R.string.aggro_downloaded_app_market_url));
+        Utility.writePrefs(getActivity(), appList.getIcon(), getResources().getString(R.string.aggro_downloaded_app_icon_url));
+        Utility.writeBooleaenPrefs(getActivity(), appList.isInstalled(), getResources().getString(R.string.aggro_is_app_downloaded));
+        Utility.writeRatingToPrefs(getActivity(),appList.getRating().floatValue(),getResources().getString(R.string.aggro_app_rating));
+        Category category = new Category(getActivity());
+        category.setMyEnum(aggroCategory);
+        launchPlayStore(appList.getPackageName());
+    }
+
+
+
+    private void selectshowCatApp(String local, Category.AggroCategory level) {
+        // update the main content by replacing fragments
+        Fragment fragment = ShowCatAppFragement.newInstance(local, level);
+        android.support.v4.app.FragmentManager fragmentManager = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
+        android.support.v4.app.FragmentTransaction transaction  = fragmentManager.beginTransaction();
+//        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack so the user can navigate back
+        transaction.replace(R.id.content_frame, fragment);
+        transaction.addToBackStack(null);
+
+        // Commit the transaction
+        transaction.commit();
+
+        ((Activity)getActivity()).invalidateOptionsMenu();
+    }
+
+
+    /*--
+    Inner class to monitor download status
+     */
+
+    class MyDownloadStatusListener implements DownloadStatusListener {
+
+        @Override
+        public void onDownloadComplete(int id) {
+            System.out.println("###### onDownloadComplete ######## " + id);
+
+            if (id == downloadId1) {
+                mBuilder.setContentText("Download complete");
+                // Removes the progress bar
+                mBuilder.setProgress(0, 0, false);
+                mNotifyManager.notify(id, mBuilder.build());
+            }
+
+
+        }
+
+        @Override
+        public void onDownloadFailed(int id, int errorCode, String errorMessage) {
+            System.out.println("###### onDownloadFailed ######## "+id+" : "+errorCode+" : "+errorMessage);
+            if (id == downloadId1) {
+                mBuilder.setContentText(getResources().getString(R.string.download_failed));
+                mBuilder.setProgress(0, 0, false);
+                mNotifyManager.notify(id, mBuilder.build());
+            }
+        }
+
+        @Override
+        public void onProgress(int id, long totalBytes, long downloadedBytes, int progress) {
+            mBuilder.setProgress(100, progress, false);
+            mNotifyManager.notify(id, mBuilder.build());
+        }
+
+    }
+
+    private String getBytesDownloaded(int progress, long totalBytes) {
+        //Greater than 1 MB
+        long bytesCompleted = (progress * totalBytes)/100;
+        if (totalBytes >= 1000000) {
+            return (""+(String.format("%.1f", (float)bytesCompleted/1000000))+ "/"+ ( String.format("%.1f", (float)totalBytes/1000000)) + "MB");
+        } if (totalBytes >= 1000) {
+            return (""+(String.format("%.1f", (float)bytesCompleted/1000))+ "/"+ ( String.format("%.1f", (float)totalBytes/1000)) + "Kb");
+
+        } else {
+            return ( ""+bytesCompleted+"/"+totalBytes );
+        }
+    }
+
+    private void showDownloadInNotification(String appName){
+        mNotifyManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+        mBuilder = new NotificationCompat.Builder(getActivity());
+        mBuilder.setContentTitle("Download")
+                .setContentText("Download in progress")
+                .setSmallIcon(R.mipmap.logo);
+
+        File fileSource = storage.getFile(DIRECTORY_NAME + File.separator + SUBDIRECTORY_NAME, appName);
+        Intent toLaunch = new Intent();
+        toLaunch.setAction(android.content.Intent.ACTION_VIEW);
+        toLaunch.setDataAndType(Uri.fromFile(fileSource), getMimeType(Uri.fromFile(fileSource).toString()));  // you can also change jpeg to other types
+        PendingIntent contentIntent = PendingIntent.getActivity(getActivity(), 0, toLaunch , 0);
+        mBuilder.setContentIntent(contentIntent);
+    }
+
+    public static String getMimeType(String url) {
+        String type = null;
+        String extension = MimeTypeMap.getFileExtensionFromUrl(url);
+
+        if (extension != null) {
+            MimeTypeMap mime = MimeTypeMap.getSingleton();
+            type = mime.getMimeTypeFromExtension(extension);
+        }
+
+        return type;
+    }
+
+    private void launchPlayStore(final String appPackageName) { // getPackageName() from Context or Activity object
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+        } catch (android.content.ActivityNotFoundException anfe) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+        }
+    }
 }

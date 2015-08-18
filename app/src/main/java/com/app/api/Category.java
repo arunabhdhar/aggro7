@@ -1,6 +1,7 @@
 package com.app.api;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -25,7 +26,16 @@ public class Category {
         APPS,BUSINESS,LIFESTYLE,NEWS_AND_MAGAZINES,
         EDUCATION,TRANSPORTATION,PRODUCTIVITY,
         GAMES,TRAVEL_AND_LOCAL,SPORTS,HEALTH_AND_FITNESS,
-        MUSIC_AND_AUDIO
+        MUSIC_AND_AUDIO;
+
+        public static AggroCategory aggroCategory (String myEnumString) {
+            try {
+                return valueOf(myEnumString);
+            } catch (Exception ex) {
+                // For error cases
+                return APPS;
+            }
+        }
     }
 
     AggroCategory aggroCategory;
@@ -33,19 +43,27 @@ public class Category {
     private Context context;
 
     private RequestQueue mRequestQueue;
+    SharedPreferences sp;
+    SharedPreferences.Editor editor;
 
     public Category(Context context){
         this.context = context;
+        sp = context.getSharedPreferences(context.getResources().getString(R.string.aggro_prefs),Context.MODE_PRIVATE);
+        editor = sp.edit();
     }
 
     public Category(AggroCategory aggroCategory){
         this.aggroCategory = aggroCategory;
+        sp = context.getSharedPreferences(context.getResources().getString(R.string.aggro_prefs),Context.MODE_PRIVATE);
+        editor = sp.edit();
     }
 
     public Category(Context context, String country, AggroCategory aggroCategory){
         this.context = context;
         this.country = country;
         this.aggroCategory = aggroCategory;
+        sp = context.getSharedPreferences(context.getResources().getString(R.string.aggro_prefs),Context.MODE_PRIVATE);
+        editor = sp.edit();
     }
 
     public void getAppsByCategory(){
@@ -143,5 +161,15 @@ public class Category {
                         .show();
             }
         };
+    }
+
+    public void setMyEnum(AggroCategory myEnum) {
+        editor.putString("MyEnum", myEnum.toString());
+        editor.commit();
+    }
+
+    public AggroCategory getMyEnum() {
+        String myEnumString = sp.getString("MyEnum", AggroCategory.APPS.toString());
+        return AggroCategory.aggroCategory(myEnumString);
     }
 }

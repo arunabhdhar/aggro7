@@ -12,16 +12,20 @@ import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.app.OnClick;
 import com.app.Utility.ColoredRatingBar;
 import com.app.Utility.CustomVolleyRequestQueue;
 import com.app.Utility.GifWebView;
 import com.app.aggro.R;
 import com.app.gridcategory.SquareImageView;
 import com.app.modal.AppList;
+import com.app.thin.downloadmanager.ThinDownloadManager;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerviewViewHolder;
 import com.marshalchen.ultimaterecyclerview.UltimateViewAdapter;
 import com.marshalchen.ultimaterecyclerview.animators.internal.ViewHelper;
@@ -41,9 +45,12 @@ public class SimpleAdapter extends UltimateViewAdapter<SimpleAdapter.SimpleAdapt
 
     private boolean isFirstOnly = true;
     private Context mContext;
-    public SimpleAdapter(List<AppList> stringList, Context mContext) {
+    OnClick onClick;
+
+    public SimpleAdapter(List<AppList> stringList, Context mContext,OnClick onClick) {
         this.stringList = stringList;
         this.mContext = mContext;
+        this.onClick = onClick;
     }
 
 
@@ -51,12 +58,19 @@ public class SimpleAdapter extends UltimateViewAdapter<SimpleAdapter.SimpleAdapt
     public void onBindViewHolder(final SimpleAdapterViewHolder holder, int position) {
         if (position < getItemCount() && (customHeaderView != null ? position <= stringList.size() : position < stringList.size()) && (customHeaderView != null ? position > 0 : true)) {
 
+            ((SimpleAdapterViewHolder) holder).imageViewSample.setTag(stringList.get(customHeaderView != null ? position - 1 : position));
             ((SimpleAdapterViewHolder) holder).appName.setText(stringList.get(customHeaderView != null ? position - 1 : position).getTitle());
             ((SimpleAdapterViewHolder) holder).appCategory.setText(stringList.get(customHeaderView != null ? position - 1 : position).getCategory());
             if((Double) stringList.get(customHeaderView != null ? position - 1 : position).getRating()!=null)
             ((SimpleAdapterViewHolder) holder).coloredRatingBar.setRating(((Double) stringList.get(customHeaderView != null ? position - 1 : position).getRating()).floatValue());
             String url = stringList.get(customHeaderView != null ? position - 1 : position).getIcon();
             ((SimpleAdapterViewHolder) holder).imageViewSample.setImageUrl(url, ((SimpleAdapterViewHolder) holder).mImageLoader);
+            if(stringList.get(customHeaderView != null ? position - 1 : position).isInstalled()==true){
+                ((SimpleAdapterViewHolder) holder).addAppImg.setImageResource(R.mipmap.checkbox_marked_circle_outline);
+            }
+            else{
+                ((SimpleAdapterViewHolder) holder).addAppImg.setImageResource(R.mipmap.plus_circle);
+            }
 
             // ((ViewHolder) holder).itemView.setActivated(selectedItems.get(position, false));
             if (mDragStartListener != null) {
@@ -76,6 +90,15 @@ public class SimpleAdapter extends UltimateViewAdapter<SimpleAdapter.SimpleAdapt
                         return false;
                     }
                 });
+
+                //ToDo app selection And adding it to library
+//                ((SimpleAdapterViewHolder) holder).imageViewSample.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                     int id  = (int)v.getTag();
+//                      onClick.downloadApp(id,stringList.get(id).getMarketUrl(),stringList.get(id).getTitle());
+//                    }
+//                });
             }
         }
 
@@ -105,7 +128,9 @@ public class SimpleAdapter extends UltimateViewAdapter<SimpleAdapter.SimpleAdapt
     public SimpleAdapterViewHolder onCreateViewHolder(ViewGroup parent) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.recycler_view_adapter, parent, false);
-        SimpleAdapterViewHolder vh = new SimpleAdapterViewHolder(v, true);
+            SimpleAdapterViewHolder vh = new SimpleAdapterViewHolder(v, true);
+        vh.relative_add_app.setTag(vh);
+        vh.relative_add_app.setOnClickListener(clickItemListener());
         return vh;
     }
 
@@ -213,12 +238,14 @@ public class SimpleAdapter extends UltimateViewAdapter<SimpleAdapter.SimpleAdapt
 
     public class SimpleAdapterViewHolder extends UltimateRecyclerviewViewHolder {
 
-        TextView appName, appCategory;
-        NetworkImageView imageViewSample;
-        ColoredRatingBar coloredRatingBar;
-        ProgressBar progressBarSample;
-        View item_view;
+         TextView appName, appCategory;
+         NetworkImageView imageViewSample;
+         ColoredRatingBar coloredRatingBar;
+         ProgressBar progressBarSample;
+         View item_view;
          ImageLoader mImageLoader;
+          ImageView addAppImg;
+          RelativeLayout relative_add_app;
 
         public SimpleAdapterViewHolder(View itemView, boolean isItem) {
             super(itemView);
@@ -246,6 +273,8 @@ public class SimpleAdapter extends UltimateViewAdapter<SimpleAdapter.SimpleAdapt
                 coloredRatingBar = (ColoredRatingBar)itemView.findViewById(R.id.coloredRatingBar1);
                 progressBarSample.setVisibility(View.GONE);
                 item_view = itemView.findViewById(R.id.itemview);
+                addAppImg = (ImageView)itemView.findViewById(R.id.plus_circle);
+                relative_add_app = (RelativeLayout)itemView.findViewById(R.id.rel_add_app);
                 mImageLoader = CustomVolleyRequestQueue.getInstance(mContext.getApplicationContext())
                         .getImageLoader();
 
@@ -270,6 +299,31 @@ public class SimpleAdapter extends UltimateViewAdapter<SimpleAdapter.SimpleAdapt
         if (position < stringList.size())
             return stringList.get(position);
         else return new AppList();
+    }
+
+    private View.OnClickListener clickItemListener(){
+        View.OnClickListener l = null;
+         l = new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+                 SimpleAdapterViewHolder holder = (SimpleAdapterViewHolder) view.getTag();
+
+                 int id = holder.getPosition();
+                 if (view.getId() == holder.relative_add_app.getId()){
+                     id = id -1;
+                     AppList appList = stringList.get(id);
+                     if (!appList.isInstalled())
+                      onClick.downloadApp(id, appList);
+
+                     String aPPName = stringList.get(id).getTitle();
+                     String packageName = stringList.get(id).getPackageName();
+                 } else {
+                     Toast.makeText(mContext, "RecyclerView Item onClick at " + id, Toast.LENGTH_SHORT).show();
+                 }
+             }
+         };
+
+        return l;
     }
 
 

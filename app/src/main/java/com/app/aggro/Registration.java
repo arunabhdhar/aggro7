@@ -1,6 +1,7 @@
 package com.app.aggro;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v7.app.ActionBarActivity;
@@ -17,6 +18,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 
+import com.app.Utility.Utility;
 import com.app.Validator.EmptyTextListener;
 import com.app.Validator.InputValidator;
 import com.app.address.User;
@@ -35,14 +37,29 @@ public class Registration extends Activity {
     private GPSTracker gpsTracker ;
     private EditText name_ed, user_name_ed,age_ed, gender_ed,location_ed, email_ed;
     public static Typeface mpRegular, mpBold, mpSnap;
+    private Activity mContext = Registration.this;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (!Utility.readUserInfoFromPrefs(mContext,getResources().getString(R.string.username)).equals("")){
+            startActivity(new Intent(Registration.this, com.app.aggro.Menu.class));
+            finish();
+        }
+
         setContentView(R.layout.activity_registration);
+        new Utility().setupUI(findViewById(R.id.reg), Registration.this);
         init();
-//        trackLocation();
+        trackLocation();
         addItemToSpinner();
         addListenerToSpinner();
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        gpsTracker.stopUsingGPS();
     }
 
     @Override
@@ -82,6 +99,8 @@ public class Registration extends Activity {
         age_ed = (EditText)findViewById(R.id.age);
         location_ed = (EditText)findViewById(R.id.loacation);
         email_ed = (EditText)findViewById(R.id.email);
+
+        email_ed.setOnEditorActionListener(new EmptyTextListener(email_ed, user_name_ed));
         
         signIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,18 +156,21 @@ public class Registration extends Activity {
     }
 
     private void trackLocation(){
-        if (gpsTracker.canGetLocation())
-        {
-            User user = gpsTracker.getAddress(Registration.this,gpsTracker.getLatitude(), gpsTracker.getLongitude());
-            location_ed.setText(user.address);
-        }
-        else
-        {
-            // can't get location
-            // GPS or Network is not enabled
-            // Ask user to enable GPS/network in settings
-            gpsTracker.showSettingsAlert();
-        }
+            if (gpsTracker.canGetLocation())
+            {
+                User user = gpsTracker.getAddress(Registration.this,gpsTracker.getLatitude(), gpsTracker.getLongitude());
+                location_ed.setText(user.city);
+            }
+            else
+            {
+                // can't get location
+                // GPS or Network is not enabled
+                // Ask user to enable GPS/network in settings
+
+                gpsTracker.showSettingsAlert();
+            }
+
+
     }
 
     /**
@@ -188,11 +210,10 @@ public class Registration extends Activity {
         }
         else {
             //submit
+            Utility.writeUserInfoToPrefs(mContext,name_ed.getText().toString(),user_name_ed.getText().toString(),email_ed.getText().toString().trim());
             startActivity(new Intent(Registration.this, com.app.aggro.Menu.class));
             finish();
         }
-
-
 
     }
 

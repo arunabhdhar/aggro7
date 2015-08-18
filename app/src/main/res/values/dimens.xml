@@ -26,4 +26,10 @@
     <dimen name="my_detail_content_padding_bottom">5dp</dimen>
     <dimen name="my_detail_content_padding_left">15dp</dimen>
 
+    <dimen name="search_box_left_padding">10dp</dimen>
+    <dimen name="back_arrow_left_margin">10dp</dimen>
+
+    <dimen name="lib_item_app_name_text_size">15dp</dimen>
+    <dimen name="lib_item_app_category_text_size">12dp</dimen>
+
 </resources>

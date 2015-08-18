@@ -3,7 +3,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="search">Settings</string>
+    <string name="search">Search</string>
     <string name="name_copywrite">copyright by App.Dynamo.Tech Solutions Ltd.</string>
 
     <!-- Hints Commands for Signin Screen -->
@@ -30,6 +30,7 @@
     <string name="sample_show_log">Show Log</string>
     <string name="sample_hide_log">Hide Log</string>
 
+    <string name="app_menu">Menu</string>
     <string name="app_library">App</string>
     <string name="app_cat">Category</string>
     <string name="app_fav">Favourite</string>
@@ -86,7 +87,7 @@
     <string name="my_detail_update">Update</string>
 
     <!-- TODO: Access token -->
-    <string name="aggro_access_token">b48337314a94c3accd6fa0de6deb6b11aeca53e5</string>
+    <string name="aggro_access_token">87a19171d594626c1ecdb84e198bb20941a58697</string>
 
     <!-- TODO: Volley error helper -->
     <string name="no_network_connection" translatable="false">No network connection found</string>
@@ -96,5 +97,18 @@
     <string name="no_internet" translatable="false">No internet</string>
     <string name="parsing_failed" translatable="false">Parsing Failure</string>
     <string name="auth_failed" translatable="false">Authentication Failure</string>
+    
+    <!--TODO:Shared Prefrences Detail-->
+    <string name="aggro_prefs">AGGRO_PREFS</string>
+    <string name="aggro_prefs_package_name">AGGRO_PREFS_PACKAGE</string>
+    <string name="aggro_downloaded_app_name">AGGRO_DOWNLOADED_APP_NAME</string>
+    <string name="aggro_downloaded_app_category">AGGRO_DOWNLOADED_APP_CATEGORY</string>
+    <string name="aggro_downloaded_app_market_url">AGGRO_DOWNLOADED_APP_MARKET_URL</string>
+    <string name="aggro_downloaded_app_icon_url">AGGRO_DOWNLOADED_APP_ICON_URL</string>
+    <string name="aggro_is_app_downloaded">IS_DOWNLOADED</string>
+    <string name="aggro_app_rating">APP_RATING</string>
+    <string name="aggro_search">Enter the name of the app you are looking for</string>
 
+    <!--TODO:DOWNLOAD -->
+    <string name="download_failed">Download failed</string>
 </resources>
