@@ -25,6 +25,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.Utility.Utility;
 import com.app.aggro.R;
 import com.app.aggro.Registration;
 import com.app.spinneradapter.NothingSelectedSpinnerAdapter;
@@ -278,12 +279,15 @@ public class MyDetailsFragement extends Fragment {
     }
 
     private void setDummyDataOnLoad(){
-        name_ed.setText("Aggro");
-        age_ed.setText("21");
-        location_ed.setText("Hyderabad");
-        email_ed.setText("app.dynamo@gmail.com");
+        name_ed.setText(Utility.readUserInfoFromPrefs(getActivity(),getString(R.string.username)));
+        age_ed.setText(Utility.readUserInfoFromPrefs(getActivity(),getString(R.string.age)));
+        location_ed.setText(Utility.readUserInfoFromPrefs(getActivity(), getString(R.string.location)));
+        email_ed.setText(Utility.readUserInfoFromPrefs(getActivity(), getString(R.string.email)));
         makeSpinnerActivate();
-        gender_sp.setSelection(1);
+        if (Utility.readUserInfoFromPrefs(getActivity(),getString(R.string.gender)).equals("M"))
+            gender_sp.setSelection(0);
+        else
+            gender_sp.setSelection(1);
         gender_sp.setEnabled(false);
     }
 

@@ -34,6 +34,7 @@ public class PackageChangeReceiver extends BroadcastReceiver {
         }
 
         final String packageName = intent.getData().getSchemeSpecificPart();
+
         if (Utility.readUserInfoFromPrefs(context,context.getString(R.string.aggro_prefs_package_name).trim()).equals(packageName)){
             AppTracker localApptracker = AppTracker.getSingleEntry(packageName);
             if (localApptracker!=null){

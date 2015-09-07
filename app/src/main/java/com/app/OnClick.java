@@ -8,4 +8,6 @@ import com.app.modal.AppList;
 public interface OnClick {
 
     public void downloadApp(int downloadId,AppList appList);
+    public boolean openApp(AppList appList);
+    public void createCustomcategory(AppList appList);
 }

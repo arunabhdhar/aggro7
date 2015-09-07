@@ -222,6 +222,40 @@ public class CatFragement extends Fragment{
         mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_sports), R.mipmap.sports));
         mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_health), R.mipmap.health));
         mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_entertainment), R.mipmap.entertainment));
+
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_comics), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_communication), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_finance), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_media_video), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_medical), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_personilazation), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_photography), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_shopping), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_social), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_tool), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_wheather), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_lib_demo), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_arcade), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_puzzle), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_card), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_casual), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_racing), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_sport), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_action), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_adventure), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_board), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_casino), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_educational), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_family), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_music), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_role_playing), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_simulation), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_strategy), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_trivia), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_word), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_app_wallpaper), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_app_widget), R.mipmap.entertainment));
+
         return mItems;
     }
 

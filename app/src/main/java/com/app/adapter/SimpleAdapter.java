@@ -23,6 +23,7 @@ import com.app.Utility.ColoredRatingBar;
 import com.app.Utility.CustomVolleyRequestQueue;
 import com.app.Utility.GifWebView;
 import com.app.aggro.R;
+import com.app.getterAndSetter.MyCategory;
 import com.app.gridcategory.SquareImageView;
 import com.app.modal.AppList;
 import com.app.thin.downloadmanager.ThinDownloadManager;
@@ -314,6 +315,11 @@ public class SimpleAdapter extends UltimateViewAdapter<SimpleAdapter.SimpleAdapt
                      AppList appList = stringList.get(id);
                      if (!appList.isInstalled())
                       onClick.downloadApp(id, appList);
+                     else
+                     onClick.openApp(appList);
+
+                     if (MyCategory.isCustomcategory())
+                      onClick.createCustomcategory(appList);
 
                      String aPPName = stringList.get(id).getTitle();
                      String packageName = stringList.get(id).getPackageName();

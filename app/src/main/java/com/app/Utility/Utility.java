@@ -48,13 +48,16 @@ public class Utility {
         inputMethodManager.hideSoftInputFromWindow(((Activity)activity).getCurrentFocus().getWindowToken(), 0);
     }
 
-    public static void writeUserInfoToPrefs(Context mContext,String name, String userName,String email){
+    public static void writeUserInfoToPrefs(Context mContext,String name, String userName,String email,String gender,String location,String age){
         SharedPreferences.Editor prefs = mContext
                 .getSharedPreferences(mContext.getResources().getString(R.string.aggro_prefs),
                         Context.MODE_PRIVATE).edit();
         prefs.putString(mContext.getResources().getString(R.string.name), name);
         prefs.putString(mContext.getResources().getString(R.string.username), userName);
         prefs.putString(mContext.getResources().getString(R.string.email), email);
+        prefs.putString(mContext.getResources().getString(R.string.gender), gender);
+        prefs.putString(mContext.getResources().getString(R.string.location), location);
+        prefs.putString(mContext.getResources().getString(R.string.age), age);
         prefs.commit();
     }
 

@@ -54,9 +54,10 @@ public class RecyclerViewFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
 
         groupItem.items = preareList();
-        mAdapter = new RecyclerViewMaterialAdapter(new AggroRecyclerViewAdapter(preareList(),getActivity()));
-        mRecyclerView.setAdapter(mAdapter);
-
+        if (groupItem.items.size()>1) {
+            mAdapter = new RecyclerViewMaterialAdapter(new AggroRecyclerViewAdapter(preareList(), getActivity()));
+            mRecyclerView.setAdapter(mAdapter);
+        }
         MaterialViewPagerHelper.registerRecyclerView(getActivity(), mRecyclerView, null);
     }
 
@@ -71,7 +72,10 @@ public class RecyclerViewFragment extends Fragment {
 
         for (int i = 0; i < eventList.size(); i++){
             ChildItem childItem = new ChildItem();
-            AppTracker event = eventList.get(i);
+            int k = i;
+            AppTracker event;
+            event =  eventList.get(0);
+
             childItem.mAppIconUrl = event.appIconUrl;
             childItem.mAppCategory = event.catName;
             childItem.mAppname = event.appName;
@@ -81,5 +85,7 @@ public class RecyclerViewFragment extends Fragment {
 
         return groupItem.items;
     }
+
+
 
 }

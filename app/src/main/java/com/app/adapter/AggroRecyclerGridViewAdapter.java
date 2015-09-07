@@ -128,7 +128,7 @@ public class AggroRecyclerGridViewAdapter extends RecyclerView.Adapter<AggroRecy
 //        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
         // Replace whatever is in the fragment_container view with this fragment,
         // and add the transaction to the back stack so the user can navigate back
-        transaction.replace(R.id.content_frame, fragment);
+        transaction.add(R.id.content_frame, fragment);
         transaction.addToBackStack(null);
 
         // Commit the transaction
@@ -174,7 +174,105 @@ public class AggroRecyclerGridViewAdapter extends RecyclerView.Adapter<AggroRecy
         } else if (category.trim().equals(mContext.getResources().getString(R.string.cat_entertainment))) {
             localvariable = mContext.getResources().getString(R.string.cat_entertainment);
             catLevel = Category.AggroCategory.MUSIC_AND_AUDIO;
-        } else {
+        }
+        else if (category.trim().equals(mContext.getResources().getString(R.string.cat_comics))) {
+            localvariable = mContext.getResources().getString(R.string.cat_comics);
+            catLevel = Category.AggroCategory.COMICS;
+        }
+        else if (category.trim().equals(mContext.getResources().getString(R.string.cat_communication))) {
+            localvariable = mContext.getResources().getString(R.string.cat_communication);
+            catLevel = Category.AggroCategory.COMMUNICATION;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_finance))) {
+            localvariable = mContext.getResources().getString(R.string.cat_finance);
+            catLevel = Category.AggroCategory.FINANCE;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_media_video))) {
+            localvariable = mContext.getResources().getString(R.string.cat_media_video);
+            catLevel = Category.AggroCategory.MEDIA_AND_VIDEO;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_medical))) {
+            localvariable = mContext.getResources().getString(R.string.cat_medical);
+            catLevel = Category.AggroCategory.MEDICAL;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_personilazation))) {
+            localvariable = mContext.getResources().getString(R.string.cat_personilazation);
+            catLevel = Category.AggroCategory.PERSONALIZATION;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_photography))) {
+            localvariable = mContext.getResources().getString(R.string.cat_photography);
+            catLevel = Category.AggroCategory.PHOTOGRAPHY;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_shopping))) {
+            localvariable = mContext.getResources().getString(R.string.cat_shopping);
+            catLevel = Category.AggroCategory.SHOPPING;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_social))) {
+            localvariable = mContext.getResources().getString(R.string.cat_social);
+            catLevel = Category.AggroCategory.SOCIAL;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_tool))) {
+            localvariable = mContext.getResources().getString(R.string.cat_tool);
+            catLevel = Category.AggroCategory.TOOLS;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_wheather))) {
+            localvariable = mContext.getResources().getString(R.string.cat_wheather);
+            catLevel = Category.AggroCategory.WEATHER;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_lib_demo))) {
+            localvariable = mContext.getResources().getString(R.string.cat_lib_demo);
+            catLevel = Category.AggroCategory.LIBRARIES_AND_DEMO;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_game_arcade))) {
+            localvariable = mContext.getResources().getString(R.string.cat_game_arcade);
+            catLevel = Category.AggroCategory.GAME_ARCADE;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_game_puzzle))) {
+            localvariable = mContext.getResources().getString(R.string.cat_game_puzzle);
+            catLevel = Category.AggroCategory.GAME_PUZZLE;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_game_card))) {
+            localvariable = mContext.getResources().getString(R.string.cat_game_card);
+            catLevel = Category.AggroCategory.GAME_CARD;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_game_casual))) {
+            localvariable = mContext.getResources().getString(R.string.cat_game_casual);
+            catLevel = Category.AggroCategory.GAME_CASUAL;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_game_racing))) {
+            localvariable = mContext.getResources().getString(R.string.cat_game_racing);
+            catLevel = Category.AggroCategory.GAME_RACING;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_game_sport))) {
+            localvariable = mContext.getResources().getString(R.string.cat_game_sport);
+            catLevel = Category.AggroCategory.GAME_SPORTS;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_game_action))) {
+            localvariable = mContext.getResources().getString(R.string.cat_game_action);
+            catLevel = Category.AggroCategory.GAME_ACTION;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_game_adventure))) {
+            localvariable = mContext.getResources().getString(R.string.cat_game_adventure);
+            catLevel = Category.AggroCategory.GAME_ADVENTURE;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_game_board))) {
+            localvariable = mContext.getResources().getString(R.string.cat_game_board);
+            catLevel = Category.AggroCategory.GAME_BOARD;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_game_casino))) {
+            localvariable = mContext.getResources().getString(R.string.cat_game_casino);
+            catLevel = Category.AggroCategory.GAME_CASINO;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_game_educational))) {
+            localvariable = mContext.getResources().getString(R.string.cat_game_educational);
+            catLevel = Category.AggroCategory.GAME_EDUCATIONAL;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_game_family))) {
+            localvariable = mContext.getResources().getString(R.string.cat_game_family);
+            catLevel = Category.AggroCategory.GAME_FAMILY;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_game_music))) {
+            localvariable = mContext.getResources().getString(R.string.cat_game_music);
+            catLevel = Category.AggroCategory.GAME_MUSIC;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_game_role_playing))) {
+            localvariable = mContext.getResources().getString(R.string.cat_game_role_playing);
+            catLevel = Category.AggroCategory.GAME_ROLE_PLAYING;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_game_simulation))) {
+            localvariable = mContext.getResources().getString(R.string.cat_game_simulation);
+            catLevel = Category.AggroCategory.GAME_SIMULATION;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_game_strategy))) {
+            localvariable = mContext.getResources().getString(R.string.cat_game_strategy);
+            catLevel = Category.AggroCategory.GAME_STRATEGY;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_game_trivia))) {
+            localvariable = mContext.getResources().getString(R.string.cat_game_trivia);
+            catLevel = Category.AggroCategory.GAME_TRIVIA;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_game_word))) {
+            localvariable = mContext.getResources().getString(R.string.cat_game_word);
+            catLevel = Category.AggroCategory.GAME_BOARD;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_app_wallpaper))) {
+            localvariable = mContext.getResources().getString(R.string.cat_app_wallpaper);
+            catLevel = Category.AggroCategory.APP_WALLPAPER;
+        }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_app_widget))) {
+            localvariable = mContext.getResources().getString(R.string.cat_app_widget);
+            catLevel = Category.AggroCategory.APP_WIDGETS;
+        }else {
             //custom category
         }
 

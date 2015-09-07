@@ -14,6 +14,7 @@ repositories {
     maven { url "https://oss.sonatype.org/content/repositories/snapshots"}
     maven { url 'https://maven.fabric.io/public' }
     maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    maven { url 'https://dl.bintray.com/drummer-aidan/maven' }
 }
 android {
     compileSdkVersion 22
@@ -55,4 +56,5 @@ dependencies {
     compile 'com.quinny898.library.persistentsearch:library:1.0.0-SNAPSHOT'
     compile project(':storage')
     compile files('libs/activeandroid-3.0.jar')
+    compile 'com.getbase:floatingactionbutton:1.10.0'
 }

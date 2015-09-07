@@ -23,6 +23,8 @@ import com.app.Validator.EmptyTextListener;
 import com.app.Validator.InputValidator;
 import com.app.address.User;
 import com.app.gps.GPSTracker;
+import com.app.gridcategory.ImageItem;
+import com.app.local.database.AppTracker;
 import com.app.spinneradapter.NothingSelectedSpinnerAdapter;
 
 import java.util.ArrayList;
@@ -37,7 +39,10 @@ public class Registration extends Activity {
     private GPSTracker gpsTracker ;
     private EditText name_ed, user_name_ed,age_ed, gender_ed,location_ed, email_ed;
     public static Typeface mpRegular, mpBold, mpSnap;
+    private static int count = 0;
     private Activity mContext = Registration.this;
+    private String gender;
+    public static ArrayList<ImageItem> mItems;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +55,8 @@ public class Registration extends Activity {
         setContentView(R.layout.activity_registration);
         new Utility().setupUI(findViewById(R.id.reg), Registration.this);
         init();
+        defaultCategoryLoad();
+        initLocalApptracer();
         trackLocation();
         addItemToSpinner();
         addListenerToSpinner();
@@ -112,6 +119,54 @@ public class Registration extends Activity {
 
     }
 
+    private void defaultCategoryLoad(){
+        mItems = new ArrayList<ImageItem>();
+        mItems.add(new ImageItem(getString(R.string.cat_bussiness),R.mipmap.games));
+        mItems.add(new ImageItem(getString(R.string.cat_lifestyle),R.mipmap.games));
+        mItems.add(new ImageItem(getString(R.string.cat_news),   R.mipmap.news));
+        mItems.add(new ImageItem(getString(R.string.cat_education),R.mipmap.teaching));
+        mItems.add(new ImageItem(getString(R.string.cat_transporation),R.mipmap.games));
+        mItems.add(new ImageItem(getString(R.string.cat_productiity),R.mipmap.games));
+        mItems.add(new ImageItem(getString(R.string.cat_games),R.mipmap.games));
+        mItems.add(new ImageItem(getString(R.string.cat_travel),R.mipmap.games));
+        mItems.add(new ImageItem(getString(R.string.cat_sports), R.mipmap.sports));
+        mItems.add(new ImageItem(getString(R.string.cat_health), R.mipmap.health));
+        mItems.add(new ImageItem(getString(R.string.cat_entertainment), R.mipmap.entertainment));
+
+        mItems.add(new ImageItem(getString(R.string.cat_comics), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_communication), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_finance), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_media_video), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_medical), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_personilazation), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_photography), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_shopping), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_social), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_tool), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_wheather), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_lib_demo), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_game_arcade), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_game_puzzle), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_game_card), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_game_casual), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_game_racing), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_game_sport), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_game_action), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_game_adventure), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_game_board), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_game_casino), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_game_educational), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_game_family), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_game_music), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_game_role_playing), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_game_simulation), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_game_strategy), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_game_trivia), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_game_word), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_app_wallpaper), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_app_widget), R.mipmap.entertainment));
+    }
+
     /**
      * An inner class that will that handle
      * Spinner Selection event
@@ -126,9 +181,11 @@ public class Registration extends Activity {
             switch (position) {
                 case 0:
                     //Male Selection
+                    gender = "M";
                     break;
                 case 1:
                     //Female Selection
+                    gender = "F";
                     break;
                 default:
                     break;
@@ -158,6 +215,7 @@ public class Registration extends Activity {
     private void trackLocation(){
             if (gpsTracker.canGetLocation())
             {
+                boolean getLocation = gpsTracker.canGetLocation();
                 User user = gpsTracker.getAddress(Registration.this,gpsTracker.getLatitude(), gpsTracker.getLongitude());
                 location_ed.setText(user.city);
             }
@@ -210,7 +268,7 @@ public class Registration extends Activity {
         }
         else {
             //submit
-            Utility.writeUserInfoToPrefs(mContext,name_ed.getText().toString(),user_name_ed.getText().toString(),email_ed.getText().toString().trim());
+            Utility.writeUserInfoToPrefs(mContext,name_ed.getText().toString(),user_name_ed.getText().toString(),email_ed.getText().toString().trim(),gender,location_ed.getText().toString(),age_ed.getText().toString());
             startActivity(new Intent(Registration.this, com.app.aggro.Menu.class));
             finish();
         }
@@ -243,5 +301,17 @@ public class Registration extends Activity {
         return false;
     }
 
-
+ private void initLocalApptracer(){
+     if (count == 0){
+         AppTracker appTracker = new AppTracker();
+         appTracker.isInstalled = true;
+         appTracker.packageName = "xxx";
+         appTracker.appName = "xxx";
+         appTracker.catName = "xxx";
+         appTracker.marketUrl = "xxx";
+         appTracker.appIconUrl = "xxx";
+         appTracker.save();
+     }
+     count = count + 1;
+ }
 }

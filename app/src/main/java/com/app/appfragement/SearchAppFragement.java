@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -30,11 +31,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+import com.app.AppConstant;
 import com.app.OnClick;
 import com.app.Utility.Utility;
 import com.app.adapter.SimpleAdapter;
@@ -42,6 +45,7 @@ import com.app.aggro.R;
 import com.app.api.Category;
 import com.app.api.GsonRequest;
 import com.app.api.VolleyErrorHelper;
+import com.app.getterAndSetter.MyCategory;
 import com.app.getterAndSetter.MyToolBar;
 import com.app.holder.GroupItem;
 import com.app.local.database.AppTracker;
@@ -64,6 +68,7 @@ import com.quinny898.library.persistentsearch.SearchResult;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -279,6 +284,11 @@ public class SearchAppFragement extends Fragment implements OnClick {
                 searchSuccessListener(),
                 searchErrorListener());
 
+        myReq.setRetryPolicy(new DefaultRetryPolicy(
+                AppConstant.MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         mRequestQueue.add(myReq);
     }
 
@@ -387,6 +397,89 @@ public class SearchAppFragement extends Fragment implements OnClick {
         Utility.writeBooleaenPrefs(getActivity(), appList.isInstalled(), getResources().getString(R.string.aggro_is_app_downloaded));
         Utility.writeRatingToPrefs(getActivity(), appList.getRating().floatValue(), getResources().getString(R.string.aggro_app_rating));
         launchPlayStore(appList.getPackageName());
+    }
+
+    @Override
+    public boolean openApp(AppList appList) {
+        PackageManager manager = getActivity().getPackageManager();
+        try {
+            Intent i = manager.getLaunchIntentForPackage(appList.getPackageName());
+            if (i == null) {
+//                return false;
+                throw new PackageManager.NameNotFoundException();
+            }
+            i.addCategory(Intent.CATEGORY_LAUNCHER);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getActivity().startActivity(i);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public void createCustomcategory(AppList appList) {
+        String url = "http://jarvisme.com/customapp/add.php";
+        RequestQueue mRequestQueue = Volley.newRequestQueue(getActivity());
+        GsonRequest<com.app.response.Response> myReq = new GsonRequest<com.app.response.Response>(
+                Request.Method.POST,
+                url,
+                com.app.response.Response.class,
+                prepareHasMap(appList),
+                createMyReqSuccessListener(),
+                createMyReqErrorListener());
+
+        myReq.setRetryPolicy(new DefaultRetryPolicy(
+                AppConstant.MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        mRequestQueue.add(myReq);
+    }
+
+    private HashMap prepareHasMap(AppList appList){
+        HashMap<String,String> hm = new HashMap<String,String>();
+        hm.put("email", Utility.readUserInfoFromPrefs(getActivity(),getString(R.string.email)));
+        hm.put("customCategory", new MyCategory().getCategoryName());
+        hm.put("appName",appList.getTitle());
+        hm.put("iconurlkey",appList.getIcon());
+        hm.put("category",appList.getCategory());
+        hm.put("appRating","" + appList.getRating());
+        return hm;
+    }
+
+    private com.android.volley.Response.Listener<com.app.response.Response> createMyReqSuccessListener() {
+        return new com.android.volley.Response.Listener<com.app.response.Response>() {
+            @Override
+            public void onResponse(com.app.response.Response response) {
+                try {
+                    if (response.getStatus() == 1){
+                        Toast.makeText(getActivity(), "Registration successfull", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    else{
+                        Toast.makeText(getActivity(), "OOPS something wrong happen please try again!!!", Toast.LENGTH_LONG).show();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            };
+        };
+    }
+
+    private com.android.volley.Response.ErrorListener createMyReqErrorListener() {
+        return new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                String errorMsg = VolleyErrorHelper.getMessage(error, getActivity());
+//                if (error.getLocalizedMessage().toString()!=null || !(error.getLocalizedMessage().toString().equals("null")))
+//                Log.e("EROOR MESSG","" + error.getLocalizedMessage().toString());
+                Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_LONG)
+                        .show();
+            }
+        };
     }
 
     /*--

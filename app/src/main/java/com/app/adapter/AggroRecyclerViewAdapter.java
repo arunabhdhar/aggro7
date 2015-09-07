@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -36,7 +37,6 @@ public class AggroRecyclerViewAdapter extends RecyclerView.Adapter<AggroRecycler
         this.contents = contents;
         this.context = context;
         int size = contents.size();
-        int size1 = contents.size();
     }
 
     @Override
@@ -54,7 +54,7 @@ public class AggroRecyclerViewAdapter extends RecyclerView.Adapter<AggroRecycler
         if (contents != null)
             return contents.size();
         else
-            return 1;
+            return -1;
     }
 
     @Override
@@ -70,7 +70,10 @@ public class AggroRecyclerViewAdapter extends RecyclerView.Adapter<AggroRecycler
             case TYPE_CELL: {
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.list_item_card_small, parent, false);
-                return new ItemViewHolder(view);
+                ItemViewHolder vh = new ItemViewHolder(view);
+                vh.card_view.setTag(vh);
+                vh.card_view.setOnClickListener(clickItemListener());
+                return vh;
             }
         }
         return null;
@@ -80,6 +83,7 @@ public class AggroRecyclerViewAdapter extends RecyclerView.Adapter<AggroRecycler
     @Override
     public void onBindViewHolder(final ItemViewHolder holder, int position) {
 
+        int s =position;
         switch (getItemViewType(position)) {
             case TYPE_HEADER:
                 break;
@@ -92,7 +96,6 @@ public class AggroRecyclerViewAdapter extends RecyclerView.Adapter<AggroRecycler
     private void bindItemCardCell(int position,ItemViewHolder holder){
 
         Log.e("fedf","" + "d ");
-
             holder.mAppImageView.setImageUrl(contents.get(position).mAppIconUrl,holder.mImageLoader);
             holder.mAppName.setText(contents.get(position).mAppname);
             holder.mAppCategory.setText(contents.get(position).mAppCategory);
@@ -100,6 +103,26 @@ public class AggroRecyclerViewAdapter extends RecyclerView.Adapter<AggroRecycler
 
     }
 
+
+    private View.OnClickListener clickItemListener(){
+        View.OnClickListener l = null;
+        l = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ItemViewHolder holder = (ItemViewHolder) view.getTag();
+                int id = holder.getPosition();
+                if (view.getId() == holder.card_view.getId()){
+                    id = id- 1;
+//                    Toast.makeText(mContext, "imageIV onClick at" + id, Toast.LENGTH_SHORT).show();
+//                    openApp();
+                } else {
+                    Toast.makeText(context, "RecyclerView Item onClick at " + id, Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+
+        return l;
+    }
 
 
     class ItemViewHolder extends RecyclerView.ViewHolder{

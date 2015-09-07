@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -31,11 +32,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+import com.app.AppConstant;
 import com.app.BroadcastListener;
 import com.app.OnClick;
 import com.app.Utility.Utility;
@@ -383,7 +386,7 @@ public class ShowCatAppFragement extends Fragment implements OnClick{
         int limit = 5;
         String country = "IN";
         RequestQueue mRequestQueue = Volley.newRequestQueue(getActivity());
-        String url = "http://jarvisme.com/api/json.php?" + "list_name=topselling_free"+ "&cat_key=" + category + "&country=" + country + "&limit=" + limit + "&page=" + count + "&access_token=" + getActivity().getResources().getString(R.string.aggro_access_token);
+        String url = "http://jarvisme.com/api/json1.php?" + "list_name=topselling_free"+ "&cat_key=" + category + "&country=" + country + "&limit=" + limit + "&page=" + count + "&access_token=" + getActivity().getResources().getString(R.string.aggro_access_token);
 //        String url = "https://42matters.com/api/1/apps/top_google_charts.json?" + "list_name=topselling_free"+ "&cat_key=" + category + "&country=" + country + "&limit=" + limit + "&page=" + count + "&access_token=" + getActivity().getResources().getString(R.string.aggro_access_token);
         Log.e("URL","" + url);
         GsonRequest<AppDetail> myReq = new GsonRequest<AppDetail>(
@@ -392,6 +395,11 @@ public class ShowCatAppFragement extends Fragment implements OnClick{
                 AppDetail.class,
                 createMyReqSuccessListener(),
                 createMyReqErrorListener());
+
+        myReq.setRetryPolicy(new DefaultRetryPolicy(
+                AppConstant.MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         mRequestQueue.add(myReq);
     }
@@ -495,6 +503,102 @@ public class ShowCatAppFragement extends Fragment implements OnClick{
             case MUSIC_AND_AUDIO:
                 getTopSellingApps(getActivity().getResources().getString(R.string.cat_entertainment));
                 break;
+            case COMICS:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_comics));
+                break;
+            case COMMUNICATION:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_communication));
+                break;
+            case FINANCE:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_finance));
+                break;
+            case MEDIA_AND_VIDEO:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_media_video));
+                break;
+            case MEDICAL:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_medical));
+                break;
+            case PERSONALIZATION:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_personilazation));
+                break;
+            case PHOTOGRAPHY:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_photography));
+                break;
+            case SHOPPING:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_shopping));
+                break;
+            case SOCIAL:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_social));
+                break;
+            case TOOLS:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_tool));
+                break;
+            case WEATHER:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_wheather));
+                break;
+            case LIBRARIES_AND_DEMO:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_lib_demo));
+                break;
+            case GAME_ARCADE:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_game_arcade));
+                break;
+            case GAME_PUZZLE:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_game_puzzle));
+                break;
+            case GAME_CARD:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_game_card));
+                break;
+            case GAME_CASUAL:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_game_casual));
+                break;
+            case GAME_RACING:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_game_racing));
+                break;
+            case GAME_SPORTS:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_game_sport));
+                break;
+            case GAME_ACTION:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_game_action));
+                break;
+            case GAME_ADVENTURE:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_game_adventure));
+                break;
+            case GAME_BOARD:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_game_board));
+                break;
+            case GAME_CASINO:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_game_casino));
+                break;
+            case GAME_EDUCATIONAL:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_game_educational));
+                break;
+            case GAME_FAMILY:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_game_family));
+                break;
+            case GAME_MUSIC:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_game_music));
+                break;
+            case GAME_ROLE_PLAYING:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_game_role_playing));
+                break;
+            case GAME_SIMULATION:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_game_simulation));
+                break;
+            case GAME_STRATEGY:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_game_strategy));
+                break;
+            case GAME_TRIVIA:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_game_trivia));
+                break;
+            case GAME_WORD:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_game_word));
+                break;
+            case APP_WALLPAPER:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_app_wallpaper));
+                break;
+            case APP_WIDGETS:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_app_widget));
+                break;
 
             default:
                 System.out.println("Not comes under the predefined category");
@@ -525,6 +629,29 @@ public class ShowCatAppFragement extends Fragment implements OnClick{
         launchPlayStore(appList.getPackageName());
     }
 
+    @Override
+    public boolean openApp(AppList appList) {
+        PackageManager manager = getActivity().getPackageManager();
+        try {
+            Intent i = manager.getLaunchIntentForPackage(appList.getPackageName());
+            if (i == null) {
+//                return false;
+                throw new PackageManager.NameNotFoundException();
+            }
+            i.addCategory(Intent.CATEGORY_LAUNCHER);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getActivity().startActivity(i);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public void createCustomcategory(AppList appList) {
+
+    }
 
 
     private void selectshowCatApp(String local, Category.AggroCategory level) {

@@ -157,18 +157,20 @@ public class Menu extends AppCompatActivity implements com.app.appfragement.Menu
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
+        Log.e("GET FRAGEMENT MANAGER", "" + getFragmentManager().getBackStackEntryCount());
 //        if(isSearchOpened) {
 //            handleMenuSearch();
 //            return;
 //        }
-        if (getFragmentManager().getBackStackEntryCount() == 0) {
-            Log.e("GET FRAGEMENT MANAGER", "" + getFragmentManager().getBackStackEntryCount());
-            Menu.this.finish();
-        } else {
-            Log.e("ELSE CONDITION", "" + getFragmentManager().getBackStackEntryCount());
-            Fragment f = Menu.this.getSupportFragmentManager().findFragmentById(R.id.content_frame);
-                getFragmentManager().popBackStack();
-        }
+//        if (getFragmentManager().getBackStackEntryCount() == 0) {
+//            Log.e("GET FRAGEMENT MANAGER", "" + getFragmentManager().getBackStackEntryCount());
+//            Menu.this.finish();
+//        } else {
+//            Log.e("ELSE CONDITION", "" + getFragmentManager().getBackStackEntryCount());
+//            Fragment f = Menu.this.getSupportFragmentManager().findFragmentById(R.id.content_frame);
+//            getFragmentManager().popBackStack();
+//        }
 
     }
 
@@ -280,7 +282,7 @@ public class Menu extends AppCompatActivity implements com.app.appfragement.Menu
         // Replace whatever is in the fragment_container view with this fragment,
         // and add the transaction to the back stack so the user can navigate back
         fragmentManager.executePendingTransactions();
-        transaction.replace(R.id.content_frame, fragment);
+        transaction.add(R.id.content_frame, fragment);
         transaction.addToBackStack(null);
 
         // Commit the transaction
@@ -295,7 +297,8 @@ public class Menu extends AppCompatActivity implements com.app.appfragement.Menu
 //        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
         // Replace whatever is in the fragment_container view with this fragment,
         // and add the transaction to the back stack so the user can navigate back
-        transaction.replace(R.id.content_frame, fragment);
+        fragmentManager.executePendingTransactions();
+        transaction.add(R.id.content_frame, fragment);
         transaction.addToBackStack(null);
 
         // Commit the transaction

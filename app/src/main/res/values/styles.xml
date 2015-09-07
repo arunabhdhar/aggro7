@@ -219,4 +219,20 @@
         <item name="android:textColorPrimary">@android:color/white</item>
     </style>
 
+    <style name="menu_labels_style">
+        <item name="android:background">@drawable/fab_label_background</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <!--Custom Category Save Button-->
+    <style name="custom_cat_save_btn">
+        <item name="android:layout_width">150dp</item>
+        <item name="android:layout_height">35dp</item>
+        <item name="android:layout_marginTop">30dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:background">@color/primary_dark</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
 </resources>

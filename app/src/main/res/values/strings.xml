@@ -48,6 +48,38 @@
     <string name="cat_sports">SPORTS</string>
     <string name="cat_health">HEALTH_AND_FITNESS</string>
     <string name="cat_entertainment">MUSIC_AND_AUDIO</string>
+    <string name="cat_comics">COMICS</string>
+    <string name="cat_communication">COMMUNICATION</string>
+    <string name="cat_finance">FINANCE</string>
+    <string name="cat_media_video">MEDIA_AND_VIDEO</string>
+    <string name="cat_medical">MEDICAL</string>
+    <string name="cat_personilazation">PERSONALIZATION</string>
+    <string name="cat_photography">PHOTOGRAPHY</string>
+    <string name="cat_shopping">SHOPPING</string>
+    <string name="cat_social">SOCIAL</string>
+    <string name="cat_tool">TOOLS</string>
+    <string name="cat_wheather">WEATHER</string>
+    <string name="cat_lib_demo">LIBRARIES_AND_DEMO</string>
+    <string name="cat_game_arcade">GAME_ARCADE</string>
+    <string name="cat_game_puzzle">GAME_PUZZLE</string>
+    <string name="cat_game_card">GAME_CARD</string>
+    <string name="cat_game_casual">GAME_CASUAL</string>
+    <string name="cat_game_racing">GAME_RACING</string>
+    <string name="cat_game_sport">GAME_SPORTS</string>
+    <string name="cat_game_action">GAME_ACTION</string>
+    <string name="cat_game_adventure">GAME_ADVENTURE</string>
+    <string name="cat_game_board">GAME_BOARD</string>
+    <string name="cat_game_casino">GAME_CASINO</string>
+    <string name="cat_game_educational">GAME_EDUCATIONAL</string>
+    <string name="cat_game_family">GAME_FAMILY</string>
+    <string name="cat_game_music">GAME_MUSIC</string>
+    <string name="cat_game_role_playing">GAME_ROLE_PLAYING</string>
+    <string name="cat_game_simulation">GAME_SIMULATION</string>
+    <string name="cat_game_strategy">GAME_STRATEGY</string>
+    <string name="cat_game_trivia">GAME_TRIVIA	</string>
+    <string name="cat_game_word">GAME_WORD</string>
+    <string name="cat_app_wallpaper">APP_WALLPAPER</string>
+    <string name="cat_app_widget">APP_WIDGETS</string>
 
     <!-- TODO: Ctaegory GAME -->
     <string name="name_one">Subway Sutfer</string>
@@ -111,4 +143,10 @@
 
     <!--TODO:DOWNLOAD -->
     <string name="download_failed">Download failed</string>
+
+    <!--TODO:CUSTOM CATEGORY DIALOG TEXT
+    -->
+    <string name="custome_cat_header_dialog">C-Category</string>
+    <string name="custome_cat_name">Name</string>
+    <string name="custome_create_button">Create</string>
 </resources>
