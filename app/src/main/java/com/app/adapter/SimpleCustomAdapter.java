@@ -21,24 +21,20 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.app.OnClick;
 import com.app.Utility.ColoredRatingBar;
 import com.app.Utility.CustomVolleyRequestQueue;
-import com.app.Utility.GifWebView;
 import com.app.aggro.R;
 import com.app.getterAndSetter.MyCategory;
-import com.app.gridcategory.SquareImageView;
 import com.app.modal.AppList;
-import com.app.thin.downloadmanager.ThinDownloadManager;
+import com.app.response.CustomMsg;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerviewViewHolder;
 import com.marshalchen.ultimaterecyclerview.UltimateViewAdapter;
 import com.marshalchen.ultimaterecyclerview.animators.internal.ViewHelper;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.security.SecureRandom;
 import java.util.List;
 
 
-public class SimpleAdapter extends UltimateViewAdapter<SimpleAdapter.SimpleAdapterViewHolder> {
-    private List<AppList> stringList;
+public class SimpleCustomAdapter extends UltimateViewAdapter<SimpleCustomAdapter.SimpleAdapterViewHolder> {
+    private List<CustomMsg> stringList;
 
     private int mDuration = 300;
     private Interpolator mInterpolator = new LinearInterpolator();
@@ -48,7 +44,7 @@ public class SimpleAdapter extends UltimateViewAdapter<SimpleAdapter.SimpleAdapt
     private Context mContext;
     OnClick onClick;
 
-    public SimpleAdapter(List<AppList> stringList, Context mContext,OnClick onClick) {
+    public SimpleCustomAdapter(List<CustomMsg> stringList, Context mContext, OnClick onClick) {
         this.stringList = stringList;
         this.mContext = mContext;
         this.onClick = onClick;
@@ -60,18 +56,18 @@ public class SimpleAdapter extends UltimateViewAdapter<SimpleAdapter.SimpleAdapt
         if (position < getItemCount() && (customHeaderView != null ? position <= stringList.size() : position < stringList.size()) && (customHeaderView != null ? position > 0 : true)) {
 
             ((SimpleAdapterViewHolder) holder).imageViewSample.setTag(stringList.get(customHeaderView != null ? position - 1 : position));
-            ((SimpleAdapterViewHolder) holder).appName.setText(stringList.get(customHeaderView != null ? position - 1 : position).getTitle());
+            ((SimpleAdapterViewHolder) holder).appName.setText(stringList.get(customHeaderView != null ? position - 1 : position).getAppName());
             ((SimpleAdapterViewHolder) holder).appCategory.setText(stringList.get(customHeaderView != null ? position - 1 : position).getCategory());
-            if((Double) stringList.get(customHeaderView != null ? position - 1 : position).getRating()!=null)
-            ((SimpleAdapterViewHolder) holder).coloredRatingBar.setRating(((Double) stringList.get(customHeaderView != null ? position - 1 : position).getRating()).floatValue());
-            String url = stringList.get(customHeaderView != null ? position - 1 : position).getIcon();
+            if((Double) stringList.get(customHeaderView != null ? position - 1 : position).getAppRating()!=null)
+            ((SimpleAdapterViewHolder) holder).coloredRatingBar.setRating(((Double) stringList.get(customHeaderView != null ? position - 1 : position).getAppRating()).floatValue());
+            String url = stringList.get(customHeaderView != null ? position - 1 : position).getIconLink();
             ((SimpleAdapterViewHolder) holder).imageViewSample.setImageUrl(url, ((SimpleAdapterViewHolder) holder).mImageLoader);
-            if(stringList.get(customHeaderView != null ? position - 1 : position).isInstalled()==true){
-                ((SimpleAdapterViewHolder) holder).addAppImg.setImageResource(R.mipmap.checkbox_marked_circle_outline);
-            }
-            else{
-                ((SimpleAdapterViewHolder) holder).addAppImg.setImageResource(R.mipmap.plus_circle);
-            }
+//            if(stringList.get(customHeaderView != null ? position - 1 : position).isInstalled()==true){
+//                ((SimpleAdapterViewHolder) holder).addAppImg.setImageResource(R.mipmap.checkbox_marked_circle_outline);
+//            }
+//            else{
+//                ((SimpleAdapterViewHolder) holder).addAppImg.setImageResource(R.mipmap.plus_circle);
+//            }
 
             // ((ViewHolder) holder).itemView.setActivated(selectedItems.get(position, false));
             if (mDragStartListener != null) {
@@ -136,7 +132,7 @@ public class SimpleAdapter extends UltimateViewAdapter<SimpleAdapter.SimpleAdapt
     }
 
 
-    public void insert(AppList string, int position) {
+    public void insert(CustomMsg string, int position) {
         insert(stringList, string, position);
     }
 
@@ -172,8 +168,8 @@ public class SimpleAdapter extends UltimateViewAdapter<SimpleAdapter.SimpleAdapt
     @Override
     public long generateHeaderId(int position) {
         // URLogs.d("position--" + position + "   " + getItem(position));
-        if (getItem(position).getSize() > 0)
-            return getItem(position).getSize();
+        if (getItem(position).getAppName().length() > 0)
+            return getItem(position).getAppName().length();
         else return -1;
     }
 
@@ -294,12 +290,12 @@ public class SimpleAdapter extends UltimateViewAdapter<SimpleAdapter.SimpleAdapt
         }
     }
 
-    public AppList getItem(int position) {
+    public CustomMsg getItem(int position) {
         if (customHeaderView != null)
             position--;
         if (position < stringList.size())
             return stringList.get(position);
-        else return new AppList();
+        else return new CustomMsg();
     }
 
     private View.OnClickListener clickItemListener(){
@@ -312,22 +308,17 @@ public class SimpleAdapter extends UltimateViewAdapter<SimpleAdapter.SimpleAdapt
                  int id = holder.getPosition();
                  if (view.getId() == holder.relative_add_app.getId()){
                      id = id -1;
-                     AppList appList = stringList.get(id);
-
-                     if (MyCategory.isCustomcategory()){
-                         onClick.createCustomcategory(appList);
-                         return;
-                     }
-
-                     if (!appList.isInstalled())
-                      onClick.downloadApp(id, appList);
-                     else
-                     onClick.openApp(appList);
-
-
-
-                     String aPPName = stringList.get(id).getTitle();
-                     String packageName = stringList.get(id).getPackageName();
+                     CustomMsg appList = stringList.get(id);
+//                     if (!appList.isInstalled())
+//                      onClick.downloadApp(id, appList);
+//                     else
+//                     onClick.openApp(appList);
+//
+//                     if (MyCategory.isCustomcategory())
+//                      onClick.createCustomcategory(appList);
+//
+//                     String aPPName = stringList.get(id).getTitle();
+//                     String packageName = stringList.get(id).getPackageName();
                  } else {
                      Toast.makeText(mContext, "RecyclerView Item onClick at " + id, Toast.LENGTH_SHORT).show();
                  }

@@ -91,6 +91,24 @@
                         android:layout_centerVertical="true"/>
 
                 </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rel_fav_app"
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="@dimen/lib_cell_margin_left"
+                    android:layout_toLeftOf="@+id/rel_add_app">
+
+                    <ImageView
+                        android:id="@+id/fav_star"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@mipmap/star_orange"
+                        android:layout_marginRight="10dp"
+                        android:layout_centerVertical="true"/>
+
+                </RelativeLayout>
+
             </RelativeLayout>
 
             <ProgressBar

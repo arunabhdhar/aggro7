@@ -31,7 +31,7 @@ public class AggroRecyclerThreeWayGridViewAdapter extends RecyclerView.Adapter<A
     public int getItemViewType(int position) {
         switch (position) {
             case 0:
-                return TYPE_CELL;
+                return TYPE_HEADER;
             default:
                 return TYPE_CELL;
         }
@@ -44,6 +44,8 @@ public class AggroRecyclerThreeWayGridViewAdapter extends RecyclerView.Adapter<A
         else
             return 1;
     }
+
+
 
     @Override
     public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

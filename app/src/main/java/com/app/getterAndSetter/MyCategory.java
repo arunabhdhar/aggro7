@@ -6,14 +6,14 @@ package com.app.getterAndSetter;
 public class MyCategory {
 
     static boolean isCustomcategory= false;
-    private String categoryName = "";
+     static String categoryName = "";
 
-    public String getCategoryName() {
+    public static String getCategoryName() {
         return categoryName;
     }
 
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
+    public static void setCategoryName(String categoryName) {
+        MyCategory.categoryName = categoryName;
     }
 
     public static boolean isCustomcategory() {

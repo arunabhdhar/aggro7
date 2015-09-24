@@ -7,40 +7,33 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
-import com.app.OnClick;
 import com.app.Utility.ColoredRatingBar;
 import com.app.Utility.CustomVolleyRequestQueue;
 import com.app.aggro.R;
-import com.app.gridcategory.ImageItem;
-import com.app.gridcategory.SquareImageView;
 import com.app.holder.ChildItem;
-import com.app.holder.GroupItem;
 
 import java.util.List;
 
 /**
  * Created by florentchampigny on 24/04/15.
  */
-public class AggroRecyclerViewAdapter extends RecyclerView.Adapter<AggroRecyclerViewAdapter.ItemViewHolder> {
+public class favAdapter extends RecyclerView.Adapter<favAdapter.ItemViewHolder> {
 
     List<ChildItem> contents;
 
     static final int TYPE_HEADER = 0;
     static final int TYPE_CELL = 1;
-    CreateFav createFav;
-
     private Context context;
-    public AggroRecyclerViewAdapter(List<ChildItem> contents,Context context,final CreateFav createFav) {
+
+    public favAdapter(List<ChildItem> contents, Context context) {
         this.contents = contents;
         this.context = context;
-        this.createFav = createFav;
         int size = contents.size();
     }
 
@@ -114,14 +107,12 @@ public class AggroRecyclerViewAdapter extends RecyclerView.Adapter<AggroRecycler
             @Override
             public void onClick(View view) {
                 ItemViewHolder holder = (ItemViewHolder) view.getTag();
-//                holder.fav_star.setImageResource(R.mipmap.star_orange);
                 int id = holder.getPosition();
                 if (view.getId() == holder.rel_fav.getId()){
                     id = id- 1;
 //                    Toast.makeText(mContext, "imageIV onClick at" + id, Toast.LENGTH_SHORT).show();
 //                    openApp();
 
-                    createFav.addToFav(contents.get(id));
                 } else {
                     Toast.makeText(context, "RecyclerView Item onClick at " + id, Toast.LENGTH_SHORT).show();
                 }
@@ -140,7 +131,6 @@ public class AggroRecyclerViewAdapter extends RecyclerView.Adapter<AggroRecycler
         ImageLoader mImageLoader;
         ColoredRatingBar coloredRatingBar;
         RelativeLayout rel_fav;
-        ImageView fav_star;
         public ItemViewHolder(View convertView){
             super(convertView);
             card_view = (CardView)convertView.findViewById(R.id.card_view);
@@ -150,7 +140,6 @@ public class AggroRecyclerViewAdapter extends RecyclerView.Adapter<AggroRecycler
             mAppCategory = (TextView)convertView.findViewById(R.id.app_cat);
             coloredRatingBar = (ColoredRatingBar)itemView.findViewById(R.id.coloredRatingBar1);
             rel_fav = (RelativeLayout)itemView.findViewById(R.id.rel_fav_app);
-            fav_star = (ImageView)itemView.findViewById(R.id.fav_star);
             mImageLoader = CustomVolleyRequestQueue.getInstance(context.getApplicationContext())
                     .getImageLoader();
         }

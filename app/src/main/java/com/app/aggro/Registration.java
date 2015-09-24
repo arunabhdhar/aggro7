@@ -16,18 +16,32 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
+import com.app.AppConstant;
 import com.app.Utility.Utility;
 import com.app.Validator.EmptyTextListener;
 import com.app.Validator.InputValidator;
 import com.app.address.User;
+import com.app.api.GsonRequest;
+import com.app.api.VolleyErrorHelper;
 import com.app.gps.GPSTracker;
 import com.app.gridcategory.ImageItem;
+import com.app.local.database.AggroCategory;
 import com.app.local.database.AppTracker;
+import com.app.response.Msg;
+import com.app.response.RegisterResponse;
 import com.app.spinneradapter.NothingSelectedSpinnerAdapter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -39,23 +53,25 @@ public class Registration extends Activity {
     private GPSTracker gpsTracker ;
     private EditText name_ed, user_name_ed,age_ed, gender_ed,location_ed, email_ed;
     public static Typeface mpRegular, mpBold, mpSnap;
-    private static int count = 0;
+    public static int count = 0;
     private Activity mContext = Registration.this;
     private String gender;
-    public static ArrayList<ImageItem> mItems;
+//    public static ArrayList<ImageItem> mItems;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (!Utility.readUserInfoFromPrefs(mContext,getResources().getString(R.string.username)).equals("")){
+            count = count + 1;
             startActivity(new Intent(Registration.this, com.app.aggro.Menu.class));
             finish();
+            return;
         }
 
         setContentView(R.layout.activity_registration);
         new Utility().setupUI(findViewById(R.id.reg), Registration.this);
         init();
-        defaultCategoryLoad();
+        saveCategoryInDatabaseFirstTime();
         initLocalApptracer();
         trackLocation();
         addItemToSpinner();
@@ -66,7 +82,7 @@ public class Registration extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        gpsTracker.stopUsingGPS();
+//        gpsTracker.stopUsingGPS();
     }
 
     @Override
@@ -119,8 +135,8 @@ public class Registration extends Activity {
 
     }
 
-    private void defaultCategoryLoad(){
-        mItems = new ArrayList<ImageItem>();
+    private ArrayList<ImageItem> defaultCategoryLoad(){
+        final ArrayList<ImageItem> mItems = new ArrayList<>();
         mItems.add(new ImageItem(getString(R.string.cat_bussiness),R.mipmap.games));
         mItems.add(new ImageItem(getString(R.string.cat_lifestyle),R.mipmap.games));
         mItems.add(new ImageItem(getString(R.string.cat_news),   R.mipmap.news));
@@ -165,6 +181,19 @@ public class Registration extends Activity {
         mItems.add(new ImageItem(getString(R.string.cat_game_word), R.mipmap.entertainment));
         mItems.add(new ImageItem(getString(R.string.cat_app_wallpaper), R.mipmap.entertainment));
         mItems.add(new ImageItem(getString(R.string.cat_app_widget), R.mipmap.entertainment));
+
+        return mItems;
+    }
+
+    private void saveCategoryInDatabaseFirstTime(){
+
+        for (int i = 0; i < defaultCategoryLoad().size(); i++){
+            AggroCategory aggroCategory = new AggroCategory();
+            ImageItem imageItem = defaultCategoryLoad().get(i);
+            aggroCategory.categoryName = imageItem.getTitle();
+            aggroCategory.categoryImage = imageItem.getImage();
+            aggroCategory.save();
+        }
     }
 
     /**
@@ -228,6 +257,8 @@ public class Registration extends Activity {
                 gpsTracker.showSettingsAlert();
             }
 
+//        location_ed.setText("Patna");
+
 
     }
 
@@ -268,9 +299,26 @@ public class Registration extends Activity {
         }
         else {
             //submit
-            Utility.writeUserInfoToPrefs(mContext,name_ed.getText().toString(),user_name_ed.getText().toString(),email_ed.getText().toString().trim(),gender,location_ed.getText().toString(),age_ed.getText().toString());
-            startActivity(new Intent(Registration.this, com.app.aggro.Menu.class));
-            finish();
+//            Utility.writeUserInfoToPrefs(mContext,name_ed.getText().toString(),user_name_ed.getText().toString(),email_ed.getText().toString().trim(),gender,location_ed.getText().toString(),age_ed.getText().toString());
+//            startActivity(new Intent(Registration.this, com.app.aggro.Menu.class));
+//            finish();
+
+            String url = "http://jarvisme.com/customapp/register.php";
+            RequestQueue mRequestQueue = Volley.newRequestQueue(mContext);
+            GsonRequest<RegisterResponse> myReq = new GsonRequest<RegisterResponse>(
+                    Request.Method.POST,
+                    url,
+                    RegisterResponse.class,
+                    prepareHasMap(),
+                    createMyReqSuccessListener(),
+                    createMyReqErrorListener());
+
+            myReq.setRetryPolicy(new DefaultRetryPolicy(
+                    AppConstant.MY_SOCKET_TIMEOUT_MS,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+            mRequestQueue.add(myReq);
         }
 
     }
@@ -312,6 +360,51 @@ public class Registration extends Activity {
          appTracker.appIconUrl = "xxx";
          appTracker.save();
      }
+
      count = count + 1;
  }
+
+    private HashMap prepareHasMap(){
+        HashMap<String,String> hm = new HashMap<String,String>();
+        hm.put("firstName", name_ed.getText().toString());
+        hm.put("lastName", name_ed.getText().toString());
+        hm.put("userName", user_name_ed.getText().toString());
+        hm.put("email", email_ed.getText().toString());
+        hm.put("location", location_ed.getText().toString());
+        hm.put("gender", gender);
+        return hm;
+    }
+
+    private Response.Listener<RegisterResponse> createMyReqSuccessListener(){
+        return new Response.Listener<RegisterResponse>(){
+            @Override
+            public void onResponse(RegisterResponse registerResponse) {
+
+                Log.e("HXSXS","" + registerResponse.getStatus());
+                int status = registerResponse.getStatus();
+                if (registerResponse.getStatus() == 1){
+                    List<Msg> msgList = registerResponse.getMsg();
+                    Utility.writeUserInfoToPrefs(mContext, msgList.get(0).getFirstName(), msgList.get(0).getUserName().toString(), msgList.get(0).getEmail().toString().trim(), gender, msgList.get(0).getLocation().toString(), age_ed.getText().toString());
+                    startActivity(new Intent(Registration.this, com.app.aggro.Menu.class));
+                    finish();
+
+                }
+
+            }
+        };
+    }
+
+    private Response.ErrorListener createMyReqErrorListener(){
+        return new Response.ErrorListener(){
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                String errorMsg = VolleyErrorHelper.getMessage(volleyError, mContext);
+//                if (error.getLocalizedMessage().toString()!=null || !(error.getLocalizedMessage().toString().equals("null")))
+//                Log.e("EROOR MESSG","" + error.getLocalizedMessage().toString());
+                Toast.makeText(mContext, errorMsg, Toast.LENGTH_LONG)
+                        .show();
+
+            }
+        };
+    }
 }

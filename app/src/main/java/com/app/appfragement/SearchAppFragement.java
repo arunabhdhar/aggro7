@@ -152,6 +152,29 @@ public class SearchAppFragement extends Fragment implements OnClick {
         return v;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+
+                    // handle back button
+                    MyToolBar.getToolbar().setVisibility(View.VISIBLE);
+                    getActivity().getSupportFragmentManager().popBackStack();
+                    return true;
+                }
+
+                return false;
+            }
+        });
+    }
+
     private void init(View view) {
         if (SimpleStorage.isExternalStorageWritable()) {
             storage = SimpleStorage.getExternalStorage();
@@ -275,7 +298,9 @@ public class SearchAppFragement extends Fragment implements OnClick {
         int limit = 6;
         String country = "IN";
         RequestQueue mRequestQueue = Volley.newRequestQueue(getActivity());
-        String url = "https://42matters.com/api/1/apps/search.json?q=" + edtSeach.getText().toString().trim() + "&limit=" + limit + "&page=" + count + "&access_token=" + getActivity().getResources().getString(R.string.aggro_access_token);
+        String url = "http://jarvisme.com/api/search.php?q=" + edtSeach.getText().toString().trim() + "&limit=" + limit + "&page=" + count + "&access_token=" + getActivity().getResources().getString(R.string.aggro_access_token);
+
+//        String url = "https://42matters.com/api/1/apps/search.json?q=" + edtSeach.getText().toString().trim() + "&limit=" + limit + "&page=" + count + "&access_token=" + getActivity().getResources().getString(R.string.aggro_access_token);
         Log.e("URL", "" + count);
         GsonRequest<SearchDetail> myReq = new GsonRequest<SearchDetail>(
                 Request.Method.GET,
@@ -420,7 +445,7 @@ public class SearchAppFragement extends Fragment implements OnClick {
 
     @Override
     public void createCustomcategory(AppList appList) {
-        String url = "http://jarvisme.com/customapp/add.php";
+        String url = "http://jarvisme.com/customapp/add.php?";
         RequestQueue mRequestQueue = Volley.newRequestQueue(getActivity());
         GsonRequest<com.app.response.Response> myReq = new GsonRequest<com.app.response.Response>(
                 Request.Method.POST,
@@ -441,11 +466,12 @@ public class SearchAppFragement extends Fragment implements OnClick {
     private HashMap prepareHasMap(AppList appList){
         HashMap<String,String> hm = new HashMap<String,String>();
         hm.put("email", Utility.readUserInfoFromPrefs(getActivity(),getString(R.string.email)));
-        hm.put("customCategory", new MyCategory().getCategoryName());
+        hm.put("customCategory", MyCategory.getCategoryName());
         hm.put("appName",appList.getTitle());
         hm.put("iconurlkey",appList.getIcon());
         hm.put("category",appList.getCategory());
         hm.put("appRating","" + appList.getRating());
+        hm.put("packagename",appList.getPackageName());
         return hm;
     }
 
@@ -455,7 +481,7 @@ public class SearchAppFragement extends Fragment implements OnClick {
             public void onResponse(com.app.response.Response response) {
                 try {
                     if (response.getStatus() == 1){
-                        Toast.makeText(getActivity(), "Registration successfull", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), "App added successfully", Toast.LENGTH_LONG).show();
                         return;
                     }
 

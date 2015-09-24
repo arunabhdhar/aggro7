@@ -15,7 +15,9 @@ import android.widget.Toast;
 
 import com.app.aggro.R;
 import com.app.api.Category;
+import com.app.appfragement.CustomAppFragment;
 import com.app.appfragement.ShowCatAppFragement;
+import com.app.getterAndSetter.MyCategory;
 import com.app.gridcategory.ImageItem;
 import com.app.gridcategory.SquareImageView;
 import com.app.holder.GroupItem;
@@ -137,6 +139,23 @@ public class AggroRecyclerGridViewAdapter extends RecyclerView.Adapter<AggroRecy
         ((Activity)mContext).invalidateOptionsMenu();
     }
 
+
+    private void selectCustomCategoryApp(String local){
+        // update the main content by replacing fragments
+        Fragment fragment = CustomAppFragment.newInstance(local);
+        android.support.v4.app.FragmentManager fragmentManager = ((AppCompatActivity)mContext).getSupportFragmentManager();
+        android.support.v4.app.FragmentTransaction transaction  = fragmentManager.beginTransaction();
+//        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack so the user can navigate back
+        transaction.add(R.id.content_frame, fragment);
+        transaction.addToBackStack(null);
+
+        // Commit the transaction
+        transaction.commit();
+
+        ((Activity)mContext).invalidateOptionsMenu();
+    }
     private void selectItem(String category) {
         // update the main content by replacing fragments
         String localvariable = null;
@@ -274,8 +293,12 @@ public class AggroRecyclerGridViewAdapter extends RecyclerView.Adapter<AggroRecy
             catLevel = Category.AggroCategory.APP_WIDGETS;
         }else {
             //custom category
+            MyCategory.setIsCustomcategory(true);
+            MyCategory.setCategoryName(category);
+            selectCustomCategoryApp(category);
+            return;
         }
-
+        MyCategory.setIsCustomcategory(false);
         selectshowCatApp(localvariable,catLevel);
     }
 
