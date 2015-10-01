@@ -6,4 +6,5 @@ package com.app;
 public class AppConstant {
 
     public static final int MY_SOCKET_TIMEOUT_MS = 10000;
+    public static final String ADMOB_ID = "pub-5752152437329746";
 }

@@ -39,15 +39,16 @@ import com.app.local.database.AppTracker;
 import com.app.response.Msg;
 import com.app.response.RegisterResponse;
 import com.app.spinneradapter.NothingSelectedSpinnerAdapter;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
-
 public class Registration extends Activity {
-
+    private AdView mAdView;
     private ImageView signIn;
     private Spinner spinnerMF;
     private GPSTracker gpsTracker ;
@@ -82,7 +83,31 @@ public class Registration extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-//        gpsTracker.stopUsingGPS();
+        if (gpsTracker != null)
+        gpsTracker.stopUsingGPS();
+
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+    }
+
+    /** Called when returning to the activity */
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (mAdView != null) {
+            mAdView.resume();
+        }
+    }
+
+    /** Called before the activity is destroyed */
+    @Override
+    public void onDestroy() {
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
+        super.onDestroy();
     }
 
     @Override
@@ -114,6 +139,7 @@ public class Registration extends Activity {
                 "fonts/Helvetica Neue CE 55 Roman.ttf");
         mpBold = Typeface.createFromAsset(getAssets(),
                 "fonts/Helvetica Neue CE 75 Bold.ttf");
+        mAdView = (AdView) findViewById(R.id.adView);
         gpsTracker = new GPSTracker(Registration.this);
         signIn = (ImageView)findViewById(R.id.signin);
         spinnerMF = (Spinner)findViewById(R.id.gender);
@@ -132,6 +158,15 @@ public class Registration extends Activity {
             }
         });
 
+        // Request for Ads
+        AdRequest adRequest = new AdRequest.Builder()
+
+                // Add a test device to show Test Ads
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+
+        // Load ads into Banner Ads
+        mAdView.loadAd(adRequest);
 
     }
 

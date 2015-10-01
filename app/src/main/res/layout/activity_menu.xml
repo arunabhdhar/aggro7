@@ -38,7 +38,7 @@
         android:id="@+id/footer"
         android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:layout_alignParentBottom="true">
+        android:layout_above="@+id/include_baneer">
 
 
         <include
@@ -47,6 +47,11 @@
             layout="@layout/copyright" />
     </RelativeLayout>
 
-
+    <include
+        android:id="@+id/include_baneer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        layout="@layout/banner" />
 
 </RelativeLayout>

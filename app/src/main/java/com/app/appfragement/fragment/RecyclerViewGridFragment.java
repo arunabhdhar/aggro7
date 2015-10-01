@@ -231,11 +231,12 @@ public class RecyclerViewGridFragment extends Fragment {
         return new Response.ErrorListener(){
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-                String errorMsg = VolleyErrorHelper.getMessage(volleyError, getActivity());
+                System.out.println(volleyError.getMessage());
+//                String errorMsg = VolleyErrorHelper.getMessage(volleyError, getActivity());
 //                if (error.getLocalizedMessage().toString()!=null || !(error.getLocalizedMessage().toString().equals("null")))
 //                Log.e("EROOR MESSG","" + error.getLocalizedMessage().toString());
-                Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_LONG)
-                        .show();
+//                Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_LONG)
+//                        .show();
 
             }
         };

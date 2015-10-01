@@ -1,34 +1,20 @@
 package com.app.appfragement;
 
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
+import com.app.Updateable;
 import com.app.adapter.SimpleAnimationAdapter;
 import com.app.aggro.R;
 import com.app.appfragement.fragment.RecyclerViewFragment;
@@ -38,15 +24,9 @@ import com.app.getterAndSetter.MyToolBar;
 import com.app.gridcategory.ImageItem;
 import com.app.holder.GroupItem;
 import com.app.slideradapter.MyFragmentAdapter;
-import com.app.slideradapter.TabsPagerAdapter;
 import com.app.viewslider.SlidingTabLayout;
-import com.crashlytics.android.Crashlytics;
-import com.github.florent37.materialviewpager.BuildConfig;
 import com.github.florent37.materialviewpager.MaterialViewPager;
 import com.github.florent37.materialviewpager.header.HeaderDesign;
-import com.marshalchen.ultimaterecyclerview.ObservableScrollState;
-import com.marshalchen.ultimaterecyclerview.ObservableScrollViewCallbacks;
-import com.marshalchen.ultimaterecyclerview.URLogs;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 
 
@@ -54,8 +34,6 @@ import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-
-import io.fabric.sdk.android.Fabric;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -65,7 +43,7 @@ import io.fabric.sdk.android.Fabric;
  * Use the {@link Menu#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Menu extends Fragment {
+public class Menu extends Fragment{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -129,6 +107,7 @@ public class Menu extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_menu, container, false);
+        init();
         return rootView;
     }
 
@@ -242,9 +221,15 @@ public class Menu extends Fragment {
 
 //after adding all the fragments write the below lines
         mViewPager = (MaterialViewPager) view.findViewById(R.id.materialViewPager);
-        mPagerAdapter  = new MyFragmentAdapter(getActivity(),super.getChildFragmentManager(), fragments);
+
+        mPagerAdapter  = new MyFragmentAdapter(getActivity(),super.getChildFragmentManager(), fragments,mViewPager);
+
+        MyToolBar.setMyFragmentAdapter(mPagerAdapter);
         mViewPager.getToolbar().setVisibility(View.GONE);
         mViewPager.getViewPager().setAdapter(mPagerAdapter);
+        mViewPager.getViewPager().getAdapter().notifyDataSetChanged();
+        mPagerAdapter.notifyDataSetChanged();
+
         if (mParam2 == MyFragmentAdapter.CENTERED_PAGE){
             mViewPager.getViewPager().setCurrentItem(mParam2);
         }
@@ -257,33 +242,36 @@ public class Menu extends Fragment {
             mViewPager.getViewPager().setCurrentItem(mParam2);
         }
 
-        mViewPager.setMaterialViewPagerListener(new MaterialViewPager.Listener() {
-            @Override
-            public HeaderDesign getHeaderDesign(int page) {
-                switch (page) {
-                    case 0:
-                        return HeaderDesign.fromColorResAndUrl(
-                                R.color.green,
-                                "https://fs01.androidpit.info/a/63/0e/android-l-wallpapers-630ea6-h900.jpg");
-                    case 1:
-                        return HeaderDesign.fromColorResAndUrl(
-                                R.color.blue,
-                                "http://cdn1.tnwcdn.com/wp-content/blogs.dir/1/files/2014/06/wallpaper_51.jpg");
-                    case 2:
-                        return HeaderDesign.fromColorResAndUrl(
-                                R.color.cyan,
-                                "http://www.droid-life.com/wp-content/uploads/2014/10/lollipop-wallpapers10.jpg");
-                    case 3:
-                        return HeaderDesign.fromColorResAndUrl(
-                                R.color.red,
-                                "http://www.tothemobile.com/wp-content/uploads/2014/07/original.jpg");
-                }
 
-                //execute others actions if needed (ex : modify your header logo)
 
-                return null;
-            }
-        });
+//        mViewPager.setMaterialViewPagerListener(new MaterialViewPager.Listener() {
+//            @Override
+//            public HeaderDesign getHeaderDesign(int page) {
+//                switch (page) {
+//                    case 0:
+//                        return HeaderDesign.fromColorResAndUrl(
+//                                R.color.green,
+//                                "https://fs01.androidpit.info/a/63/0e/android-l-wallpapers-630ea6-h900.jpg");
+//                    case 1:
+//                        return HeaderDesign.fromColorResAndUrl(
+//                                R.color.blue,
+//                                "http://cdn1.tnwcdn.com/wp-content/blogs.dir/1/files/2014/06/wallpaper_51.jpg");
+//                    case 2:
+//                        return HeaderDesign.fromColorResAndUrl(
+//                                R.color.cyan,
+//                                "http://www.droid-life.com/wp-content/uploads/2014/10/lollipop-wallpapers10.jpg");
+//                    case 3:
+//                        return HeaderDesign.fromColorResAndUrl(
+//                                R.color.red,
+//                                "http://www.tothemobile.com/wp-content/uploads/2014/07/original.jpg");
+//                }
+//
+//                //execute others actions if needed (ex : modify your header logo)
+//
+//                return null;
+//            }
+//        });
+
 
         mViewPager.getViewPager().setOffscreenPageLimit(mViewPager.getViewPager().getAdapter().getCount());
         mViewPager.getPagerTitleStrip().setViewPager(mViewPager.getViewPager());
@@ -312,14 +300,14 @@ public class Menu extends Fragment {
      * Prepare some dummy data for gridview
      */
     private ArrayList<ImageItem> getData() {
-        final ArrayList<ImageItem> mItems = new ArrayList<>();
+        final ArrayList<ImageItem> mItems = new ArrayList<ImageItem>();
 //        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_bussiness),R.mipmap.games));
         return mItems;
     }
 
     private void init(){
-        if (!BuildConfig.DEBUG)
-            Fabric.with(getActivity(), new Crashlytics());
+//        if (!BuildConfig.DEBUG)
+//            Fabric.with(getActivity(), new Crashlytics());
 
 
     }

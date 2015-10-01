@@ -6,6 +6,9 @@
     <string name="search">Search</string>
     <string name="name_copywrite">copyright by App.Dynamo.Tech Solutions Ltd.</string>
 
+    <!-- Banner Ads ID -->
+    <string name="banner_id">ca-app-pub-5752152437329746/5264606119</string>
+
     <!-- Hints Commands for Signin Screen -->
     <string name="name">Name</string>
     <string name="username">Username</string>

@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.app.OnClick;
+import com.app.OnCustomCategoryItemClick;
 import com.app.Utility.ColoredRatingBar;
 import com.app.Utility.CustomVolleyRequestQueue;
 import com.app.aggro.R;
@@ -42,9 +43,9 @@ public class SimpleCustomAdapter extends UltimateViewAdapter<SimpleCustomAdapter
 
     private boolean isFirstOnly = true;
     private Context mContext;
-    OnClick onClick;
+    OnCustomCategoryItemClick onClick;
 
-    public SimpleCustomAdapter(List<CustomMsg> stringList, Context mContext, OnClick onClick) {
+    public SimpleCustomAdapter(List<CustomMsg> stringList, Context mContext, OnCustomCategoryItemClick onClick) {
         this.stringList = stringList;
         this.mContext = mContext;
         this.onClick = onClick;
@@ -62,12 +63,12 @@ public class SimpleCustomAdapter extends UltimateViewAdapter<SimpleCustomAdapter
             ((SimpleAdapterViewHolder) holder).coloredRatingBar.setRating(((Double) stringList.get(customHeaderView != null ? position - 1 : position).getAppRating()).floatValue());
             String url = stringList.get(customHeaderView != null ? position - 1 : position).getIconLink();
             ((SimpleAdapterViewHolder) holder).imageViewSample.setImageUrl(url, ((SimpleAdapterViewHolder) holder).mImageLoader);
-//            if(stringList.get(customHeaderView != null ? position - 1 : position).isInstalled()==true){
-//                ((SimpleAdapterViewHolder) holder).addAppImg.setImageResource(R.mipmap.checkbox_marked_circle_outline);
-//            }
-//            else{
-//                ((SimpleAdapterViewHolder) holder).addAppImg.setImageResource(R.mipmap.plus_circle);
-//            }
+            if(stringList.get(customHeaderView != null ? position - 1 : position).isInstalled()==true){
+                ((SimpleAdapterViewHolder) holder).addAppImg.setImageResource(R.mipmap.checkbox_marked_circle_outline);
+            }
+            else{
+                ((SimpleAdapterViewHolder) holder).addAppImg.setImageResource(R.mipmap.plus_circle);
+            }
 
             // ((ViewHolder) holder).itemView.setActivated(selectedItems.get(position, false));
             if (mDragStartListener != null) {
@@ -309,10 +310,10 @@ public class SimpleCustomAdapter extends UltimateViewAdapter<SimpleCustomAdapter
                  if (view.getId() == holder.relative_add_app.getId()){
                      id = id -1;
                      CustomMsg appList = stringList.get(id);
-//                     if (!appList.isInstalled())
-//                      onClick.downloadApp(id, appList);
-//                     else
-//                     onClick.openApp(appList);
+                     if (!appList.isInstalled())
+                      onClick.downloadApp(id, appList);
+                     else
+                     onClick.openApp(appList);
 //
 //                     if (MyCategory.isCustomcategory())
 //                      onClick.createCustomcategory(appList);

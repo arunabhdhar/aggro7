@@ -103,7 +103,7 @@
                         android:id="@+id/fav_star"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@mipmap/star_orange"
+                        android:src="@mipmap/star_green"
                         android:layout_marginRight="10dp"
                         android:layout_centerVertical="true"/>
 

@@ -1,5 +1,7 @@
 package com.app.appfragement.fragment;
 
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,6 +21,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.app.AppConstant;
+import com.app.Updateable;
 import com.app.Utility.EndlessRecyclerOnScrollListener;
 import com.app.Utility.Utility;
 import com.app.adapter.AggroRecyclerThreeWayGridViewAdapter;
@@ -31,6 +34,7 @@ import com.app.getterAndSetter.MyToolBar;
 import com.app.gridcategory.ImageItem;
 import com.app.holder.ChildItem;
 import com.app.holder.GroupItem;
+import com.app.local.database.AppTracker;
 import com.app.response.CustomMsg;
 import com.app.response.CustomResponse;
 import com.github.florent37.materialviewpager.MaterialViewPagerHelper;
@@ -53,6 +57,7 @@ public class RecyclerViewThreeWayGridFragment extends Fragment {
     private GroupItem groupItem = new GroupItem();
     private int count = 1;
 
+
     public static RecyclerViewThreeWayGridFragment newInstance() {
         return new RecyclerViewThreeWayGridFragment();
     }
@@ -66,35 +71,43 @@ public class RecyclerViewThreeWayGridFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setHasFixedSize(true);
 
-        mRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
-            @Override
-            public void onLoadMore(int current_page) {
-                // do something...
-                count = current_page;
-                loadApiGetMethod("fav");
-            }
-        });
+//        mRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
+//            @Override
+//            public void onLoadMore(int current_page) {
+//                // do something...
+//                count = current_page;
+//                loadApiGetMethod("fav");
+//            }
+//        });
 
-        mAdapter = new RecyclerViewMaterialAdapter(new favAdapter(groupItem.items, getActivity()));
+        mAdapter = new RecyclerViewMaterialAdapter(new favAdapter(preareList(), getActivity(), new favAdapter.CreateFav() {
+            @Override
+            public void openApp(ChildItem childItem) {
+                openDownloadedApp(childItem);
+            }
+        }));
         mRecyclerView.setAdapter(mAdapter);
 
-         loadApiGetMethod("fav");
+//         loadApiGetMethod("fav");
 
         MaterialViewPagerHelper.registerRecyclerView(getActivity(), mRecyclerView, null);
     }
+
+
 
     private void loadApiGetMethod(String category){
         int limit = 5;
         String country = "IN";
         Log.e("Data", "" + category);
         RequestQueue mRequestQueue = Volley.newRequestQueue(getActivity());
-        String url = "http://jarvisme.com/customapp/get.php?" + "email=" + Utility.readUserInfoFromPrefs(getActivity(), getActivity().getResources().getString(R.string.email)) + "&customCategory=" + "fav";
+        String url = "http://jarvisme.com/customapp/get.php?";
 //        String url = "https://42matters.com/api/1/apps/top_google_charts.json?" + "list_name=topselling_free"+ "&cat_key=" + category + "&country=" + country + "&limit=" + limit + "&page=" + count + "&access_token=" + getActivity().getResources().getString(R.string.aggro_access_token);
         Log.e("URL", "" + url);
         GsonRequest<CustomResponse> myReq = new GsonRequest<CustomResponse>(
@@ -116,7 +129,7 @@ public class RecyclerViewThreeWayGridFragment extends Fragment {
     private HashMap prepareHasMap(){
         HashMap<String,String> hm = new HashMap<String,String>();
         hm.put("category_name", "fav");
-        hm.put("email", Utility.readUserInfoFromPrefs(getActivity(),getString(R.string.email)));
+        hm.put("email", Utility.readUserInfoFromPrefs(getActivity(), getString(R.string.email)));
         hm.put("limit", "" + 5);
         hm.put("page", "" + count);
         return hm;
@@ -140,14 +153,14 @@ public class RecyclerViewThreeWayGridFragment extends Fragment {
                         Log.e("APPNAMe", "" + childItem.mAppname);
                         groupItem.items.add(childItem);
 
-                        mAdapter.notifyItemInserted(groupItem.items.size()-1);
+                        mAdapter.notifyItemInserted(i);
 
                     }
 
-                    if (groupItem.items.size()>1) {
-                        mAdapter = new RecyclerViewMaterialAdapter(new favAdapter(groupItem.items, getActivity()));
-                        mRecyclerView.setAdapter(mAdapter);
-                    }
+//                    if (groupItem.items.size()>1) {
+//                        mAdapter = new RecyclerViewMaterialAdapter(new favAdapter(groupItem.items, getActivity()));
+//                        mRecyclerView.setAdapter(mAdapter);
+//                    }
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -160,12 +173,60 @@ public class RecyclerViewThreeWayGridFragment extends Fragment {
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                String errorMsg = VolleyErrorHelper.getMessage(error, getActivity());
+                System.out.println(error.getMessage());
+//                String errorMsg = VolleyErrorHelper.getMessage(error, getActivity());
 //                if (error.getLocalizedMessage().toString()!=null || !(error.getLocalizedMessage().toString().equals("null")))
 //                Log.e("EROOR MESSG","" + error.getLocalizedMessage().toString());
-                Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_LONG)
-                        .show();
+//                Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_LONG)
+//                        .show();
             }
         };
+    }
+
+    private List<ChildItem> preareList() {
+        if (groupItem != null)
+            groupItem.items.clear();
+
+        List<AppTracker> eventList = null;
+        eventList = new AppTracker().getAllByFav(1);
+        int size = eventList.size();
+
+        for (int i = 0; i < eventList.size(); i++){
+            ChildItem childItem = new ChildItem();
+            int k = i;
+            AppTracker event;
+            event =  eventList.get(i);
+
+            childItem.mAppIconUrl = event.appIconUrl;
+            childItem.mAppCategory = event.catName;
+            childItem.mAppname = event.appName;
+            childItem.mRating = event.rating;
+            childItem.mPackageName = event.packageName;
+            childItem.isFavourite = event.isFavourite;
+
+            Log.e("SSSS","" + childItem.isFavourite);
+            groupItem.items.add(childItem);
+        }
+
+        return groupItem.items;
+    }
+
+
+    public boolean openDownloadedApp(ChildItem appList) {
+        PackageManager manager = getActivity().getPackageManager();
+        try {
+            Intent i = manager.getLaunchIntentForPackage(appList.mPackageName);
+            if (i == null) {
+//                return false;
+                throw new PackageManager.NameNotFoundException();
+            }
+            i.addCategory(Intent.CATEGORY_LAUNCHER);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getActivity().startActivity(i);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

@@ -39,10 +39,12 @@ public class PackageChangeReceiver extends BroadcastReceiver {
             AppTracker localApptracker = AppTracker.getSingleEntry(packageName);
             if (localApptracker!=null){
                   AppTracker appTracker = localApptracker.load(AppTracker.class,localApptracker.getId());
-                 if (appTracker.isInstalled)
+                 if (appTracker.isInstalled){
                      appTracker.isInstalled = false;
-                else
+                 }
+                else {
                      appTracker.isInstalled = true;
+                 }
 
                 appTracker.save();
             }
@@ -56,12 +58,13 @@ public class PackageChangeReceiver extends BroadcastReceiver {
                 appTracker.appIconUrl = Utility.readUserInfoFromPrefs(context,context.getResources().getString(R.string.aggro_downloaded_app_icon_url));
                 appTracker.save();
             }
+            Intent i = new Intent(context,Menu.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            context.getApplicationContext().startActivity(i);
         }else{
           // do some work if you want
         }
-        Intent i = new Intent(context,Menu.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        context.getApplicationContext().startActivity(i);
+
     }
 
 

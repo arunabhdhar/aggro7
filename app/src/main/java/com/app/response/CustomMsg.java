@@ -13,6 +13,7 @@ public class CustomMsg {
     private String category;
     private String packagename;
     private Double appRating;
+    private boolean isInstalled = false;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
@@ -103,6 +104,14 @@ public class CustomMsg {
 
     public void setPackagename(String packagename) {
         this.packagename = packagename;
+    }
+
+    public boolean isInstalled() {
+        return isInstalled;
+    }
+
+    public void setIsInstalled(boolean isInstalled) {
+        this.isInstalled = isInstalled;
     }
 
     /**

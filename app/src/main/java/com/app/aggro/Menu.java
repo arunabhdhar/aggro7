@@ -26,6 +26,8 @@ import com.app.Utility.Utility;
 import com.app.appfragement.MyDetailsFragement;
 import com.app.getterAndSetter.MyToolBar;
 import com.app.slideradapter.MyFragmentAdapter;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
@@ -59,12 +61,24 @@ public class Menu extends AppCompatActivity implements com.app.appfragement.Menu
 
     Activity mContext;
     private SearchBox search;
-
+    private AdView mAdView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
         mContext = Menu.this;
+
+        //Display Benner Ads
+        mAdView = (AdView) findViewById(R.id.adView);
+        // Request for Ads
+        AdRequest adRequest = new AdRequest.Builder()
+
+                // Add a test device to show Test Ads
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+
+        // Load ads into Banner Ads
+        mAdView.loadAd(adRequest);
 
         // Handle Toolbar
          Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -153,6 +167,32 @@ public class Menu extends AppCompatActivity implements com.app.appfragement.Menu
         }
 
         selectItem(MyFragmentAdapter.LEFT_PAGE);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mAdView != null) {
+            mAdView.pause();
+        }
+    }
+
+    /** Called when returning to the activity */
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mAdView != null) {
+            mAdView.resume();
+        }
+    }
+
+    /** Called before the activity is destroyed */
+    @Override
+    public void onDestroy() {
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
+        super.onDestroy();
     }
 
     @Override

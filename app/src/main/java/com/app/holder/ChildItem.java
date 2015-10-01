@@ -7,5 +7,6 @@ public class ChildItem {
     public String mAppCategory;
     public String mAppIconUrl;
     public String mPackageName;
+    public int isFavourite;
     public float mRating;
 }

@@ -78,6 +78,9 @@ public class AggroRecyclerViewAdapter extends RecyclerView.Adapter<AggroRecycler
                 ItemViewHolder vh = new ItemViewHolder(view);
                 vh.rel_fav.setTag(vh);
                 vh.rel_fav.setOnClickListener(clickItemListener());
+
+                vh.rel_add_app.setTag(vh);
+                vh.rel_add_app.setOnClickListener(clickItemListener());
                 return vh;
             }
         }
@@ -100,11 +103,16 @@ public class AggroRecyclerViewAdapter extends RecyclerView.Adapter<AggroRecycler
 
     private void bindItemCardCell(int position,ItemViewHolder holder){
 
-        Log.e("fedf","" + "d ");
-            holder.mAppImageView.setImageUrl(contents.get(position).mAppIconUrl,holder.mImageLoader);
+        Log.e("fedf", "" + "d ");
+            holder.mAppImageView.setImageUrl(contents.get(position).mAppIconUrl, holder.mImageLoader);
             holder.mAppName.setText(contents.get(position).mAppname);
             holder.mAppCategory.setText(contents.get(position).mAppCategory);
             holder.coloredRatingBar.setRating(contents.get(position).mRating);
+        if (contents.get(position).isFavourite == 0){
+            holder.fav_star.setImageResource(R.mipmap.star_green);
+        }else{
+            holder.fav_star.setImageResource(R.mipmap.star_orange);
+        }
     }
 
 
@@ -122,7 +130,12 @@ public class AggroRecyclerViewAdapter extends RecyclerView.Adapter<AggroRecycler
 //                    openApp();
 
                     createFav.addToFav(contents.get(id));
-                } else {
+                }
+                else if(view.getId() == holder.rel_add_app.getId()){
+                    id = id- 1;
+                    createFav.openApp(contents.get(id));
+                }
+                else {
                     Toast.makeText(context, "RecyclerView Item onClick at " + id, Toast.LENGTH_SHORT).show();
                 }
             }
@@ -139,7 +152,7 @@ public class AggroRecyclerViewAdapter extends RecyclerView.Adapter<AggroRecycler
         CardView card_view;
         ImageLoader mImageLoader;
         ColoredRatingBar coloredRatingBar;
-        RelativeLayout rel_fav;
+        RelativeLayout rel_fav,rel_add_app;
         ImageView fav_star;
         public ItemViewHolder(View convertView){
             super(convertView);
@@ -151,6 +164,7 @@ public class AggroRecyclerViewAdapter extends RecyclerView.Adapter<AggroRecycler
             coloredRatingBar = (ColoredRatingBar)itemView.findViewById(R.id.coloredRatingBar1);
             rel_fav = (RelativeLayout)itemView.findViewById(R.id.rel_fav_app);
             fav_star = (ImageView)itemView.findViewById(R.id.fav_star);
+            rel_add_app = (RelativeLayout)itemView.findViewById(R.id.rel_add_app);
             mImageLoader = CustomVolleyRequestQueue.getInstance(context.getApplicationContext())
                     .getImageLoader();
         }
@@ -159,6 +173,7 @@ public class AggroRecyclerViewAdapter extends RecyclerView.Adapter<AggroRecycler
 
     public interface CreateFav {
         public void addToFav(ChildItem childItem);
+        public void openApp(ChildItem childItem);
     }
 
 }

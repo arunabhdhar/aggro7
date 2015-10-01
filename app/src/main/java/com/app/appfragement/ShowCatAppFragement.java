@@ -21,6 +21,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.*;
 import android.view.Menu;
@@ -383,8 +384,10 @@ public class ShowCatAppFragement extends Fragment implements OnClick{
 
 
     private void loadApiGetMethod(String category){
+        TelephonyManager tm = (TelephonyManager)getActivity().getSystemService(getActivity().TELEPHONY_SERVICE);
+        String countryCodeValue = tm.getNetworkCountryIso();
         int limit = 5;
-        String country = "IN";
+        String country = countryCodeValue;
         RequestQueue mRequestQueue = Volley.newRequestQueue(getActivity());
         String url = "http://jarvisme.com/api/json1.php?" + "list_name=topselling_free"+ "&cat_key=" + category + "&country=" + country + "&limit=" + limit + "&page=" + count + "&access_token=" + getActivity().getResources().getString(R.string.aggro_access_token);
 //        String url = "https://42matters.com/api/1/apps/top_google_charts.json?" + "list_name=topselling_free"+ "&cat_key=" + category + "&country=" + country + "&limit=" + limit + "&page=" + count + "&access_token=" + getActivity().getResources().getString(R.string.aggro_access_token);
@@ -439,11 +442,12 @@ public class ShowCatAppFragement extends Fragment implements OnClick{
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                String errorMsg = VolleyErrorHelper.getMessage(error, getActivity());
+                System.out.println(error.getMessage());
+//                String errorMsg = VolleyErrorHelper.getMessage(error, getActivity());
 //                if (error.getLocalizedMessage().toString()!=null || !(error.getLocalizedMessage().toString().equals("null")))
 //                Log.e("EROOR MESSG","" + error.getLocalizedMessage().toString());
-                Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_LONG)
-                        .show();
+//                Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_LONG)
+//                        .show();
             }
         };
     }
@@ -618,6 +622,7 @@ public class ShowCatAppFragement extends Fragment implements OnClick{
     @Override
     public void downloadApp(int downloadId,AppList appList) {
         Utility.writePackageNameToPrefs(getActivity(), appList.getPackageName());
+        String appPackageName = appList.getPackageName();
         Utility.writePrefs(getActivity(), appList.getTitle(), getResources().getString(R.string.aggro_downloaded_app_name));
         Utility.writePrefs(getActivity(),appList.getCategory(),getResources().getString(R.string.aggro_downloaded_app_category));
         Utility.writePrefs(getActivity(),appList.getMarketUrl(),getResources().getString(R.string.aggro_downloaded_app_market_url));

@@ -19,6 +19,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.*;
 import android.view.Menu;
@@ -295,8 +296,10 @@ public class SearchAppFragement extends Fragment implements OnClick {
     }
 
     private void searchForApp(){
+        TelephonyManager tm = (TelephonyManager)getActivity().getSystemService(getActivity().TELEPHONY_SERVICE);
+        String countryCodeValue = tm.getNetworkCountryIso();
         int limit = 6;
-        String country = "IN";
+        String country = countryCodeValue;
         RequestQueue mRequestQueue = Volley.newRequestQueue(getActivity());
         String url = "http://jarvisme.com/api/search.php?q=" + edtSeach.getText().toString().trim() + "&limit=" + limit + "&page=" + count + "&access_token=" + getActivity().getResources().getString(R.string.aggro_access_token);
 
@@ -349,10 +352,11 @@ public class SearchAppFragement extends Fragment implements OnClick {
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                String errorMsg = VolleyErrorHelper.getMessage(error, getActivity());
-//                Log.e("EROOR MESSG","" + error.getMessage().toString());
-                Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_LONG)
-                        .show();
+                System.out.println(error.getMessage());
+//                String errorMsg = VolleyErrorHelper.getMessage(error, getActivity());
+////                Log.e("EROOR MESSG","" + error.getMessage().toString());
+//                Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_LONG)
+//                        .show();
             }
         };
     }
@@ -484,7 +488,6 @@ public class SearchAppFragement extends Fragment implements OnClick {
                         Toast.makeText(getActivity(), "App added successfully", Toast.LENGTH_LONG).show();
                         return;
                     }
-
                     else{
                         Toast.makeText(getActivity(), "OOPS something wrong happen please try again!!!", Toast.LENGTH_LONG).show();
                     }
@@ -499,11 +502,12 @@ public class SearchAppFragement extends Fragment implements OnClick {
         return new com.android.volley.Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                String errorMsg = VolleyErrorHelper.getMessage(error, getActivity());
+                System.out.println(error.getMessage());
+//                String errorMsg = VolleyErrorHelper.getMessage(error, getActivity());
 //                if (error.getLocalizedMessage().toString()!=null || !(error.getLocalizedMessage().toString().equals("null")))
 //                Log.e("EROOR MESSG","" + error.getLocalizedMessage().toString());
-                Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_LONG)
-                        .show();
+//                Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_LONG)
+//                        .show();
             }
         };
     }

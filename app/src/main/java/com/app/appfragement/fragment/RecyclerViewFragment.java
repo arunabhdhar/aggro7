@@ -1,6 +1,10 @@
 package com.app.appfragement.fragment;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.IInterface;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,24 +22,19 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.app.AppConstant;
+import com.app.Updateable;
 import com.app.Utility.Utility;
 import com.app.adapter.AggroRecyclerViewAdapter;
 import com.app.aggro.R;
 import com.app.aggro.Registration;
 import com.app.api.GsonRequest;
-import com.app.api.VolleyErrorHelper;
-import com.app.getterAndSetter.MyCategory;
 import com.app.getterAndSetter.MyToolBar;
-import com.app.gridcategory.ImageItem;
 import com.app.holder.ChildItem;
 import com.app.holder.GroupItem;
-import com.app.local.database.AggroCategory;
 import com.app.local.database.AppTracker;
-import com.app.modal.AppList;
 import com.github.florent37.materialviewpager.MaterialViewPagerHelper;
 import com.github.florent37.materialviewpager.adapter.RecyclerViewMaterialAdapter;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -51,9 +50,21 @@ public class RecyclerViewFragment extends Fragment {
 
     private GroupItem groupItem = new GroupItem();
 
+    Updateable updateable;
+    Context mContext;
+
+    public RecyclerViewFragment(){
+
+    }
+    public RecyclerViewFragment(Updateable updateable, Context mContext){
+        this.updateable = updateable;
+        this.mContext = mContext;
+    }
     public static RecyclerViewFragment newInstance() {
         return new RecyclerViewFragment();
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -74,12 +85,32 @@ public class RecyclerViewFragment extends Fragment {
             mAdapter = new RecyclerViewMaterialAdapter(new AggroRecyclerViewAdapter(preareList(), getActivity(), new AggroRecyclerViewAdapter.CreateFav() {
                 @Override
                 public void addToFav(ChildItem childItem) {
-                    addingAppToFav(childItem);
+//                    addingAppToFav(childItem);
+                    AppTracker appTracker = AppTracker.getSingleEntry(childItem.mPackageName);
+                    Log.e("PACJA","" + appTracker.packageName);
+                    if (childItem.isFavourite == 0){
+                        childItem.isFavourite = 1;
+                    }else{
+                        childItem.isFavourite = 0;
+                    }
+                    if (appTracker != null){
+                        appTracker.isFavourite = childItem.isFavourite;
+                        Log.e("APP TRACKER FRAGEMENT","" + appTracker.isFavourite);
+                        appTracker.save();
+                    }
+//                    MyToolBar.getMaterialViewPager().getViewPager().getAdapter().notifyDataSetChanged();
+                    MyToolBar.getMyFragmentAdapter().updateData();
+                    mAdapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void openApp(ChildItem childItem) {
+                     openDownloadedApp(childItem);
                 }
             }));
             mRecyclerView.setAdapter(mAdapter);
         }
-        createFavCat();
+//        createFavCat();
         MaterialViewPagerHelper.registerRecyclerView(getActivity(), mRecyclerView, null);
     }
 
@@ -96,13 +127,14 @@ public class RecyclerViewFragment extends Fragment {
             ChildItem childItem = new ChildItem();
             int k = i;
             AppTracker event;
-            event =  eventList.get(0);
+            event =  eventList.get(i);
 
             childItem.mAppIconUrl = event.appIconUrl;
             childItem.mAppCategory = event.catName;
             childItem.mAppname = event.appName;
             childItem.mRating = event.rating;
             childItem.mPackageName = event.packageName;
+            childItem.isFavourite = event.isFavourite;
             groupItem.items.add(childItem);
         }
 
@@ -138,7 +170,7 @@ public class RecyclerViewFragment extends Fragment {
 
 
     private Response.Listener<com.app.response.Response> createMyReqSuccessListener(final String nameOfCategory){
-        return new Response.Listener<com.app.response.Response>(){
+        return new Response.Listener<com.app.response.Response>() {
             @Override
             public void onResponse(com.app.response.Response respose) {
 
@@ -157,11 +189,12 @@ public class RecyclerViewFragment extends Fragment {
         return new Response.ErrorListener(){
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-                String errorMsg = VolleyErrorHelper.getMessage(volleyError, getActivity());
+                System.out.println(volleyError.getMessage());
+//                String errorMsg = VolleyErrorHelper.getMessage(volleyError, getActivity());
 //                if (error.getLocalizedMessage().toString()!=null || !(error.getLocalizedMessage().toString().equals("null")))
 //                Log.e("EROOR MESSG","" + error.getLocalizedMessage().toString());
-                Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_LONG)
-                        .show();
+//                Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_LONG)
+//                        .show();
 
             }
         };
@@ -194,8 +227,8 @@ public class RecyclerViewFragment extends Fragment {
         hm.put("appName",appList.mAppname);
         hm.put("iconurlkey",appList.mAppIconUrl);
         hm.put("category",appList.mAppCategory);
-        hm.put("appRating","" + appList.mRating);
-        hm.put("packagename",appList.mPackageName);
+        hm.put("appRating", "" + appList.mRating);
+        hm.put("packagename", appList.mPackageName);
         return hm;
     }
 
@@ -223,13 +256,32 @@ public class RecyclerViewFragment extends Fragment {
         return new com.android.volley.Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                String errorMsg = VolleyErrorHelper.getMessage(error, getActivity());
+                System.out.println(error.getMessage());
+//                String errorMsg = VolleyErrorHelper.getMessage(error, getActivity());
 //                if (error.getLocalizedMessage().toString()!=null || !(error.getLocalizedMessage().toString().equals("null")))
 //                Log.e("EROOR MESSG","" + error.getLocalizedMessage().toString());
-                Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_LONG)
-                        .show();
+//                Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_LONG)
+//                        .show();
             }
         };
+    }
+
+    public boolean openDownloadedApp(ChildItem appList) {
+        PackageManager manager = getActivity().getPackageManager();
+        try {
+            Intent i = manager.getLaunchIntentForPackage(appList.mPackageName);
+            if (i == null) {
+//                return false;
+                throw new PackageManager.NameNotFoundException();
+            }
+            i.addCategory(Intent.CATEGORY_LAUNCHER);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getActivity().startActivity(i);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }

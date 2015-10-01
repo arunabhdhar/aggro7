@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,11 +31,12 @@ public class favAdapter extends RecyclerView.Adapter<favAdapter.ItemViewHolder> 
     static final int TYPE_HEADER = 0;
     static final int TYPE_CELL = 1;
     private Context context;
-
-    public favAdapter(List<ChildItem> contents, Context context) {
+    CreateFav createFav;
+    public favAdapter(List<ChildItem> contents, Context context,final CreateFav createFav) {
         this.contents = contents;
         this.context = context;
-        int size = contents.size();
+        this.createFav = createFav;
+        Log.e("Content size","" + contents.size());
     }
 
     @Override
@@ -61,16 +63,22 @@ public class favAdapter extends RecyclerView.Adapter<favAdapter.ItemViewHolder> 
 
         switch (viewType) {
             case TYPE_HEADER: {
+//                view = LayoutInflater.from(parent.getContext())
+//                        .inflate(R.layout.list_item_card_big, parent, false);
+//                return new ItemViewHolder(view);
                 view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.list_item_card_big, parent, false);
-                return new ItemViewHolder(view);
+                        .inflate(R.layout.list_item_card_small, parent, false);
+                ItemViewHolder vh = new ItemViewHolder(view);
+                vh.rel_add_app.setTag(vh);
+                vh.rel_add_app.setOnClickListener(clickItemListener());
+                return vh;
             }
             case TYPE_CELL: {
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.list_item_card_small, parent, false);
                 ItemViewHolder vh = new ItemViewHolder(view);
-                vh.rel_fav.setTag(vh);
-                vh.rel_fav.setOnClickListener(clickItemListener());
+                vh.rel_add_app.setTag(vh);
+                vh.rel_add_app.setOnClickListener(clickItemListener());
                 return vh;
             }
         }
@@ -84,6 +92,7 @@ public class favAdapter extends RecyclerView.Adapter<favAdapter.ItemViewHolder> 
         int s =position;
         switch (getItemViewType(position)) {
             case TYPE_HEADER:
+                bindItemCardCell(position,holder);
                 break;
             case TYPE_CELL:
                 bindItemCardCell(position,holder);
@@ -91,13 +100,20 @@ public class favAdapter extends RecyclerView.Adapter<favAdapter.ItemViewHolder> 
         }
     }
 
-    private void bindItemCardCell(int position,ItemViewHolder holder){
+    private void bindItemCardCell(int position,ItemViewHolder holder) {
 
-        Log.e("fedf","" + "d ");
-            holder.mAppImageView.setImageUrl(contents.get(position).mAppIconUrl,holder.mImageLoader);
+            Log.e("fedf", "" + "d ");
+             String appname = contents.get(position).mAppname;
+            holder.mAppImageView.setImageUrl(contents.get(position).mAppIconUrl, holder.mImageLoader);
             holder.mAppName.setText(contents.get(position).mAppname);
             holder.mAppCategory.setText(contents.get(position).mAppCategory);
             holder.coloredRatingBar.setRating(contents.get(position).mRating);
+
+        if (contents.get(position).isFavourite == 0){
+            holder.fav_star.setImageResource(R.mipmap.star_green);
+        }else{
+            holder.fav_star.setImageResource(R.mipmap.star_orange);
+        }
     }
 
 
@@ -108,10 +124,10 @@ public class favAdapter extends RecyclerView.Adapter<favAdapter.ItemViewHolder> 
             public void onClick(View view) {
                 ItemViewHolder holder = (ItemViewHolder) view.getTag();
                 int id = holder.getPosition();
-                if (view.getId() == holder.rel_fav.getId()){
+                if (view.getId() == holder.rel_add_app.getId()){
                     id = id- 1;
 //                    Toast.makeText(mContext, "imageIV onClick at" + id, Toast.LENGTH_SHORT).show();
-//                    openApp();
+                     createFav.openApp(contents.get(id));
 
                 } else {
                     Toast.makeText(context, "RecyclerView Item onClick at " + id, Toast.LENGTH_SHORT).show();
@@ -130,16 +146,19 @@ public class favAdapter extends RecyclerView.Adapter<favAdapter.ItemViewHolder> 
         CardView card_view;
         ImageLoader mImageLoader;
         ColoredRatingBar coloredRatingBar;
-        RelativeLayout rel_fav;
+        RelativeLayout rel_fav,rel_add_app;
+        ImageView fav_star;
         public ItemViewHolder(View convertView){
             super(convertView);
             card_view = (CardView)convertView.findViewById(R.id.card_view);
             mAppImageView = (NetworkImageView) convertView
                     .findViewById(R.id.app_icon);
-            mAppName = (TextView)convertView.findViewById(R.id.app_name);
+            mAppName = (TextView) convertView.findViewById(R.id.app_name);
             mAppCategory = (TextView)convertView.findViewById(R.id.app_cat);
             coloredRatingBar = (ColoredRatingBar)itemView.findViewById(R.id.coloredRatingBar1);
             rel_fav = (RelativeLayout)itemView.findViewById(R.id.rel_fav_app);
+            rel_add_app = (RelativeLayout)itemView.findViewById(R.id.rel_add_app);
+            fav_star = (ImageView)itemView.findViewById(R.id.fav_star);
             mImageLoader = CustomVolleyRequestQueue.getInstance(context.getApplicationContext())
                     .getImageLoader();
         }
@@ -147,7 +166,7 @@ public class favAdapter extends RecyclerView.Adapter<favAdapter.ItemViewHolder> 
     }
 
     public interface CreateFav {
-        public void addToFav(ChildItem childItem);
+        public void openApp(ChildItem childItem);
     }
 
 }

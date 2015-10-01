@@ -24,6 +24,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.app.AppConstant;
 import com.app.OnClick;
+import com.app.OnCustomCategoryItemClick;
 import com.app.Utility.Utility;
 import com.app.adapter.SimpleAdapter;
 import com.app.adapter.SimpleCustomAdapter;
@@ -54,7 +55,7 @@ import java.util.List;
  * Use the {@link CustomAppFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CustomAppFragment extends Fragment implements OnClick {
+public class CustomAppFragment extends Fragment implements OnCustomCategoryItemClick {
     // TODO: Rename parameter arguments, choose names that match
 
     // TODO: Rename and change types of parameters
@@ -328,10 +329,10 @@ public class CustomAppFragment extends Fragment implements OnClick {
                         CustomMsg appList = lists.get(i);
                         String appname = appList.getPackagename();
                         Log.e("APPNAMe", "" + appname);
-//                        if (createLocalTraceOfApp(appList))
-//                            appList.setIsInstalled(true);
-//                        else
-//                            appList.setIsInstalled(false);
+                        if (createLocalTraceOfApp(appList))
+                            appList.setIsInstalled(true);
+                        else
+                            appList.setIsInstalled(false);
                         simpleRecyclerViewAdapter.insert(appList, simpleRecyclerViewAdapter.getAdapterItemCount());
                         simpleRecyclerViewAdapter.notifyDataSetChanged();
                     }
@@ -347,23 +348,24 @@ public class CustomAppFragment extends Fragment implements OnClick {
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                String errorMsg = VolleyErrorHelper.getMessage(error, getActivity());
+                System.out.println(error.getMessage());
+//                String errorMsg = VolleyErrorHelper.getMessage(error, getActivity());
 //                if (error.getLocalizedMessage().toString()!=null || !(error.getLocalizedMessage().toString().equals("null")))
 //                Log.e("EROOR MESSG","" + error.getLocalizedMessage().toString());
-                Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_LONG)
-                        .show();
+//                Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_LONG)
+//                        .show();
             }
         };
     }
 
-    public boolean createLocalTraceOfApp(AppList appList){
-        AppTracker appTracker = AppTracker.getSingleEntry(appList.getPackageName());
+    public boolean createLocalTraceOfApp(CustomMsg appList){
+        AppTracker appTracker = AppTracker.getSingleEntry(appList.getPackagename());
         if (appTracker!=null){
             AppTracker appLocalTracker = appTracker.load(AppTracker.class,appTracker.getId());
-            appLocalTracker.appName = appList.getTitle();
+            appLocalTracker.appName = appList.getAppName();
             appLocalTracker.catName = appList.getCategory();
-            appLocalTracker.packageName = appList.getPackageName();
-            appLocalTracker.appIconUrl = appList.getIcon();
+            appLocalTracker.packageName = appList.getPackagename();
+            appLocalTracker.appIconUrl = appList.getIconLink();
             appLocalTracker.isInstalled = appTracker.isInstalled;
             appLocalTracker.rating = appTracker.rating;
             appLocalTracker.save();
@@ -387,24 +389,24 @@ public class CustomAppFragment extends Fragment implements OnClick {
     Interface listener for Adding app
      */
     @Override
-    public void downloadApp(int downloadId,AppList appList) {
-        Utility.writePackageNameToPrefs(getActivity(), appList.getPackageName());
-        Utility.writePrefs(getActivity(), appList.getTitle(), getResources().getString(R.string.aggro_downloaded_app_name));
+    public void downloadApp(int downloadId,CustomMsg appList) {
+        Utility.writePackageNameToPrefs(getActivity(), appList.getPackagename());
+        Utility.writePrefs(getActivity(), appList.getAppName(), getResources().getString(R.string.aggro_downloaded_app_name));
         Utility.writePrefs(getActivity(),appList.getCategory(),getResources().getString(R.string.aggro_downloaded_app_category));
-        Utility.writePrefs(getActivity(),appList.getMarketUrl(),getResources().getString(R.string.aggro_downloaded_app_market_url));
-        Utility.writePrefs(getActivity(), appList.getIcon(), getResources().getString(R.string.aggro_downloaded_app_icon_url));
+        Utility.writePrefs(getActivity(),appList.getPackagename(),getResources().getString(R.string.aggro_downloaded_app_market_url));
+        Utility.writePrefs(getActivity(), appList.getIconLink(), getResources().getString(R.string.aggro_downloaded_app_icon_url));
         Utility.writeBooleaenPrefs(getActivity(), appList.isInstalled(), getResources().getString(R.string.aggro_is_app_downloaded));
-        Utility.writeRatingToPrefs(getActivity(),appList.getRating().floatValue(),getResources().getString(R.string.aggro_app_rating));
+        Utility.writeRatingToPrefs(getActivity(),appList.getAppRating().floatValue(),getResources().getString(R.string.aggro_app_rating));
 //        Category category = new Category(getActivity());
 //        category.setMyEnum(aggroCategory);
-        launchPlayStore(appList.getPackageName());
+        launchPlayStore(appList.getPackagename());
     }
 
     @Override
-    public boolean openApp(AppList appList) {
+    public boolean openApp(CustomMsg appList) {
         PackageManager manager = getActivity().getPackageManager();
         try {
-            Intent i = manager.getLaunchIntentForPackage(appList.getPackageName());
+            Intent i = manager.getLaunchIntentForPackage(appList.getPackagename());
             if (i == null) {
 //                return false;
                 throw new PackageManager.NameNotFoundException();
@@ -420,7 +422,7 @@ public class CustomAppFragment extends Fragment implements OnClick {
     }
 
     @Override
-    public void createCustomcategory(AppList appList) {
+    public void createCustomcategory(CustomMsg appList) {
 
     }
 

@@ -44,8 +44,10 @@ public class Utility {
     }
 
     private static void hideSoftKeyboard(Context activity) {
-        InputMethodManager inputMethodManager = (InputMethodManager)  activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(((Activity)activity).getCurrentFocus().getWindowToken(), 0);
+        if(activity != null){
+            InputMethodManager inputMethodManager = (InputMethodManager)  activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(((Activity)activity).getCurrentFocus().getWindowToken(), 0);
+        }
     }
 
     public static void writeUserInfoToPrefs(Context mContext,String name, String userName,String email,String gender,String location,String age){

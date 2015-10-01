@@ -93,7 +93,7 @@
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:background="#003165"
-        android:layout_alignParentBottom="true">
+        android:layout_above="@+id/include_baneer">
 
         <TextView
             android:layout_width="wrap_content"
@@ -108,5 +108,13 @@
             />
 
     </RelativeLayout>
+
+    <include
+        android:id="@+id/include_baneer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        layout="@layout/banner" />
+
 
 </RelativeLayout>
