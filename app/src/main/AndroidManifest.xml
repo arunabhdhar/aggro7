@@ -1,32 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.app.aggro">
+    package="com.app.aggro" >
+
+    <uses-sdk android:minSdkVersion="11"/>
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_DOWNLOAD_MANAGER" />
 
-    <uses-permission android:name="android.permission.ACCESS_DOWNLOAD_MANAGER">
-    </uses-permission>
+        <uses-permission android:name="android.permission.WAKE_LOCK" />
+        <uses-permission android:name="android.permission.VIBRATE" />
+        <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+        <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+
+
+        <!--
+          IMPORTANT: Change "info.androidhive.parsenotifications.permission.C2D_MESSAGE" in the lines below
+          to match your app's package name + ".permission.C2D_MESSAGE".
+        -->
+        <permission
+            android:name="com.app.aggro.permission.C2D_MESSAGE"
+            android:protectionLevel="signature" />
+
+        <uses-permission android:name="com.app.aggro.permission.C2D_MESSAGE" />
+
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/logo"
         android:label="@string/app_name"
+        android:persistent="true"
         android:theme="@style/AppTheme"
-        tools:replace="name,icon,label,theme"
-        android:persistent="true">
+        tools:replace="name,icon,label,theme" >
         <meta-data
             android:name="AA_MODELS"
             android:value="com.myapp.model.Event" />
+
         <activity
             android:name=".Registration"
             android:label="@string/app_name"
-            android:windowSoftInputMode="stateHidden"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:windowSoftInputMode="stateHidden" >
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,55 +55,116 @@
             </intent-filter>
 
         </activity>
-
         <activity
             android:name=".Menu"
+            android:excludeFromRecents="true"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:taskAffinity=""
-            android:excludeFromRecents="true"
-            android:theme="@style/AppTheme">
-<!--
+            android:theme="@style/AppTheme" >
+
+            <!--
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
--->
+            -->
 
         </activity>
-
-
-
-
         <activity
             android:name="com.app.test.RevealActivity"
             android:label="@string/app_name"
-            android:theme="@style/RevealTheme">
+            android:theme="@style/RevealTheme" >
         </activity>
 
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main" >
 
-        <receiver android:name="com.app.aggro.PackageChangeReceiver" >
+
+        </activity>
+
+        <receiver android:name=".PackageChangeReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_ADDED" />
+
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".UninstallApkReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+
                 <data android:scheme="package" />
             </intent-filter>
         </receiver>
 
-        <receiver android:name="com.app.aggro.UninstallApkReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_REMOVED"/>
-                <data android:scheme="package"/>
-            </intent-filter>
-        </receiver>
-
-
-        <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version"/>
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
         <activity
             android:name="com.google.android.gms.ads.AdActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:theme="@android:style/Theme.Translucent"/>
+
+        <!-- Enable background dispatching to improve delivery on non-Google Play devices -->
+        <receiver
+            android:name="com.google.android.gms.analytics.AnalyticsReceiver"
+            android:enabled="true" >
+            <intent-filter>
+                <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="com.google.android.gms.analytics.AnalyticsService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <!-- Enable Google Play Store Campaign reports -->
+        <receiver
+            android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="com.google.android.gms.analytics.CampaignTrackingService"
+            android:enabled="true" />
+
+        <receiver
+            android:name="com.app.aggro.App42GCMReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+
+                <!-- Receives the actual messages. -->
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <!-- Receives the registration id. -->
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+                <!-- Your package name here -->
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
+                <!-- Your package name here -->
+                <category android:name="com.app.aggro" />
+            </intent-filter>
+        </receiver>
+
+        <!--
+          Application-specific subclass of intentService that will
+          handle received messages.
+        -->
+        <service android:name="com.app.aggro.App42GCMService" >
+        </service>
+
+        <meta-data
+            android:name="onMessageOpen"
+            android:value="com.app.aggro.MainActivity" />
+
 
     </application>
 

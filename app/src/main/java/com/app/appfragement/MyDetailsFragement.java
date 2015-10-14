@@ -2,11 +2,19 @@ package com.app.appfragement;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.method.KeyListener;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -26,9 +34,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.Utility.Utility;
+import com.app.aggro.MainActivity;
+import com.app.aggro.MyApplication;
 import com.app.aggro.R;
 import com.app.aggro.Registration;
+import com.app.local.database.UserInfo;
+import com.app.response.Msg;
 import com.app.spinneradapter.NothingSelectedSpinnerAdapter;
+import com.google.android.gms.analytics.HitBuilders;
+
+import java.util.List;
 
 /**
  * A simple {@link android.support.v4.app.Fragment} subclass.
@@ -47,6 +62,7 @@ public class MyDetailsFragement extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private String gender;
 
     private OnFragmentInteractionListener mListener;
 
@@ -62,10 +78,8 @@ public class MyDetailsFragement extends Fragment {
     private ImageView img_name, img_age, img_gender, img_location, img_email;
     private Button btn_update;
 
-    private MenuItem mSearchAction;
-    private boolean isSearchOpened = false;
-    private EditText edtSeach;
-
+    CoordinatorLayout rootLayout;
+    Toolbar toolbar;
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -103,6 +117,10 @@ public class MyDetailsFragement extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_my_details_fragement, container, false);
+
+        MyApplication.tracker().setScreenName("My Detail  Tab");
+        MyApplication.tracker().send(new HitBuilders.ScreenViewBuilder().build());
+        initInstances(rootView);
         init(rootView);
         setFontOnViewLoaded();
 
@@ -117,86 +135,45 @@ public class MyDetailsFragement extends Fragment {
         return rootView;
     }
 
-    @Override
-    public void onCreateOptionsMenu(android.view.Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_main, menu);
-        super.onCreateOptionsMenu(menu, inflater);
+
+    private void initInstances(View view) {
+
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        toolbar.setTitle("Aggro");
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fragmentManager = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
+                FragmentTransaction ft = fragmentManager.beginTransaction();
+                MainActivity.fragmentStack.lastElement().onPause();
+                ft.remove(MainActivity.fragmentStack.pop());
+                MainActivity.fragmentStack.lastElement().onResume();
+                ft.show(MainActivity.fragmentStack.lastElement());
+                ft.commit();
+            }
+        });
+        rootLayout = (CoordinatorLayout) view.findViewById(R.id.htab_maincontent);
+
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    @Override
-    public void onPrepareOptionsMenu(android.view.Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-        mSearchAction = menu.findItem(R.id.action_search);
+    public void selectsearchAppFragement(String local, String level) {
+        // update the main content by replacing fragments
+        Fragment fragment = SearchAppFragement.newInstance("", "");
+        android.support.v4.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        android.support.v4.app.FragmentTransaction transaction  = fragmentManager.beginTransaction();
+//        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack so the user can navigate back
+        transaction.replace(R.id.main_content, fragment);
+        transaction.addToBackStack(null);
+
+        // Commit the transaction
+        transaction.commit();
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.action_settings:
-                return true;
-            case R.id.action_search:
-                handleMenuSearch();
-                return true;
-        }
-
-        return false;
-    }
-
-    protected void handleMenuSearch(){
-        ActionBar action = ((AppCompatActivity)getActivity()).getSupportActionBar(); //get the actionbar
-
-        if(isSearchOpened){ //test if the search is open
-
-            action.setDisplayShowCustomEnabled(false); //disable a custom view inside the actionbar
-            action.setDisplayShowTitleEnabled(true); //show the title in the action bar
-
-            //hides the keyboard
-            InputMethodManager inputMethodManager = (InputMethodManager)  getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-            inputMethodManager.hideSoftInputFromWindow(((Activity)getActivity()).getCurrentFocus().getWindowToken(), 0);
-
-            //add the search icon in the action bar
-            mSearchAction.setIcon(getResources().getDrawable(R.drawable.ic_open_search));
-
-            isSearchOpened = false;
-        } else { //open the search entry
-
-            action.setDisplayShowCustomEnabled(true); //enable it to display a
-            // custom view in the action bar.
-            action.setCustomView(R.layout.search_bar);//add the custom view
-            action.setDisplayShowTitleEnabled(false); //hide the title
-
-            edtSeach = (EditText)action.getCustomView().findViewById(R.id.edtSearch); //the text editor
-
-            //this is a listener to do a search when the user clicks on search button
-            edtSeach.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                @Override
-                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                        doSearch();
-                        return true;
-                    }
-                    return false;
-                }
-            });
-
-            edtSeach.requestFocus();
-
-            //open the keyboard focused in the edtSearch
-            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(edtSeach, InputMethodManager.SHOW_IMPLICIT);
-
-            //add the close icon
-            mSearchAction.setIcon(getResources().getDrawable(R.mipmap.ic_action));
-
-            isSearchOpened = true;
-        }
-    }
-
-    private void doSearch() {
-        Toast.makeText(getActivity(), "LENGTH", Toast.LENGTH_LONG).show();
-    }
-
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -279,16 +256,21 @@ public class MyDetailsFragement extends Fragment {
     }
 
     private void setDummyDataOnLoad(){
-        name_ed.setText(Utility.readUserInfoFromPrefs(getActivity(),getString(R.string.username)));
-        age_ed.setText(Utility.readUserInfoFromPrefs(getActivity(),getString(R.string.age)));
-        location_ed.setText(Utility.readUserInfoFromPrefs(getActivity(), getString(R.string.location)));
-        email_ed.setText(Utility.readUserInfoFromPrefs(getActivity(), getString(R.string.email)));
-        makeSpinnerActivate();
-        if (Utility.readUserInfoFromPrefs(getActivity(),getString(R.string.gender)).equals("M"))
-            gender_sp.setSelection(0);
-        else
-            gender_sp.setSelection(1);
-        gender_sp.setEnabled(false);
+        UserInfo userInfo = UserInfo.getRandom();
+        if (userInfo != null){
+            name_ed.setText(userInfo.userName);
+            age_ed.setText(userInfo.age);
+            location_ed.setText(userInfo.location);
+            email_ed.setText(userInfo.email);
+            makeSpinnerActivate();
+            if (userInfo.geneder.equals("M"))
+                gender_sp.setSelection(0);
+            else
+                gender_sp.setSelection(1);
+            gender_sp.setEnabled(false);
+        }
+
+
     }
 
     private void makeActive(EditText ed){
@@ -322,28 +304,6 @@ public class MyDetailsFragement extends Fragment {
         gender_sp.setOnItemSelectedListener(new SystemSpinner());
     }
 
-    private void selectItem(int item) {
-        // update the main content by replacing fragments
-        Fragment fragment = null;
-        if (item == 1){
-            fragment = com.app.appfragement.Menu.newInstance("", item);
-        }else if (item == 2){
-            fragment = com.app.appfragement.Menu.newInstance("", item);
-        }
-        else {
-            fragment = com.app.appfragement.Menu.newInstance("", item);
-        }
-        android.support.v4.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        android.support.v4.app.FragmentTransaction transaction  = fragmentManager.beginTransaction();
-//        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
-        // Replace whatever is in the fragment_container view with this fragment,
-        // and add the transaction to the back stack so the user can navigate back
-        transaction.replace(R.id.content_frame, fragment);
-        transaction.addToBackStack(null);
-
-        // Commit the transaction
-        transaction.commit();
-    }
 
     /**
      * An inner class that will that handle
@@ -359,9 +319,11 @@ public class MyDetailsFragement extends Fragment {
             switch (position) {
                 case 0:
                     //Male Selection
+                    gender = "M";
                     break;
                 case 1:
                     //Female Selection
+                    gender = "F";
                     break;
                 default:
                     break;
@@ -398,12 +360,14 @@ public class MyDetailsFragement extends Fragment {
                    break;
                case R.id.imageView_email:
                    //Edit email
-                   makeActive(email_ed);
+//                   makeActive(email_ed);
                    break;
 
                case R.id.update:
                    //Edit email
-                 selectItem(0);
+                   saveUserInfo();
+                  startActivity(new Intent(getActivity(), com.app.aggro.MainActivity.class));
+                   getActivity().finish();
                    break;
 
                default:
@@ -413,4 +377,17 @@ public class MyDetailsFragement extends Fragment {
         }
     };
 
+    private void saveUserInfo(){
+
+        UserInfo userInfo = UserInfo.getRandom();
+        if (userInfo != null){
+            userInfo.userName = name_ed.getText().toString();
+            userInfo.age = age_ed.getText().toString().trim();
+            userInfo.location = location_ed.getText().toString();
+            userInfo.geneder = gender;
+
+            userInfo.save();
+        }
+
+    }
 }

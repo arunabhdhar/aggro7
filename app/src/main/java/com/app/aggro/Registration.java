@@ -3,13 +3,18 @@ package com.app.aggro;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.os.Build;
+import android.os.NetworkOnMainThreadException;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -32,20 +37,28 @@ import com.app.Validator.InputValidator;
 import com.app.address.User;
 import com.app.api.GsonRequest;
 import com.app.api.VolleyErrorHelper;
+import com.app.error.Generic;
 import com.app.gps.GPSTracker;
 import com.app.gridcategory.ImageItem;
 import com.app.local.database.AggroCategory;
 import com.app.local.database.AppTracker;
+import com.app.local.database.UserInfo;
 import com.app.response.Msg;
 import com.app.response.RegisterResponse;
 import com.app.spinneradapter.NothingSelectedSpinnerAdapter;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.parse.ParseAnalytics;
 
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class Registration extends Activity {
     private AdView mAdView;
@@ -61,16 +74,14 @@ public class Registration extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (!Utility.readUserInfoFromPrefs(mContext,getResources().getString(R.string.username)).equals("")){
+        if (UserInfo.getRandom() != null){
             count = count + 1;
-            startActivity(new Intent(Registration.this, com.app.aggro.Menu.class));
+            startActivity(new Intent(Registration.this, com.app.aggro.MainActivity.class));
             finish();
             return;
         }
 
         setContentView(R.layout.activity_registration);
-        new Utility().setupUI(findViewById(R.id.reg), Registration.this);
         init();
         saveCategoryInDatabaseFirstTime();
         initLocalApptracer();
@@ -80,11 +91,12 @@ public class Registration extends Activity {
     }
 
 
+
     @Override
     protected void onPause() {
         super.onPause();
-        if (gpsTracker != null)
-        gpsTracker.stopUsingGPS();
+//        if (gpsTracker != null)
+//        gpsTracker.stopUsingGPS();
 
         if (mAdView != null) {
             mAdView.pause();
@@ -96,6 +108,7 @@ public class Registration extends Activity {
     public void onResume() {
         super.onResume();
 
+        GooglePlayServicesUtil.isGooglePlayServicesAvailable(Registration.this);
         if (mAdView != null) {
             mAdView.resume();
         }
@@ -130,6 +143,48 @@ public class Registration extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if(ev.getAction() == MotionEvent.ACTION_UP) {
+            final View view = getCurrentFocus();
+
+            if(view != null) {
+                final boolean consumed = super.dispatchTouchEvent(ev);
+
+                final View viewTmp = getCurrentFocus();
+                final View viewNew = viewTmp != null ? viewTmp : view;
+
+                if(viewNew.equals(view)) {
+                    final Rect rect = new Rect();
+                    final int[] coordinates = new int[2];
+
+                    view.getLocationOnScreen(coordinates);
+
+                    rect.set(coordinates[0], coordinates[1], coordinates[0] + view.getWidth(), coordinates[1] + view.getHeight());
+
+                    final int x = (int) ev.getX();
+                    final int y = (int) ev.getY();
+
+                    if(rect.contains(x, y)) {
+                        return consumed;
+                    }
+                }
+                else if(viewNew instanceof EditText) {
+                    return consumed;
+                }
+
+                final InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                inputMethodManager.hideSoftInputFromWindow(viewNew.getWindowToken(), 0);
+
+                viewNew.clearFocus();
+
+                return consumed;
+            }
+        }
+        return super.dispatchTouchEvent(ev);
     }
 
     private void init() {
@@ -277,22 +332,22 @@ public class Registration extends Activity {
     }
 
     private void trackLocation(){
-            if (gpsTracker.canGetLocation())
-            {
-                boolean getLocation = gpsTracker.canGetLocation();
-                User user = gpsTracker.getAddress(Registration.this,gpsTracker.getLatitude(), gpsTracker.getLongitude());
-                location_ed.setText(user.city);
-            }
-            else
-            {
-                // can't get location
-                // GPS or Network is not enabled
-                // Ask user to enable GPS/network in settings
+//            if (gpsTracker.canGetLocation())
+//            {
+//                boolean getLocation = gpsTracker.canGetLocation();
+//                User user = gpsTracker.getAddress(Registration.this,gpsTracker.getLatitude(), gpsTracker.getLongitude());
+//                location_ed.setText(user.city);
+//            }
+//            else
+//            {
+//                // can't get location
+//                // GPS or Network is not enabled
+//                // Ask user to enable GPS/network in settings
+//
+//                gpsTracker.showSettingsAlert();
+//            }
 
-                gpsTracker.showSettingsAlert();
-            }
-
-//        location_ed.setText("Patna");
+        location_ed.setText("Patna");
 
 
     }
@@ -419,8 +474,9 @@ public class Registration extends Activity {
                 int status = registerResponse.getStatus();
                 if (registerResponse.getStatus() == 1){
                     List<Msg> msgList = registerResponse.getMsg();
-                    Utility.writeUserInfoToPrefs(mContext, msgList.get(0).getFirstName(), msgList.get(0).getUserName().toString(), msgList.get(0).getEmail().toString().trim(), gender, msgList.get(0).getLocation().toString(), age_ed.getText().toString());
-                    startActivity(new Intent(Registration.this, com.app.aggro.Menu.class));
+                    saveUserInfo(msgList);
+//                    Utility.writeUserInfoToPrefs(mContext, msgList.get(0).getFirstName(), msgList.get(0).getUserName().toString(), msgList.get(0).getEmail().toString().trim(), gender, msgList.get(0).getLocation().toString(), age_ed.getText().toString());
+                    startActivity(new Intent(Registration.this, com.app.aggro.MainActivity.class));
                     finish();
 
                 }
@@ -433,13 +489,28 @@ public class Registration extends Activity {
         return new Response.ErrorListener(){
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-                String errorMsg = VolleyErrorHelper.getMessage(volleyError, mContext);
+//                String errorMsg = VolleyErrorHelper.getMessage(volleyError, mContext);
 //                if (error.getLocalizedMessage().toString()!=null || !(error.getLocalizedMessage().toString().equals("null")))
 //                Log.e("EROOR MESSG","" + error.getLocalizedMessage().toString());
-                Toast.makeText(mContext, errorMsg, Toast.LENGTH_LONG)
+                Toast.makeText(mContext, volleyError.getMessage(), Toast.LENGTH_LONG)
                         .show();
 
             }
         };
+    }
+
+    private void saveUserInfo(List<Msg> msgList){
+
+        UserInfo userInfo = new UserInfo();
+        userInfo.name = msgList.get(0).getFirstName();
+        userInfo.userName = msgList.get(0).getUserName().toString();
+        userInfo.email = msgList.get(0).getEmail().toString();
+        userInfo.age = age_ed.getText().toString().trim();
+        userInfo.location = msgList.get(0).getLocation().toString();
+        userInfo.geneder = gender;
+        userInfo.isNotificationEnabled = true;
+        userInfo.wifiEnabledDownload = false;
+        userInfo.downloadWhileCharging = false;
+        userInfo.save();
     }
 }

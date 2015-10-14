@@ -3,6 +3,8 @@ package com.app.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -13,9 +15,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.aggro.MainActivity;
 import com.app.aggro.R;
 import com.app.api.Category;
 import com.app.appfragement.CustomAppFragment;
+import com.app.appfragement.SearchAppFragement;
 import com.app.appfragement.ShowCatAppFragement;
 import com.app.getterAndSetter.MyCategory;
 import com.app.gridcategory.ImageItem;
@@ -124,37 +128,56 @@ public class AggroRecyclerGridViewAdapter extends RecyclerView.Adapter<AggroRecy
 
     private void selectshowCatApp(String local, Category.AggroCategory level) {
         // update the main content by replacing fragments
+//        Fragment fragment = ShowCatAppFragement.newInstance(local, level);
+//        android.support.v4.app.FragmentManager fragmentManager = ((AppCompatActivity)mContext).getSupportFragmentManager();
+//        android.support.v4.app.FragmentTransaction transaction  = fragmentManager.beginTransaction();
+////        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
+//        // Replace whatever is in the fragment_container view with this fragment,
+//        // and add the transaction to the back stack so the user can navigate back
+//        transaction.add(R.id.main_content, fragment);
+//        transaction.addToBackStack(null);
+//
+//        // Commit the transaction
+//        transaction.commit();
+//
+//        ((Activity)mContext).invalidateOptionsMenu();
+
         Fragment fragment = ShowCatAppFragement.newInstance(local, level);
-        android.support.v4.app.FragmentManager fragmentManager = ((AppCompatActivity)mContext).getSupportFragmentManager();
-        android.support.v4.app.FragmentTransaction transaction  = fragmentManager.beginTransaction();
-//        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
-        // Replace whatever is in the fragment_container view with this fragment,
-        // and add the transaction to the back stack so the user can navigate back
-        transaction.add(R.id.content_frame, fragment);
-        transaction.addToBackStack(null);
-
-        // Commit the transaction
-        transaction.commit();
-
-        ((Activity)mContext).invalidateOptionsMenu();
+        FragmentManager fragmentManager = ((AppCompatActivity)mContext).getSupportFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.add(R.id.main_content, fragment);
+        MainActivity.fragmentStack.lastElement().onPause();
+        ft.hide(MainActivity.fragmentStack.lastElement());
+        MainActivity.fragmentStack.push(fragment);
+        ft.commit();
     }
 
 
     private void selectCustomCategoryApp(String local){
         // update the main content by replacing fragments
+//        Fragment fragment = CustomAppFragment.newInstance(local);
+//        android.support.v4.app.FragmentManager fragmentManager = ((AppCompatActivity)mContext).getSupportFragmentManager();
+//        android.support.v4.app.FragmentTransaction transaction  = fragmentManager.beginTransaction();
+////        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
+//        // Replace whatever is in the fragment_container view with this fragment,
+//        // and add the transaction to the back stack so the user can navigate back
+//        transaction.add(R.id.main_content, fragment);
+//        transaction.addToBackStack(null);
+//
+//        // Commit the transaction
+//        transaction.commit();
+//
+//        ((Activity)mContext).invalidateOptionsMenu();
+
+
         Fragment fragment = CustomAppFragment.newInstance(local);
-        android.support.v4.app.FragmentManager fragmentManager = ((AppCompatActivity)mContext).getSupportFragmentManager();
-        android.support.v4.app.FragmentTransaction transaction  = fragmentManager.beginTransaction();
-//        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
-        // Replace whatever is in the fragment_container view with this fragment,
-        // and add the transaction to the back stack so the user can navigate back
-        transaction.add(R.id.content_frame, fragment);
-        transaction.addToBackStack(null);
-
-        // Commit the transaction
-        transaction.commit();
-
-        ((Activity)mContext).invalidateOptionsMenu();
+        FragmentManager fragmentManager = ((AppCompatActivity)mContext).getSupportFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.add(R.id.main_content, fragment);
+        MainActivity.fragmentStack.lastElement().onPause();
+        ft.hide(MainActivity.fragmentStack.lastElement());
+        MainActivity.fragmentStack.push(fragment);
+        ft.commit();
     }
     private void selectItem(String category) {
         // update the main content by replacing fragments

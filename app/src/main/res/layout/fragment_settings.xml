@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/htab_maincontent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_background"
+    tools:ignore="MissingPrefix"
+    android:fitsSystemWindows="true">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapsingToolbarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:expandedTitleTextAppearance="@android:color/transparent"
+            app:titleEnabled="false"
+            app:contentScrim="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:minHeight="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                android:background="?attr/colorPrimary"
+                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+        </android.support.design.widget.CollapsingToolbarLayout>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/text1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                fontPath="fonts/Helvetica Neue CE 75 Bold.ttf"
+                android:textSize="12sp"
+                android:text="@string/setting_show_notification"/>
+
+            <TextView
+                android:id="@+id/text2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/text1"
+                fontPath="fonts/Helvetica Neue CE 55 Roman.ttf"
+                android:textSize="10sp"
+                android:text="@string/setting_show_notify"/>
+
+            <com.app.Utility.AnimCheckBox
+                android:id="@+id/checkbox_notification"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="20dp"
+                android:layout_margin="1dp"
+                android:layout_height="20dp"
+                app:stroke_width="1dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                app:stroke_color="#1976D2"
+                app:circle_color="#ffffff"/>
+        </RelativeLayout>
+
+
+
+        <TextView
+            android:id="@+id/text3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#1976D2"
+            android:layout_marginTop="@dimen/lib_cell_image_margin_bottom"
+            fontPath="fonts/Roboto-Bold.ttf"
+            android:text="@string/settings_dwnld"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/lib_cell_image_margin_bottom">
+
+            <TextView
+                android:id="@+id/dwn_wifi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                fontPath="fonts/Helvetica Neue CE 75 Bold.ttf"
+                android:text="@string/settings_dwnld_wifi_only"/>
+
+            <TextView
+                android:id="@+id/settings_dwnld_wifi_info"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/dwn_wifi"
+                android:textSize="10sp"
+                fontPath="fonts/Helvetica Neue CE 55 Roman.ttf"
+                android:layout_alignParentLeft="true"
+                android:text="@string/settings_dwnld_wifi_info"/>
+
+            <com.app.Utility.AnimCheckBox
+                android:id="@+id/dwn_wifi_check"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="20dp"
+                android:layout_margin="1dp"
+                android:layout_height="20dp"
+                app:stroke_width="1dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                app:stroke_color="#1976D2"
+                app:circle_color="#ffffff"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/lib_cell_image_margin_bottom">
+
+            <TextView
+                android:id="@+id/dwn_charginf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                fontPath="fonts/Helvetica Neue CE 75 Bold.ttf"
+                android:textSize="12sp"
+                android:text="@string/settings_dwnld_charging_only"/>
+
+            <TextView
+                android:id="@+id/settings_dwnld_charger_info"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/dwn_charginf"
+                android:textSize="10sp"
+                fontPath="fonts/Helvetica Neue CE 55 Roman.ttf"
+                android:layout_alignParentLeft="true"
+                android:text="@string/settings_dwnld_charginf_info"/>
+
+            <com.app.Utility.AnimCheckBox
+                android:id="@+id/dwn_charging_check"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="20dp"
+                android:layout_margin="1dp"
+                android:layout_height="20dp"
+                app:stroke_width="1dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                app:stroke_color="#1976D2"
+                app:circle_color="#ffffff"/>
+
+        </RelativeLayout>
+
+
+        <TextView
+            android:id="@+id/settings_about"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#1976D2"
+            fontPath="fonts/Roboto-Bold.ttf"
+            android:layout_marginTop="@dimen/lib_cell_image_margin_bottom"
+            android:text="@string/settings_about"/>
+
+        <TextView
+            android:id="@+id/settings_open_source_licence"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/lib_cell_image_margin_bottom"
+            android:textSize="12sp"
+            fontPath="fonts/Helvetica Neue CE 75 Bold.ttf"
+            android:text="@string/settings_open_source_licence"/>
+
+        <TextView
+            android:id="@+id/legal_info_about_licence"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            fontPath="fonts/Helvetica Neue CE 55 Roman.ttf"
+            android:text="@string/legal_info_about_licence"/>
+
+        <TextView
+            android:id="@+id/settings_terms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/lib_cell_image_margin_bottom"
+            android:textSize="12sp"
+            fontPath="fonts/Helvetica Neue CE 75 Bold.ttf"
+            android:text="@string/settings_terms"/>
+
+        <TextView
+            android:id="@+id/settings_privacy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:layout_marginTop="@dimen/lib_cell_image_margin_bottom"
+            fontPath="fonts/Helvetica Neue CE 75 Bold.ttf"
+            android:text="@string/settings_privacy"/>
+
+        <TextView
+            android:id="@+id/settings_usage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/lib_cell_image_margin_bottom"
+            android:textSize="12sp"
+            fontPath="fonts/Helvetica Neue CE 75 Bold.ttf"
+            android:text="@string/settings_usage"/>
+
+        <TextView
+            android:id="@+id/settings_usage_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fontPath="fonts/Helvetica Neue CE 55 Roman.ttf"
+            android:textSize="10sp"
+            android:text="@string/settings_usage_desc"/>
+
+        <TextView
+            android:id="@+id/settings_aggro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/lib_cell_image_margin_bottom"
+            android:textSize="12sp"
+            fontPath="fonts/Helvetica Neue CE 75 Bold.ttf"
+            android:text="@string/settings_aggro"/>
+
+        <TextView
+            android:id="@+id/settings_aggro_ver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            fontPath="fonts/Helvetica Neue CE 55 Roman.ttf"
+            android:text="@string/settings_aggro_version"/>
+
+    </LinearLayout>
+
+
+
+</android.support.design.widget.CoordinatorLayout>
+
+
+

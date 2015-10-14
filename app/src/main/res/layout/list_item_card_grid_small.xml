@@ -2,6 +2,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix"
     android:layout_height="wrap_content">
 
     <android.support.v7.widget.CardView
@@ -24,7 +26,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:src="@mipmap/grid_cell_bg"
                 class="com.app.gridcategory.SquareImageView"
                 android:id="@+id/picture_bg" />
 
@@ -44,8 +45,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:gravity="center"
-                android:textStyle="bold"
+                android:textSize="12sp"
                 android:paddingBottom="10dp"
+                fontPath="fonts/Helvetica Neue CE 75 Bold.ttf"
                 android:background="@android:color/transparent"
                 android:textColor="@android:color/black"/>
 

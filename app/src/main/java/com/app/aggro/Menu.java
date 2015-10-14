@@ -28,6 +28,7 @@ import com.app.getterAndSetter.MyToolBar;
 import com.app.slideradapter.MyFragmentAdapter;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.analytics.HitBuilders;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
@@ -67,6 +68,10 @@ public class Menu extends AppCompatActivity implements com.app.appfragement.Menu
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
         mContext = Menu.this;
+
+
+        MyApplication.tracker().setScreenName("Menu");
+        MyApplication.tracker().send(new HitBuilders.ScreenViewBuilder().build());
 
         //Display Benner Ads
         mAdView = (AdView) findViewById(R.id.adView);
@@ -316,6 +321,7 @@ public class Menu extends AppCompatActivity implements com.app.appfragement.Menu
         else {
             fragment = com.app.appfragement.Menu.newInstance("", item);
         }
+
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         android.support.v4.app.FragmentTransaction transaction  = fragmentManager.beginTransaction();
 //        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);

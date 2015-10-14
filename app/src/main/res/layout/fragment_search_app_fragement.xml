@@ -1,58 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    android:id="@+id/htab_maincontent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/app_background">
+    android:background="@color/app_background"
+    android:fitsSystemWindows="true">
 
-    <RelativeLayout
-        android:id="@+id/card_view"
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:background="#003165">
+        android:layout_height="250dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-
-
-        <EditText
-            android:id="@+id/search"
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapsingToolbarLayout"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginRight="@dimen/activity_right_margin"
-            android:layout_toRightOf="@+id/rel_arrow_back"
-            android:background="@null"
-            android:ems="10"
-            android:hint="@string/search"
-            android:textColor="@android:color/white"
-            android:layout_centerVertical="true"
-            android:paddingLeft="@dimen/search_box_left_padding"
-            android:singleLine="true"
-            android:imeOptions="actionSearch"
-            android:visibility="visible" >
-
-            <requestFocus />
-        </EditText>
-
-
-
-        <RelativeLayout
-            android:id="@+id/rel_arrow_back"
-            android:layout_width="45dp"
             android:layout_height="match_parent"
-            android:layout_alignParentLeft="true">
+            app:expandedTitleTextAppearance="@android:color/transparent"
+            app:titleEnabled="false"
+            app:contentScrim="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <ImageView
-                android:id="@+id/drawer_logo"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:src="@mipmap/arrow_left"
-                android:layout_marginLeft="@dimen/back_arrow_left_margin"
-                android:layout_marginTop="8dp" />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                app:layout_collapseMode="parallax"
+                app:layout_collapseParallaxMultiplier="0.7"
+                android:src="@drawable/header" />
 
-        </RelativeLayout>
-    </RelativeLayout>
+
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:minHeight="?attr/actionBarSize"
+                    app:layout_collapseMode="pin"
+                    app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+                <com.miguelcatalan.materialsearchview.MaterialSearchView
+                    android:id="@+id/search_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_collapseMode="pin"/>
+        </android.support.design.widget.CollapsingToolbarLayout>
+
+    </android.support.design.widget.AppBarLayout>
 
     <com.marshalchen.ultimaterecyclerview.UltimateRecyclerView
         android:layout_width="fill_parent"
@@ -60,6 +55,14 @@
         android:id="@+id/ultimate_recycler_view"
         app:recyclerviewScrollbars="vertical"
         app:recyclerviewFloatingActionView="@layout/floating_view"
-        app:recyclerviewEmptyView="@layout/empty_search_view">
+        app:recyclerviewEmptyView="@layout/empty_search_view"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
     </com.marshalchen.ultimaterecyclerview.UltimateRecyclerView>
-</LinearLayout>
+
+
+
+</android.support.design.widget.CoordinatorLayout>
+
+
+

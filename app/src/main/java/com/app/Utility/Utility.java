@@ -54,6 +54,7 @@ public class Utility {
         SharedPreferences.Editor prefs = mContext
                 .getSharedPreferences(mContext.getResources().getString(R.string.aggro_prefs),
                         Context.MODE_PRIVATE).edit();
+        prefs.clear();
         prefs.putString(mContext.getResources().getString(R.string.name), name);
         prefs.putString(mContext.getResources().getString(R.string.username), userName);
         prefs.putString(mContext.getResources().getString(R.string.email), email);
@@ -108,6 +109,21 @@ public class Utility {
                         Context.MODE_PRIVATE).edit();
         prefs.putFloat(prefsKey, prevValue);
         prefs.commit();
+    }
+
+    public static void writeFragementStatsToPrefs(Context mContext, int prevValue, String prefsKey){
+        SharedPreferences.Editor prefs = mContext
+                .getSharedPreferences(mContext.getResources().getString(R.string.aggro_prefs),
+                        Context.MODE_PRIVATE).edit();
+        prefs.putInt(prefsKey, prevValue);
+        prefs.commit();
+    }
+
+    public static int readFragementStatsFromPrefs(Context mContext,String key_name){
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(
+                mContext.getResources().getString(R.string.aggro_prefs),
+                mContext.MODE_PRIVATE);
+        return sharedPreferences.getInt(key_name, 0);
     }
 
 }

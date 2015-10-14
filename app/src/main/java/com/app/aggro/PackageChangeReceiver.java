@@ -58,7 +58,7 @@ public class PackageChangeReceiver extends BroadcastReceiver {
                 appTracker.appIconUrl = Utility.readUserInfoFromPrefs(context,context.getResources().getString(R.string.aggro_downloaded_app_icon_url));
                 appTracker.save();
             }
-            Intent i = new Intent(context,Menu.class);
+            Intent i = new Intent(context,MainActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             context.getApplicationContext().startActivity(i);
         }else{

@@ -4,7 +4,11 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 
 import com.app.Updateable;
 import com.app.aggro.R;
@@ -26,12 +30,14 @@ public class MyFragmentAdapter extends FragmentStatePagerAdapter {
     private List<Fragment> myFragments;
     private Context context;
     int oldPosition = -1;
-    MaterialViewPager materialViewPager;
-    public MyFragmentAdapter(Context context, FragmentManager fm, List<Fragment> myFrags, MaterialViewPager materialViewPager) {
+    ViewPager materialViewPager;
+    ImageView header;
+    public MyFragmentAdapter(Context context, FragmentManager fm, List<Fragment> myFrags, ViewPager materialViewPager,ImageView header) {
         super(fm);
         this.myFragments = myFrags;
         this.context = context;
         this.materialViewPager = materialViewPager;
+        this.header = header;
     }
 
     public void updateData(){
@@ -40,6 +46,7 @@ public class MyFragmentAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
+
         return myFragments.get(position);
 
     }
@@ -84,37 +91,48 @@ public class MyFragmentAdapter extends FragmentStatePagerAdapter {
     public void setPrimaryItem(ViewGroup container, int position, Object object) {
         super.setPrimaryItem(container, position, object);
         //only if position changed
+        Animation fadeIn = null;
         if(position == oldPosition)
             return;
         oldPosition = position;
 
-        int color = 0;
-        String imageUrl = "";
         switch (oldPosition){
             case 0:
-                imageUrl = "http://cdn1.tnwcdn.com/wp-content/blogs.dir/1/files/2014/06/wallpaper_51.jpg";
-                color = context.getResources().getColor(R.color.blue);
+                header.setImageResource(R.drawable.header);
+                fadeIn = AnimationUtils.loadAnimation(context, R.anim.fade_in);
+                header.startAnimation(fadeIn);
                 break;
             case 1:
-                imageUrl = "https://fs01.androidpit.info/a/63/0e/android-l-wallpapers-630ea6-h900.jpg";
-                color = context.getResources().getColor(R.color.green);
+                header.setImageResource(R.drawable.header_2);
+                fadeIn = AnimationUtils.loadAnimation(context, R.anim.fade_in);
+                header.startAnimation(fadeIn);
                 break;
             case 2:
-                imageUrl = "http://www.droid-life.com/wp-content/uploads/2014/10/lollipop-wallpapers10.jpg";
-                color = context.getResources().getColor(R.color.cyan);
+                header.setImageResource(R.drawable.nav_header_bg);
+                fadeIn = AnimationUtils.loadAnimation(context, R.anim.fade_in);
+                header.startAnimation(fadeIn);
                 break;
             case 3:
-                imageUrl = "http://www.tothemobile.com/wp-content/uploads/2014/07/original.jpg";
-                color = context.getResources().getColor(R.color.red);
+                header.setImageResource(R.drawable.header_2);
+                fadeIn = AnimationUtils.loadAnimation(context, R.anim.fade_in);
+                header.startAnimation(fadeIn);
                 break;
         }
 
-        final int fadeDuration = 400;
+        fadeIn.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                Animation fadeOut = AnimationUtils.loadAnimation(context, R.anim.fade_out);
+                header.startAnimation(fadeOut);
+            }
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
 
-        //change header's color and image
-//        materialViewPager.setImageUrl(imageUrl,fadeDuration);
-        materialViewPager.setImageDrawable(context.getResources().getDrawable(R.mipmap.test_back2), fadeDuration);
-//        materialViewPager.setColor(color,fadeDuration);
 
     }
 

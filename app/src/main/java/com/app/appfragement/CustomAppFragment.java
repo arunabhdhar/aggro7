@@ -7,8 +7,10 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -35,6 +37,7 @@ import com.app.api.VolleyErrorHelper;
 import com.app.getterAndSetter.MyToolBar;
 import com.app.holder.GroupItem;
 import com.app.local.database.AppTracker;
+import com.app.local.database.UserInfo;
 import com.app.modal.AppDetail;
 import com.app.modal.AppList;
 import com.app.response.CustomMsg;
@@ -73,10 +76,7 @@ public class CustomAppFragment extends Fragment implements OnCustomCategoryItemC
 
     private Toolbar toolbar;
 
-    private MenuItem mSearchAction;
-    private boolean isSearchOpened = false;
-    private EditText edtSeach;
-
+    CoordinatorLayout rootLayout;
 
 
     /**
@@ -113,6 +113,7 @@ public class CustomAppFragment extends Fragment implements OnCustomCategoryItemC
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View v = inflater.inflate(R.layout.fragment_custom_app, container, false);
+        initInstances(v);
         init(v);
         showCategorizedApp();
 
@@ -124,36 +125,6 @@ public class CustomAppFragment extends Fragment implements OnCustomCategoryItemC
         super.onDestroy();
         System.out.println("######## onDestroy ######## ");
         count = 0;
-    }
-
-
-
-    @Override
-    public void onCreateOptionsMenu(android.view.Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        menu.clear();
-        inflater.inflate(R.menu.menu_main, menu);
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(android.view.Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-        mSearchAction = menu.findItem(R.id.action_search);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.action_settings:
-                return true;
-            case R.id.action_search:
-//                handleMenuSearch();
-                selectsearchAppFragement(data,"");
-                return true;
-        }
-
-        return false;
     }
 
     public void selectsearchAppFragement(String local, String level) {
@@ -171,10 +142,27 @@ public class CustomAppFragment extends Fragment implements OnCustomCategoryItemC
         transaction.commit();
     }
 
-    private void init(View view) {
+    private void initInstances(View view) {
 
-        toolbar = MyToolBar.getToolbar();
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         toolbar.setTitle(data);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // update the main content by replacing fragments
+                startActivity(new Intent(getActivity(), com.app.aggro.MainActivity.class));
+                getActivity().finish();
+            }
+        });
+        rootLayout = (CoordinatorLayout) view.findViewById(R.id.htab_maincontent);
+
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void init(View view) {
         appList = new CustomMsg();
         groupItem = new GroupItem();
 //        listView = (ListView)view.findViewById(R.id.app_lib_list);
@@ -193,33 +181,33 @@ public class CustomAppFragment extends Fragment implements OnCustomCategoryItemC
         simpleRecyclerViewAdapter.setCustomLoadMoreView(LayoutInflater.from(getActivity())
                 .inflate(R.layout.custom_bottom_progressbar, null));
 
-        ultimateRecyclerView.setParallaxHeader(getActivity().getLayoutInflater().inflate(R.layout.parallax_recyclerview_header, ultimateRecyclerView.mRecyclerView, false));
-        ultimateRecyclerView.setOnParallaxScroll(new UltimateRecyclerView.OnParallaxScroll() {
-            @Override
-            public void onParallaxScroll(float percentage, float offset, View parallax) {
-//                Drawable c = toolbar.getBackground();
-//                c.setAlpha(Math.round(127 + percentage * 128));
-                toolbar.setBackgroundDrawable(toolbar.getBackground());
-            }
-        });
+//        ultimateRecyclerView.setParallaxHeader(getActivity().getLayoutInflater().inflate(R.layout.parallax_recyclerview_header, ultimateRecyclerView.mRecyclerView, false));
+//        ultimateRecyclerView.setOnParallaxScroll(new UltimateRecyclerView.OnParallaxScroll() {
+//            @Override
+//            public void onParallaxScroll(float percentage, float offset, View parallax) {
+////                Drawable c = toolbar.getBackground();
+////                c.setAlpha(Math.round(127 + percentage * 128));
+//                toolbar.setBackgroundDrawable(toolbar.getBackground());
+//            }
+//        });
 
         ultimateRecyclerView.setRecylerViewBackgroundColor(Color.parseColor("#ffffff"));
-        ultimateRecyclerView.setDefaultOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        simpleRecyclerViewAdapter.insert(appList, simpleRecyclerViewAdapter.getAdapterItemCount());
-                        ultimateRecyclerView.setRefreshing(false);
-                        //   ultimateRecyclerView.scrollBy(0, -50);
-                        linearLayoutManager.scrollToPosition(0);
-//                        ultimateRecyclerView.setAdapter(simpleRecyclerViewAdapter);
-//                        simpleRecyclerViewAdapter.notifyDataSetChanged();
-                    }
-                }, 1000);
-            }
-        });
+//        ultimateRecyclerView.setDefaultOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        simpleRecyclerViewAdapter.insert(appList, simpleRecyclerViewAdapter.getAdapterItemCount());
+//                        ultimateRecyclerView.setRefreshing(false);
+//                        //   ultimateRecyclerView.scrollBy(0, -50);
+//                        linearLayoutManager.scrollToPosition(0);
+////                        ultimateRecyclerView.setAdapter(simpleRecyclerViewAdapter);
+////                        simpleRecyclerViewAdapter.notifyDataSetChanged();
+//                    }
+//                }, 1000);
+//            }
+//        });
 
         ultimateRecyclerView.setOnLoadMoreListener(new UltimateRecyclerView.OnLoadMoreListener() {
             @Override
@@ -260,16 +248,16 @@ public class CustomAppFragment extends Fragment implements OnCustomCategoryItemC
 //                }
                 URLogs.d("onUpOrCancelMotionEvent");
                 if (observableScrollState == ObservableScrollState.UP) {
-                    ultimateRecyclerView.showToolbar(toolbar, ultimateRecyclerView, getScreenHeight());
+//                    ultimateRecyclerView.showToolbar(toolbar, ultimateRecyclerView, getScreenHeight());
                     ultimateRecyclerView.hideFloatingActionMenu();
                 } else if (observableScrollState == ObservableScrollState.DOWN) {
-                    ultimateRecyclerView.showToolbar(toolbar, ultimateRecyclerView, getScreenHeight());
-                    ultimateRecyclerView.showFloatingActionMenu();
+//                    ultimateRecyclerView.showToolbar(toolbar, ultimateRecyclerView, getScreenHeight());
+                    ultimateRecyclerView.hideFloatingActionMenu();
                 }
             }
         });
 
-        ultimateRecyclerView.showFloatingButtonView();
+        ultimateRecyclerView.hideDefaultFloatingActionButton();
 
     }
 
@@ -289,7 +277,7 @@ public class CustomAppFragment extends Fragment implements OnCustomCategoryItemC
         String country = "IN";
         Log.e("Data", "" + category);
         RequestQueue mRequestQueue = Volley.newRequestQueue(getActivity());
-        String url = "http://jarvisme.com/customapp/get.php?" + "email=" + Utility.readUserInfoFromPrefs(getActivity(),getActivity().getResources().getString(R.string.email)) + "&customCategory=" + data;
+        String url = "http://jarvisme.com/customapp/get.php?";
 //        String url = "https://42matters.com/api/1/apps/top_google_charts.json?" + "list_name=topselling_free"+ "&cat_key=" + category + "&country=" + country + "&limit=" + limit + "&page=" + count + "&access_token=" + getActivity().getResources().getString(R.string.aggro_access_token);
         Log.e("URL", "" + url);
         GsonRequest<CustomResponse> myReq = new GsonRequest<CustomResponse>(
@@ -311,7 +299,7 @@ public class CustomAppFragment extends Fragment implements OnCustomCategoryItemC
     private HashMap prepareHasMap(){
         HashMap<String,String> hm = new HashMap<String,String>();
         hm.put("category_name", data);
-        hm.put("email", Utility.readUserInfoFromPrefs(getActivity(),getString(R.string.email)));
+        hm.put("email", UserInfo.getRandom().email);
         hm.put("limit", "" + 5);
         hm.put("page", "" + count);
         return hm;

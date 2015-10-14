@@ -3,6 +3,7 @@ package com.app.appfragement.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,9 +22,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.app.AppConstant;
 import com.app.Utility.CustomCategoryDialog;
+import com.app.Utility.CustomRecyclerView;
 import com.app.Utility.Utility;
 import com.app.adapter.AggroRecyclerGridViewAdapter;
 import com.app.adapter.AggroRecyclerViewAdapter;
+import com.app.aggro.MyApplication;
 import com.app.aggro.R;
 import com.app.aggro.Registration;
 import com.app.api.GsonRequest;
@@ -33,12 +36,12 @@ import com.app.gridcategory.ImageItem;
 import com.app.holder.ChildItem;
 import com.app.holder.GroupItem;
 import com.app.local.database.AggroCategory;
+import com.app.local.database.UserInfo;
 import com.app.response.Msg;
 import com.app.response.RegisterResponse;
-import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.github.florent37.materialviewpager.MaterialViewPagerHelper;
 import com.github.florent37.materialviewpager.adapter.RecyclerViewMaterialAdapter;
+import com.google.android.gms.analytics.HitBuilders;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,7 +52,7 @@ import java.util.List;
  */
 public class RecyclerViewGridFragment extends Fragment {
 
-    private RecyclerView mRecyclerView;
+    private CustomRecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     public static final String CUSTOM_CATEGORY_PREFIX = "C-";
 
@@ -73,7 +76,10 @@ public class RecyclerViewGridFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        MyApplication.tracker().setScreenName("Cat Tab");
+        MyApplication.tracker().send(new HitBuilders.ScreenViewBuilder().build());
+
+        mRecyclerView = (CustomRecyclerView) view.findViewById(R.id.recyclerView);
 
         init(view);
 
@@ -93,7 +99,7 @@ public class RecyclerViewGridFragment extends Fragment {
 
     private void init(View root){
          mItems = new ArrayList<>();
-        FloatingActionButton pinkButton = (FloatingActionButton)root.findViewById(R.id.multiple_actions);
+        FloatingActionButton pinkButton = (FloatingActionButton)root.findViewById(R.id.fabBtn);
         pinkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,7 +127,7 @@ public class RecyclerViewGridFragment extends Fragment {
                             Request.Method.POST,
                             url,
                             com.app.response.Response.class,
-                            prepareHasMap(Utility.readUserInfoFromPrefs(getActivity(),getString(R.string.email)),nameOfCategory),
+                            prepareHasMap(UserInfo.getRandom().email,nameOfCategory),
                             createMyReqSuccessListener(nameOfCategory),
                             createMyReqErrorListener());
 

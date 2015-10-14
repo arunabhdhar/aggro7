@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/navItem1"
+            android:icon="@drawable/library"
+            android:title="@string/drawer_item_compact_header"/>
+        <item
+            android:id="@+id/navItem2"
+            android:icon="@drawable/my_detail"
+            android:title="@string/drawer_item_action_bar"/>
+
+        <item
+            android:id="@+id/navItem3"
+            android:icon="@drawable/fav"
+            android:title="@string/drawer_item_multi_drawer"/>
+
+    </group>
+
+    <item android:title="">
+        <menu>
+            <item
+                android:id="@+id/navItem4"
+                android:icon="@android:color/transparent"
+                android:title="@string/drawer_item_help" />
+            <item
+                android:id="@+id/navItem5"
+                android:icon="@android:color/transparent"
+                android:title="@string/drawer_item_settings" />
+
+        </menu>
+    </item>
+
+
+</menu>

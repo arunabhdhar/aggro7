@@ -236,4 +236,23 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
+
+    <style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabTextAppearance">@style/MyCustomTabText</item>
+        <item name="tabSelectedTextColor">@color/blue_semi_transparent</item>
+    </style>
+
+    <style name="MyCustomTabText" parent="TextAppearance.AppCompat.Button">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/white_pressed</item>
+    </style>
+
+    <!--Anim Check Box-->
+
+    <declare-styleable name="AnimCheckBox">
+        <attr name="stroke_width" format="dimension"/>
+        <attr name="stroke_color" format="color"/>
+        <attr name="circle_color" format="color"/>
+    </declare-styleable>
+
 </resources>

@@ -12,7 +12,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.RecognizerIntent;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -20,6 +24,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.*;
 import android.view.Menu;
@@ -42,6 +47,8 @@ import com.app.AppConstant;
 import com.app.OnClick;
 import com.app.Utility.Utility;
 import com.app.adapter.SimpleAdapter;
+import com.app.aggro.MainActivity;
+import com.app.aggro.MyApplication;
 import com.app.aggro.R;
 import com.app.api.Category;
 import com.app.api.GsonRequest;
@@ -50,6 +57,7 @@ import com.app.getterAndSetter.MyCategory;
 import com.app.getterAndSetter.MyToolBar;
 import com.app.holder.GroupItem;
 import com.app.local.database.AppTracker;
+import com.app.local.database.UserInfo;
 import com.app.modal.AppList;
 import com.app.modal.SearchDetail;
 import com.app.thin.downloadmanager.DownloadManager;
@@ -58,12 +66,14 @@ import com.app.thin.downloadmanager.DownloadStatusListener;
 import com.app.thin.downloadmanager.ThinDownloadManager;
 import com.balysv.materialmenu.MaterialMenu;
 import com.balysv.materialmenu.MaterialMenuDrawable;
+import com.google.android.gms.analytics.HitBuilders;
 import com.library.storage.SimpleStorage;
 import com.library.storage.Storage;
 import com.marshalchen.ultimaterecyclerview.ObservableScrollState;
 import com.marshalchen.ultimaterecyclerview.ObservableScrollViewCallbacks;
 import com.marshalchen.ultimaterecyclerview.URLogs;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.quinny898.library.persistentsearch.SearchBox;
 import com.quinny898.library.persistentsearch.SearchResult;
 
@@ -96,7 +106,6 @@ public class SearchAppFragement extends Fragment implements OnClick {
 
     private Toolbar toolbar;
 
-    private boolean isSearchOpened = false;
     private EditText edtSeach;
 
     GroupItem groupItem;
@@ -111,6 +120,10 @@ public class SearchAppFragement extends Fragment implements OnClick {
 
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
+
+    CoordinatorLayout rootLayout;
+    private MaterialSearchView searchView;
+    private String searchQuery;
 
     /**
      * Use this factory method to create a new instance of
@@ -148,8 +161,11 @@ public class SearchAppFragement extends Fragment implements OnClick {
         // Inflate the layout for this fragment
         final View v = inflater.inflate(R.layout.fragment_search_app_fragement, container, false);
 
+        MyApplication.tracker().setScreenName("Search  Tab");
+        MyApplication.tracker().send(new HitBuilders.ScreenViewBuilder().build());
+         initInstances(v);
         init(v);
-        search(v);
+//        search(v);
         return v;
     }
 
@@ -166,14 +182,87 @@ public class SearchAppFragement extends Fragment implements OnClick {
                 if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
 
                     // handle back button
-                    MyToolBar.getToolbar().setVisibility(View.VISIBLE);
-                    getActivity().getSupportFragmentManager().popBackStack();
+//                    MyToolBar.getToolbar().setVisibility(View.VISIBLE);
+//                    getActivity().getSupportFragmentManager().popBackStack();
+
+                    if (searchView.isSearchOpen()) {
+                        searchView.closeSearch();
+                    } else {
+                        getActivity().getSupportFragmentManager().popBackStack();
+                    }
                     return true;
                 }
 
                 return false;
             }
         });
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        inflater.inflate(R.menu.menu_main, menu);
+
+        MenuItem item = menu.findItem(R.id.action_search);
+        searchView.setMenuItem(item);
+    }
+
+    private void initInstances(final View view) {
+
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        toolbar.setTitle("Search");
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+
+        rootLayout = (CoordinatorLayout)view.findViewById(R.id.htab_maincontent);
+        searchView = (MaterialSearchView)view. findViewById(R.id.search_view);
+        searchView.setVoiceSearch(false);
+//        searchView.setCursorDrawable(R.drawable.custom_cursor);
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if (!query.toString().equals(""))
+                    searchQuery = query;
+                if (simpleRecyclerViewAdapter !=null)
+                simpleRecyclerViewAdapter.clear();
+                doSearch(searchQuery);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                //Do some magic
+                return false;
+            }
+        });
+
+        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+                //Do some magic
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+                //Do some magic
+            }
+        });
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fragmentManager = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
+                FragmentTransaction ft = fragmentManager.beginTransaction();
+                MainActivity.fragmentStack.lastElement().onPause();
+                ft.remove(MainActivity.fragmentStack.pop());
+                MainActivity.fragmentStack.lastElement().onResume();
+                ft.show(MainActivity.fragmentStack.lastElement());
+                ft.commit();
+            }
+        });
+
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void init(View view) {
@@ -187,9 +276,9 @@ public class SearchAppFragement extends Fragment implements OnClick {
         if (!dirExists)
             storage.createDirectory(DIRECTORY_NAME + File.pathSeparator + SUBDIRECTORY_NAME);
 
-        edtSeach = (EditText)view.findViewById(R.id.search);
-        toolbar = MyToolBar.getToolbar();
-        toolbar.setVisibility(View.GONE);
+//        edtSeach = (EditText)view.findViewById(R.id.search);
+//        toolbar = MyToolBar.getToolbar();
+//        toolbar.setVisibility(View.GONE);
         appList = new AppList();
         groupItem = new GroupItem();
 
@@ -208,33 +297,33 @@ public class SearchAppFragement extends Fragment implements OnClick {
         simpleRecyclerViewAdapter.setCustomLoadMoreView(LayoutInflater.from(getActivity())
                 .inflate(R.layout.custom_bottom_progressbar, null));
 
-        ultimateRecyclerView.setParallaxHeader(getActivity().getLayoutInflater().inflate(R.layout.parallax_recyclerview_header, ultimateRecyclerView.mRecyclerView, false));
-        ultimateRecyclerView.setOnParallaxScroll(new UltimateRecyclerView.OnParallaxScroll() {
-            @Override
-            public void onParallaxScroll(float percentage, float offset, View parallax) {
-//                Drawable c = toolbar.getBackground();
-//                c.setAlpha(Math.round(127 + percentage * 128));
-                toolbar.setBackgroundDrawable(toolbar.getBackground());
-            }
-        });
+//        ultimateRecyclerView.setParallaxHeader(getActivity().getLayoutInflater().inflate(R.layout.parallax_recyclerview_header, ultimateRecyclerView.mRecyclerView, false));
+//        ultimateRecyclerView.setOnParallaxScroll(new UltimateRecyclerView.OnParallaxScroll() {
+//            @Override
+//            public void onParallaxScroll(float percentage, float offset, View parallax) {
+////                Drawable c = toolbar.getBackground();
+////                c.setAlpha(Math.round(127 + percentage * 128));
+//                toolbar.setBackgroundDrawable(toolbar.getBackground());
+//            }
+//        });
 
         ultimateRecyclerView.setRecylerViewBackgroundColor(Color.parseColor("#ffffff"));
-        ultimateRecyclerView.setDefaultOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        simpleRecyclerViewAdapter.insert(appList, simpleRecyclerViewAdapter.getAdapterItemCount());
-                        ultimateRecyclerView.setRefreshing(false);
-                        //   ultimateRecyclerView.scrollBy(0, -50);
-                        linearLayoutManager.scrollToPosition(0);
-//                        ultimateRecyclerView.setAdapter(simpleRecyclerViewAdapter);
-//                        simpleRecyclerViewAdapter.notifyDataSetChanged();
-                    }
-                }, 1000);
-            }
-        });
+//        ultimateRecyclerView.setDefaultOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        simpleRecyclerViewAdapter.insert(appList, simpleRecyclerViewAdapter.getAdapterItemCount());
+//                        ultimateRecyclerView.setRefreshing(false);
+//                        //   ultimateRecyclerView.scrollBy(0, -50);
+//                        linearLayoutManager.scrollToPosition(0);
+////                        ultimateRecyclerView.setAdapter(simpleRecyclerViewAdapter);
+////                        simpleRecyclerViewAdapter.notifyDataSetChanged();
+//                    }
+//                }, 1000);
+//            }
+//        });
 
         ultimateRecyclerView.setOnLoadMoreListener(new UltimateRecyclerView.OnLoadMoreListener() {
             @Override
@@ -242,10 +331,8 @@ public class SearchAppFragement extends Fragment implements OnClick {
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     public void run() {
-                        if (isSearchOpened){
                             count = count + 1;
-                            searchForApp();
-                        }
+                            doSearch(searchQuery);
 
                         // linearLayoutManager.scrollToPositionWithOffset(maxLastVisiblePosition,-1);
                         //   linearLayoutManager.scrollToPosition(maxLastVisiblePosition);
@@ -278,16 +365,16 @@ public class SearchAppFragement extends Fragment implements OnClick {
 //                }
                 URLogs.d("onUpOrCancelMotionEvent");
                 if (observableScrollState == ObservableScrollState.UP) {
-                    ultimateRecyclerView.showToolbar(toolbar, ultimateRecyclerView, getScreenHeight());
+//                    ultimateRecyclerView.showToolbar(toolbar, ultimateRecyclerView, getScreenHeight());
                     ultimateRecyclerView.hideFloatingActionMenu();
                 } else if (observableScrollState == ObservableScrollState.DOWN) {
-                    ultimateRecyclerView.showToolbar(toolbar, ultimateRecyclerView, getScreenHeight());
-                    ultimateRecyclerView.showFloatingActionMenu();
+//                    ultimateRecyclerView.showToolbar(toolbar, ultimateRecyclerView, getScreenHeight());
+                    ultimateRecyclerView.hideFloatingActionMenu();
                 }
             }
         });
 
-        ultimateRecyclerView.showFloatingButtonView();
+        ultimateRecyclerView.hideDefaultFloatingActionButton();
 
     }
 
@@ -295,13 +382,13 @@ public class SearchAppFragement extends Fragment implements OnClick {
         return getActivity().findViewById(android.R.id.content).getHeight();
     }
 
-    private void searchForApp(){
+    private void searchForApp(String search){
         TelephonyManager tm = (TelephonyManager)getActivity().getSystemService(getActivity().TELEPHONY_SERVICE);
         String countryCodeValue = tm.getNetworkCountryIso();
         int limit = 6;
         String country = countryCodeValue;
         RequestQueue mRequestQueue = Volley.newRequestQueue(getActivity());
-        String url = "http://jarvisme.com/api/search.php?q=" + edtSeach.getText().toString().trim() + "&limit=" + limit + "&page=" + count + "&access_token=" + getActivity().getResources().getString(R.string.aggro_access_token);
+        String url = "http://jarvisme.com/api/search.php?q=" + search + "&limit=" + limit + "&page=" + count + "&access_token=" + getActivity().getResources().getString(R.string.aggro_access_token);
 
 //        String url = "https://42matters.com/api/1/apps/search.json?q=" + edtSeach.getText().toString().trim() + "&limit=" + limit + "&page=" + count + "&access_token=" + getActivity().getResources().getString(R.string.aggro_access_token);
         Log.e("URL", "" + count);
@@ -361,39 +448,39 @@ public class SearchAppFragement extends Fragment implements OnClick {
         };
     }
 
-    private void search(View view){
-        RelativeLayout relativeLayout = (RelativeLayout)view.findViewById(R.id.rel_arrow_back);
-        relativeLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+//    private void search(View view){
+//        RelativeLayout relativeLayout = (RelativeLayout)view.findViewById(R.id.rel_arrow_back);
+//        relativeLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                MyToolBar.getToolbar().setVisibility(View.VISIBLE);
+//                getActivity().getSupportFragmentManager().popBackStack();
+//            }
+//        });
+//        //this is a listener to do a search when the user clicks on search button
+//        edtSeach.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+//            @Override
+//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+//                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+//                    isSearchOpened = true;
+//                    simpleRecyclerViewAdapter.clear();
+//                    doSearch();
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
+//
+//        edtSeach.requestFocus();
+//
+//        //open the keyboard focused in the edtSearch
+//        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+//        imm.showSoftInput(edtSeach, InputMethodManager.SHOW_IMPLICIT);
+//    }
 
-                MyToolBar.getToolbar().setVisibility(View.VISIBLE);
-                getActivity().getSupportFragmentManager().popBackStack();
-            }
-        });
-        //this is a listener to do a search when the user clicks on search button
-        edtSeach.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    isSearchOpened = true;
-                    simpleRecyclerViewAdapter.clear();
-                    doSearch();
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        edtSeach.requestFocus();
-
-        //open the keyboard focused in the edtSearch
-        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(edtSeach, InputMethodManager.SHOW_IMPLICIT);
-    }
-
-    private void doSearch() {
-        searchForApp();
+    private void doSearch(String search) {
+        searchForApp(search);
     }
 
     public boolean createLocalTraceOfApp(AppList appList){
@@ -469,7 +556,7 @@ public class SearchAppFragement extends Fragment implements OnClick {
 
     private HashMap prepareHasMap(AppList appList){
         HashMap<String,String> hm = new HashMap<String,String>();
-        hm.put("email", Utility.readUserInfoFromPrefs(getActivity(),getString(R.string.email)));
+        hm.put("email", UserInfo.getRandom().email);
         hm.put("customCategory", MyCategory.getCategoryName());
         hm.put("appName",appList.getTitle());
         hm.put("iconurlkey",appList.getIcon());
@@ -596,6 +683,22 @@ public class SearchAppFragement extends Fragment implements OnClick {
         } catch (android.content.ActivityNotFoundException anfe) {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == MaterialSearchView.REQUEST_VOICE && resultCode == getActivity().RESULT_OK) {
+            ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            if (matches != null && matches.size() > 0) {
+                String searchWrd = matches.get(0);
+                if (!TextUtils.isEmpty(searchWrd)) {
+                    searchView.setQuery(searchWrd, false);
+                }
+            }
+
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
 }

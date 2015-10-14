@@ -306,9 +306,8 @@ public class SimpleCustomAdapter extends UltimateViewAdapter<SimpleCustomAdapter
              public void onClick(View view) {
                  SimpleAdapterViewHolder holder = (SimpleAdapterViewHolder) view.getTag();
 
-                 int id = holder.getPosition();
+                 int id = holder.getAdapterPosition();
                  if (view.getId() == holder.relative_add_app.getId()){
-                     id = id -1;
                      CustomMsg appList = stringList.get(id);
                      if (!appList.isInstalled())
                       onClick.downloadApp(id, appList);

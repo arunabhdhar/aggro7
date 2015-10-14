@@ -23,8 +23,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.app.AppConstant;
 import com.app.Updateable;
+import com.app.Utility.CustomRecyclerView;
 import com.app.Utility.Utility;
 import com.app.adapter.AggroRecyclerViewAdapter;
+import com.app.aggro.MyApplication;
 import com.app.aggro.R;
 import com.app.aggro.Registration;
 import com.app.api.GsonRequest;
@@ -32,8 +34,10 @@ import com.app.getterAndSetter.MyToolBar;
 import com.app.holder.ChildItem;
 import com.app.holder.GroupItem;
 import com.app.local.database.AppTracker;
+import com.app.local.database.UserInfo;
 import com.github.florent37.materialviewpager.MaterialViewPagerHelper;
 import com.github.florent37.materialviewpager.adapter.RecyclerViewMaterialAdapter;
+import com.google.android.gms.analytics.HitBuilders;
 
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +47,7 @@ import java.util.List;
  */
 public class RecyclerViewFragment extends Fragment {
 
-    private RecyclerView mRecyclerView;
+    private CustomRecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
 
     private static final int ITEM_COUNT = 100;
@@ -75,7 +79,10 @@ public class RecyclerViewFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        MyApplication.tracker().setScreenName("App Tab");
+        MyApplication.tracker().send(new HitBuilders.ScreenViewBuilder().build());
+
+        mRecyclerView = (CustomRecyclerView) view.findViewById(R.id.recyclerView);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
@@ -99,7 +106,7 @@ public class RecyclerViewFragment extends Fragment {
                         appTracker.save();
                     }
 //                    MyToolBar.getMaterialViewPager().getViewPager().getAdapter().notifyDataSetChanged();
-                    MyToolBar.getMyFragmentAdapter().updateData();
+//                    MyToolBar.getMyFragmentAdapter().updateData();
                     mAdapter.notifyDataSetChanged();
                 }
 
@@ -149,7 +156,7 @@ public class RecyclerViewFragment extends Fragment {
                     Request.Method.POST,
                     url,
                     com.app.response.Response.class,
-                    prepareHasMap(Utility.readUserInfoFromPrefs(getActivity(), getString(R.string.email)),"fav"),
+                    prepareHasMap(UserInfo.getRandom().email,"fav"),
                     createMyReqSuccessListener("fav"),
                     createMyReqErrorListener());
 

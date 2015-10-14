@@ -11,11 +11,18 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.SearchView;
@@ -49,6 +56,7 @@ import com.app.aggro.*;
 import com.app.api.Category;
 import com.app.api.GsonRequest;
 import com.app.api.VolleyErrorHelper;
+import com.app.appfragement.fragment.MenuMain;
 import com.app.getterAndSetter.MyToolBar;
 import com.app.holder.GroupItem;
 import com.app.local.database.AppTracker;
@@ -61,6 +69,7 @@ import com.app.thin.downloadmanager.DownloadManager;
 import com.app.thin.downloadmanager.DownloadRequest;
 import com.app.thin.downloadmanager.DownloadStatusListener;
 import com.app.thin.downloadmanager.ThinDownloadManager;
+import com.google.android.gms.analytics.HitBuilders;
 import com.library.storage.SimpleStorage;
 import com.library.storage.Storage;
 import com.marshalchen.ultimaterecyclerview.ObservableScrollState;
@@ -95,7 +104,6 @@ public class ShowCatAppFragement extends Fragment implements OnClick{
     private int count = 1;
     private AppList appList;
 
-    private Toolbar toolbar;
 
     private MenuItem mSearchAction;
     private boolean isSearchOpened = false;
@@ -111,6 +119,12 @@ public class ShowCatAppFragement extends Fragment implements OnClick{
 
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
+
+    ActionBarDrawerToggle drawerToggle;
+    FloatingActionButton fabBtn;
+    CoordinatorLayout rootLayout;
+    Toolbar toolbar;
+    CollapsingToolbarLayout collapsingToolbarLayout;
 
 
     public static ShowCatAppFragement newInstance(String imageUrl, Category.AggroCategory aggroCategory) {
@@ -145,6 +159,11 @@ public class ShowCatAppFragement extends Fragment implements OnClick{
         // Inflate and locate the main ImageView
 
         final View v = inflater.inflate(R.layout.fragement_show_cat_app, container, false);
+
+        MyApplication.tracker().setScreenName("Show Categorized  Tab");
+        MyApplication.tracker().send(new HitBuilders.ScreenViewBuilder().build());
+
+        initInstances(v);
         init(v);
         showCategorizedApp();
          return v;
@@ -159,105 +178,29 @@ public class ShowCatAppFragement extends Fragment implements OnClick{
         count = 0;
     }
 
+    private void initInstances(View view) {
 
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        toolbar.setTitle(data);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
 
-    @Override
-    public void onCreateOptionsMenu(android.view.Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        menu.clear();
-        inflater.inflate(R.menu.menu_main, menu);
-    }
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // update the main content by replacing fragments
+                FragmentManager fragmentManager = ((AppCompatActivity)getActivity()).getSupportFragmentManager();
+                FragmentTransaction ft = fragmentManager.beginTransaction();
+                MainActivity.fragmentStack.lastElement().onPause();
+                ft.remove(MainActivity.fragmentStack.pop());
+                MainActivity.fragmentStack.lastElement().onResume();
+                ft.show(MainActivity.fragmentStack.lastElement());
+                ft.commit();
+            }
+        });
+        rootLayout = (CoordinatorLayout) view.findViewById(R.id.htab_maincontent);
 
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-        mSearchAction = menu.findItem(R.id.action_search);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.action_settings:
-                return true;
-            case R.id.action_search:
-//                handleMenuSearch();
-                selectsearchAppFragement(data,"");
-                return true;
-        }
-
-        return false;
-    }
-
-
-
-    public void selectsearchAppFragement(String local, String level) {
-        // update the main content by replacing fragments
-        Fragment fragment = SearchAppFragement.newInstance("", "");
-        android.support.v4.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        android.support.v4.app.FragmentTransaction transaction  = fragmentManager.beginTransaction();
-//        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
-        // Replace whatever is in the fragment_container view with this fragment,
-        // and add the transaction to the back stack so the user can navigate back
-        transaction.replace(R.id.content_frame, fragment);
-        transaction.addToBackStack(null);
-
-        // Commit the transaction
-        transaction.commit();
-    }
-
-    protected void handleMenuSearch(){
-        ActionBar action = ((AppCompatActivity)getActivity()).getSupportActionBar(); //get the actionbar
-
-        if(isSearchOpened){ //test if the search is open
-
-            action.setDisplayShowCustomEnabled(false); //disable a custom view inside the actionbar
-            action.setDisplayShowTitleEnabled(true); //show the title in the action bar
-
-            //hides the keyboard
-            InputMethodManager inputMethodManager = (InputMethodManager)  getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-            inputMethodManager.hideSoftInputFromWindow(((Activity)getActivity()).getCurrentFocus().getWindowToken(), 0);
-
-            //add the search icon in the action bar
-            mSearchAction.setIcon(getResources().getDrawable(R.drawable.ic_open_search));
-
-            isSearchOpened = false;
-        } else { //open the search entry
-
-            action.setDisplayShowCustomEnabled(true); //enable it to display a
-            // custom view in the action bar.
-            action.setCustomView(R.layout.search_bar);//add the custom view
-            action.setDisplayShowTitleEnabled(false); //hide the title
-
-            edtSeach = (EditText)action.getCustomView().findViewById(R.id.edtSearch); //the text editor
-
-            //this is a listener to do a search when the user clicks on search button
-            edtSeach.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                @Override
-                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                        doSearch();
-                        return true;
-                    }
-                    return false;
-                }
-            });
-
-            edtSeach.requestFocus();
-
-            //open the keyboard focused in the edtSearch
-            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(edtSeach, InputMethodManager.SHOW_IMPLICIT);
-
-            //add the close icon
-            mSearchAction.setIcon(getResources().getDrawable(R.mipmap.ic_action));
-
-            isSearchOpened = true;
-        }
-    }
-
-    private void doSearch() {
-//        searchForApp();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void init(View view) {
@@ -272,8 +215,8 @@ public class ShowCatAppFragement extends Fragment implements OnClick{
         storage.createDirectory(DIRECTORY_NAME + "/" + SUBDIRECTORY_NAME);
 
         downloadManager = new ThinDownloadManager(DOWNLOAD_THREAD_POOL_SIZE);
-        toolbar = MyToolBar.getToolbar();
-        toolbar.setTitle(data);
+//        toolbar = MyToolBar.getToolbar();
+//        toolbar.setTitle(data);
         appList = new AppList();
         groupItem = new GroupItem();
 //        listView = (ListView)view.findViewById(R.id.app_lib_list);
@@ -292,33 +235,33 @@ public class ShowCatAppFragement extends Fragment implements OnClick{
         simpleRecyclerViewAdapter.setCustomLoadMoreView(LayoutInflater.from(getActivity())
                 .inflate(R.layout.custom_bottom_progressbar, null));
 
-        ultimateRecyclerView.setParallaxHeader(getActivity().getLayoutInflater().inflate(R.layout.parallax_recyclerview_header, ultimateRecyclerView.mRecyclerView, false));
-        ultimateRecyclerView.setOnParallaxScroll(new UltimateRecyclerView.OnParallaxScroll() {
-            @Override
-            public void onParallaxScroll(float percentage, float offset, View parallax) {
-//                Drawable c = toolbar.getBackground();
-//                c.setAlpha(Math.round(127 + percentage * 128));
-                toolbar.setBackgroundDrawable(toolbar.getBackground());
-            }
-        });
+//        ultimateRecyclerView.setParallaxHeader(getActivity().getLayoutInflater().inflate(R.layout.parallax_recyclerview_header, ultimateRecyclerView.mRecyclerView, false));
+//        ultimateRecyclerView.setOnParallaxScroll(new UltimateRecyclerView.OnParallaxScroll() {
+//            @Override
+//            public void onParallaxScroll(float percentage, float offset, View parallax) {
+////                Drawable c = toolbar.getBackground();
+////                c.setAlpha(Math.round(127 + percentage * 128));
+//                toolbar.setBackgroundDrawable(toolbar.getBackground());
+//            }
+//        });
 
         ultimateRecyclerView.setRecylerViewBackgroundColor(Color.parseColor("#ffffff"));
-        ultimateRecyclerView.setDefaultOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        simpleRecyclerViewAdapter.insert(appList, simpleRecyclerViewAdapter.getAdapterItemCount());
-                        ultimateRecyclerView.setRefreshing(false);
-                        //   ultimateRecyclerView.scrollBy(0, -50);
-                        linearLayoutManager.scrollToPosition(0);
-//                        ultimateRecyclerView.setAdapter(simpleRecyclerViewAdapter);
-//                        simpleRecyclerViewAdapter.notifyDataSetChanged();
-                    }
-                }, 1000);
-            }
-        });
+//        ultimateRecyclerView.setDefaultOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+////                        simpleRecyclerViewAdapter.insert(appList, simpleRecyclerViewAdapter.getAdapterItemCount());
+//                        ultimateRecyclerView.setRefreshing(false);
+//                        //   ultimateRecyclerView.scrollBy(0, -50);
+////                        linearLayoutManager.scrollToPosition(0);
+////                        ultimateRecyclerView.setAdapter(simpleRecyclerViewAdapter);
+////                        simpleRecyclerViewAdapter.notifyDataSetChanged();
+//                    }
+//                }, 1000);
+//            }
+//        });
 
         ultimateRecyclerView.setOnLoadMoreListener(new UltimateRecyclerView.OnLoadMoreListener() {
             @Override
@@ -359,16 +302,16 @@ public class ShowCatAppFragement extends Fragment implements OnClick{
 //                }
                 URLogs.d("onUpOrCancelMotionEvent");
                 if (observableScrollState == ObservableScrollState.UP) {
-                    ultimateRecyclerView.showToolbar(toolbar, ultimateRecyclerView, getScreenHeight());
+//                    ultimateRecyclerView.showToolbar(toolbar, ultimateRecyclerView, getScreenHeight());
                     ultimateRecyclerView.hideFloatingActionMenu();
                 } else if (observableScrollState == ObservableScrollState.DOWN) {
-                    ultimateRecyclerView.showToolbar(toolbar, ultimateRecyclerView, getScreenHeight());
-                    ultimateRecyclerView.showFloatingActionMenu();
+//                    ultimateRecyclerView.showToolbar(toolbar, ultimateRecyclerView, getScreenHeight());
+                    ultimateRecyclerView.hideFloatingActionMenu();
                 }
             }
         });
 
-        ultimateRecyclerView.showFloatingButtonView();
+        ultimateRecyclerView.hideDefaultFloatingActionButton();
 
     }
 

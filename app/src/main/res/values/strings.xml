@@ -38,6 +38,12 @@
     <string name="app_cat">Category</string>
     <string name="app_fav">Favourite</string>
 
+    <string-array name="tabs">
+        <item>App</item>
+        <item>Category</item>
+        <item>Favourite</item>
+    </string-array>
+
     <!-- TODO: Ctaegory Item List -->
     <string name="cat_all_apps">APPS</string>
     <string name="cat_bussiness">BUSINESS</string>
@@ -152,4 +158,48 @@
     <string name="custome_cat_header_dialog">C-Category</string>
     <string name="custome_cat_name">Name</string>
     <string name="custome_create_button">Create</string>
+    <string name="title_activity_main">MainActivity</string>
+
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_example">Example action</string>
+
+    <string name="prefs_fragement_stats">prefs_fragement</string>
+    
+    <string name="remove_dwn_app">Remove download Apps</string>
+    <string name="new_to_aggro">New to aggro learn the basic</string>
+    <string name="read_book">Read book on your mobile devices</string>
+    <string name="disable_enable_app">Disable and enable Aggro apps</string>
+    <string name="subsribe_on_aggro">Subscribe on aggro</string>
+
+    <!--TODO:SETTINGS SCREEN
+    -->
+
+    <string name="setting_show_notification">Show notifications</string>
+    <string name="setting_show_notify">Notify When new App is avilable</string>
+    <string name="settings_dwnld">Downloading</string>
+    <string name="settings_dwnld_wifi_only">Download via wifi only</string>
+    <string name="settings_dwnld_wifi_info">To reduce carrier data charges, download download over mobile network</string>
+    <string name="settings_dwnld_charging_only">Download via charging only</string>
+    <string name="settings_dwnld_charginf_info">To reduce battery usage, download only when charging</string>
+    <string name="settings_about">About</string>
+    <string name="settings_open_source_licence">Open source licence</string>
+    <string name="legal_info_about_licence">Legal information about licenses</string>
+    <string name="settings_terms">Terms of service</string>
+    <string name="settings_privacy">Privacy policy</string>
+    <string name="settings_usage">Usage policy</string>
+    <string name="settings_usage_desc">Aggro is for presonal and non-commericial use only </string>
+    <string name="settings_aggro">Aggro</string>
+    <string name="settings_aggro_version">Version 1.0</string>
+
+    <!--TODO:Parse-->
+    <string name="app_hq_app_id">3f5d8c696ef4f23d51a53284e3b502c11b8c251fe186a7f8f09bfa0c9c3ddabb</string>
+    <string name="app_hq_client_key">52ec18c784e005c6c93f28e3f4e51f8e9e6aa190bf6a9372366a07fb2abc2eba</string>
+    <string name="google_project_number">229356881953</string>
+    
 </resources>

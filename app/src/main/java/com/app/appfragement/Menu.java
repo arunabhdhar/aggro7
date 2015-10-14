@@ -222,13 +222,13 @@ public class Menu extends Fragment{
 //after adding all the fragments write the below lines
         mViewPager = (MaterialViewPager) view.findViewById(R.id.materialViewPager);
 
-        mPagerAdapter  = new MyFragmentAdapter(getActivity(),super.getChildFragmentManager(), fragments,mViewPager);
+//        mPagerAdapter  = new MyFragmentAdapter(getActivity(),super.getChildFragmentManager(), fragments,mViewPager);
 
-        MyToolBar.setMyFragmentAdapter(mPagerAdapter);
+//        MyToolBar.setMyFragmentAdapter(mPagerAdapter);
         mViewPager.getToolbar().setVisibility(View.GONE);
-        mViewPager.getViewPager().setAdapter(mPagerAdapter);
+//        mViewPager.getViewPager().setAdapter(mPagerAdapter);
         mViewPager.getViewPager().getAdapter().notifyDataSetChanged();
-        mPagerAdapter.notifyDataSetChanged();
+//        mPagerAdapter.notifyDataSetChanged();
 
         if (mParam2 == MyFragmentAdapter.CENTERED_PAGE){
             mViewPager.getViewPager().setCurrentItem(mParam2);

@@ -22,11 +22,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.app.AppConstant;
 import com.app.Updateable;
+import com.app.Utility.CustomRecyclerView;
 import com.app.Utility.EndlessRecyclerOnScrollListener;
 import com.app.Utility.Utility;
 import com.app.adapter.AggroRecyclerThreeWayGridViewAdapter;
 import com.app.adapter.AggroRecyclerViewAdapter;
 import com.app.adapter.favAdapter;
+import com.app.aggro.MyApplication;
 import com.app.aggro.R;
 import com.app.api.GsonRequest;
 import com.app.api.VolleyErrorHelper;
@@ -39,6 +41,7 @@ import com.app.response.CustomMsg;
 import com.app.response.CustomResponse;
 import com.github.florent37.materialviewpager.MaterialViewPagerHelper;
 import com.github.florent37.materialviewpager.adapter.RecyclerViewMaterialAdapter;
+import com.google.android.gms.analytics.HitBuilders;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,7 +52,7 @@ import java.util.List;
  */
 public class RecyclerViewThreeWayGridFragment extends Fragment {
 
-    private RecyclerView mRecyclerView;
+    private CustomRecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
 
     private static final int ITEM_COUNT = 100;
@@ -71,8 +74,10 @@ public class RecyclerViewThreeWayGridFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        MyApplication.tracker().setScreenName("Fav Tab");
+        MyApplication.tracker().send(new HitBuilders.ScreenViewBuilder().build());
 
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        mRecyclerView = (CustomRecyclerView) view.findViewById(R.id.recyclerView);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(linearLayoutManager);

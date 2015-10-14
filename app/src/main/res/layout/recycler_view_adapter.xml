@@ -2,20 +2,22 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix"
     xmlns:rb="http://schemas.android.com/apk/res-auto"
     android:id="@+id/itemview">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="85dp"
+        android:layout_height="70dp"
         android:background="@mipmap/lib_cell_bg"
         android:layout_marginLeft="@dimen/lib_cell_margin_left"
         android:layout_marginRight="@dimen/lib_cell_margin_right">
 
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/app_icon"
-            android:layout_width="65dp"
-            android:layout_height="65dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/lib_cell_image_margin_left"
             android:scaleType="centerInside"
@@ -35,10 +37,13 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentLeft="true"
-                android:paddingTop="@dimen/lib_cell_margin_right"
+                android:layout_marginTop="@dimen/lib_cell_image_margin_top"
                 android:textColor="#343434"
+                android:singleLine="true"
+                android:layout_toLeftOf="@+id/rel_add_app"
                 android:text="Subway Surf"
-                android:textAppearance="?android:attr/textAppearanceMedium"/>
+                android:textSize="12sp"
+                fontPath="fonts/Helvetica Neue CE 75 Bold.ttf"/>
 
             <TextView
                 android:id="@+id/app_cat"
@@ -47,8 +52,9 @@
                 android:layout_below="@+id/app_name"
                 android:layout_alignParentLeft="true"
                 android:text="Subway Surf"
-                android:textColor="#9f9f9f"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
+                android:textSize="10sp"
+                fontPath="fonts/Helvetica Neue CE 55 Roman.ttf"
+                android:textColor="#9f9f9f"/>
 
             <com.app.Utility.ColoredRatingBar
                 android:id="@+id/coloredRatingBar1"
