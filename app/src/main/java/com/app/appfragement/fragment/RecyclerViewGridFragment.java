@@ -76,8 +76,6 @@ public class RecyclerViewGridFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        MyApplication.tracker().setScreenName("Cat Tab");
-        MyApplication.tracker().send(new HitBuilders.ScreenViewBuilder().build());
 
         mRecyclerView = (CustomRecyclerView) view.findViewById(R.id.recyclerView);
 

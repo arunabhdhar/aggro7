@@ -118,8 +118,6 @@ public class MyDetailsFragement extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_my_details_fragement, container, false);
 
-        MyApplication.tracker().setScreenName("My Detail  Tab");
-        MyApplication.tracker().send(new HitBuilders.ScreenViewBuilder().build());
         initInstances(rootView);
         init(rootView);
         setFontOnViewLoaded();

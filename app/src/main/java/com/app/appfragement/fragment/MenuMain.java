@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.support.design.widget.TabLayout;
 import android.widget.ImageView;
 
+import com.app.aggro.MyApplication;
 import com.app.aggro.R;
 import com.app.slideradapter.MyFragmentAdapter;
 import com.github.florent37.materialviewpager.MaterialViewPager;
@@ -112,6 +113,12 @@ public class MenuMain extends Fragment{
         initInstances(view);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        MyApplication.getInstance().trackScreenView("MenuMain Fragemnent");
+    }
+
     private void initInstances(View view) {
 
         toolbar = (Toolbar) view.findViewById(R.id.toolbar);
@@ -119,24 +126,6 @@ public class MenuMain extends Fragment{
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         rootLayout = (CoordinatorLayout)view.findViewById(R.id.htab_maincontent);
         fabBtn = (FloatingActionButton) view.findViewById(R.id.fabBtn);
-//        fabBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Snackbar.make(rootLayout, "Hello. I am Snackbar!", Snackbar.LENGTH_SHORT)
-//                        .setAction("Undo", new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View v) {
-//
-//                            }
-//                        })
-//                        .show();
-//            }
-//        });
-
-//        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
-//        tabLayout.addTab(tabLayout.newTab().setText("Tab 1"));
-//        tabLayout.addTab(tabLayout.newTab().setText("Tab 2"));
-//        tabLayout.addTab(tabLayout.newTab().setText("Tab 3"));
 
         collapsingToolbarLayout = (CollapsingToolbarLayout)view.findViewById(R.id.collapsingToolbarLayout);
         collapsingToolbarLayout.setTitle("");
@@ -146,10 +135,6 @@ public class MenuMain extends Fragment{
             ((AppCompatActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
             ((AppCompatActivity)getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_action_menu);
         }
-//       ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-//        ((AppCompatActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
-
-
     }
 
 
@@ -185,14 +170,6 @@ public class MenuMain extends Fragment{
         else if (mParam2 == MyFragmentAdapter.LEFT_PAGE){
             mPager.setCurrentItem(0);
         }
-
-//        if (MyFragmentAdapter.getPos()==MyFragmentAdapter.LEFT_PAGE){
-//            header.setImageResource(R.drawable.header);
-//        }else if (MyFragmentAdapter.getPos()==MyFragmentAdapter.CENTERED_PAGE){
-//            header.setImageResource(R.drawable.nav_header_bg);
-//        }else if(MyFragmentAdapter.getPos() == MyFragmentAdapter.RIGHT_PAGE){
-//            header.setImageResource(R.drawable.header_2);
-//        }
 
     }
 

@@ -160,9 +160,6 @@ public class ShowCatAppFragement extends Fragment implements OnClick{
 
         final View v = inflater.inflate(R.layout.fragement_show_cat_app, container, false);
 
-        MyApplication.tracker().setScreenName("Show Categorized  Tab");
-        MyApplication.tracker().send(new HitBuilders.ScreenViewBuilder().build());
-
         initInstances(v);
         init(v);
         showCategorizedApp();

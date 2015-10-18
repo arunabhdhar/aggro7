@@ -181,6 +181,7 @@ public class MainActivity extends AppCompatActivity implements MyDetailsFragemen
     @Override
     public void onResume() {
         super.onResume();
+        MyApplication.getInstance().trackScreenView("Main Activity");
         if (mAdView != null) {
             mAdView.resume();
         }

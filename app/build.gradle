@@ -15,6 +15,7 @@ repositories {
     maven { url 'https://maven.fabric.io/public' }
     maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     maven { url 'https://dl.bintray.com/drummer-aidan/maven' }
+    maven {url "https://jitpack.io"}
 }
 android {
     compileSdkVersion 23
@@ -84,4 +85,5 @@ dependencies {
     compile 'com.parse.bolts:bolts-android:1.+'
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
     compile files('libs/App42_ANDROID_SDK_3.0.1.jar')
+    compile 'com.github.quentin7b:android-location-tracker:3.0'
 }

@@ -16,6 +16,7 @@ import android.provider.Settings;
 import android.util.Log;
 
 import com.app.address.User;
+import com.app.aggro.R;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -68,6 +69,7 @@ public class GPSTracker extends Service implements LocationListener {
 
 			if (!isGPSEnabled && !isNetworkEnabled) {
 				// no network provider is enabled
+				this.canGetLocation = false;
 			} else {
 				this.canGetLocation = true;
 				if (isNetworkEnabled) {

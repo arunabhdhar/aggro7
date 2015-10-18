@@ -161,8 +161,6 @@ public class SearchAppFragement extends Fragment implements OnClick {
         // Inflate the layout for this fragment
         final View v = inflater.inflate(R.layout.fragment_search_app_fragement, container, false);
 
-        MyApplication.tracker().setScreenName("Search  Tab");
-        MyApplication.tracker().send(new HitBuilders.ScreenViewBuilder().build());
          initInstances(v);
         init(v);
 //        search(v);

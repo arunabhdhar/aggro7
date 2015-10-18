@@ -79,9 +79,6 @@ public class RecyclerViewFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        MyApplication.tracker().setScreenName("App Tab");
-        MyApplication.tracker().send(new HitBuilders.ScreenViewBuilder().build());
-
         mRecyclerView = (CustomRecyclerView) view.findViewById(R.id.recyclerView);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
@@ -93,6 +90,7 @@ public class RecyclerViewFragment extends Fragment {
                 @Override
                 public void addToFav(ChildItem childItem) {
 //                    addingAppToFav(childItem);
+                    MyApplication.getInstance().trackEvent("RecyleViewFragement", "Adding", "Add app to favourite");
                     AppTracker appTracker = AppTracker.getSingleEntry(childItem.mPackageName);
                     Log.e("PACJA","" + appTracker.packageName);
                     if (childItem.isFavourite == 0){
@@ -105,13 +103,12 @@ public class RecyclerViewFragment extends Fragment {
                         Log.e("APP TRACKER FRAGEMENT","" + appTracker.isFavourite);
                         appTracker.save();
                     }
-//                    MyToolBar.getMaterialViewPager().getViewPager().getAdapter().notifyDataSetChanged();
-//                    MyToolBar.getMyFragmentAdapter().updateData();
                     mAdapter.notifyDataSetChanged();
                 }
 
                 @Override
                 public void openApp(ChildItem childItem) {
+                    MyApplication.getInstance().trackEvent("RecyleViewFragement", "Download", "Open installed app");
                      openDownloadedApp(childItem);
                 }
             }));
@@ -286,6 +283,7 @@ public class RecyclerViewFragment extends Fragment {
             getActivity().startActivity(i);
             return true;
         } catch (PackageManager.NameNotFoundException e) {
+            MyApplication.getInstance().trackException(e);
             e.printStackTrace();
             return false;
         }

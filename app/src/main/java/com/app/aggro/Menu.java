@@ -68,10 +68,7 @@ public class Menu extends AppCompatActivity implements com.app.appfragement.Menu
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
         mContext = Menu.this;
-
-
-        MyApplication.tracker().setScreenName("Menu");
-        MyApplication.tracker().send(new HitBuilders.ScreenViewBuilder().build());
+;
 
         //Display Benner Ads
         mAdView = (AdView) findViewById(R.id.adView);

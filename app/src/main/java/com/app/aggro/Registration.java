@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.os.Build;
 import android.os.NetworkOnMainThreadException;
 import android.support.v7.app.ActionBarActivity;
@@ -52,15 +55,20 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.parse.ParseAnalytics;
 
+import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
+import fr.quentinklein.slt.*;
+import fr.quentinklein.slt.LocationUtils;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class Registration extends Activity {
+    LocationTracker myTracker;
     private AdView mAdView;
     private ImageView signIn;
     private Spinner spinnerMF;
@@ -70,7 +78,7 @@ public class Registration extends Activity {
     public static int count = 0;
     private Activity mContext = Registration.this;
     private String gender;
-//    public static ArrayList<ImageItem> mItems;
+    private static String TAG = MainActivity.class.getSimpleName();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,6 +106,10 @@ public class Registration extends Activity {
 //        if (gpsTracker != null)
 //        gpsTracker.stopUsingGPS();
 
+        if(myTracker != null) {
+            myTracker.stopListen();
+        }
+
         if (mAdView != null) {
             mAdView.pause();
         }
@@ -107,8 +119,15 @@ public class Registration extends Activity {
     @Override
     public void onResume() {
         super.onResume();
-
         GooglePlayServicesUtil.isGooglePlayServicesAvailable(Registration.this);
+
+
+        if (!LocationUtils.isGpsProviderEnabled(Registration.this)){
+            Utility.showSettingsAlert(Registration.this);
+        }
+        if(myTracker != null) {
+            myTracker.startListen();
+        }
         if (mAdView != null) {
             mAdView.resume();
         }
@@ -209,7 +228,14 @@ public class Registration extends Activity {
         signIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                feildValidator();
+                try {
+                    MyApplication.getInstance().trackEvent("Register", "Sigin", "Save detail to server");
+                    feildValidator();
+                }catch (Exception e){
+                    MyApplication.getInstance().trackException(e);
+                    Log.e(TAG, "Exception: " + e.getMessage());
+                }
+
             }
         });
 
@@ -332,24 +358,51 @@ public class Registration extends Activity {
     }
 
     private void trackLocation(){
-//            if (gpsTracker.canGetLocation())
-//            {
-//                boolean getLocation = gpsTracker.canGetLocation();
-//                User user = gpsTracker.getAddress(Registration.this,gpsTracker.getLatitude(), gpsTracker.getLongitude());
-//                location_ed.setText(user.city);
-//            }
-//            else
-//            {
-//                // can't get location
-//                // GPS or Network is not enabled
-//                // Ask user to enable GPS/network in settings
-//
-//                gpsTracker.showSettingsAlert();
-//            }
-
-        location_ed.setText("Patna");
+       Log.e("GPS", "" + fr.quentinklein.slt.LocationUtils.isGpsProviderEnabled(Registration.this));
+        Log.e("NETWORK", "" + fr.quentinklein.slt.LocationUtils.isNetworkProviderEnabled(Registration.this));
 
 
+            final TrackerSettings settings =
+                    new TrackerSettings()
+                            .setUseGPS(true)
+                            .setUseNetwork(true)
+                            .setUsePassive(true)
+                            .setTimeBetweenUpdates(30 * 60 * 1000)
+                            .setMetersBetweenUpdates(100);
+            myTracker =  new LocationTracker(Registration.this, settings) {
+
+                @Override
+                public void onLocationFound(Location location) {
+                    // Do some stuff when a new location has been found.
+                    User user = getAddress(Registration.this, location.getLatitude(), location.getLongitude());
+                    location_ed.setText(user.city);
+                    stopListen();
+                }
+
+                @Override
+                public void onTimeout() {
+
+                }
+
+            };
+
+
+    }
+
+    public User getAddress(Context context ,double latitude, double longitude){
+        User user = null;
+        Geocoder geocoder;
+        List<Address> addresses;
+        geocoder = new Geocoder(context, Locale.getDefault());
+        try {
+            addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+            user = new User(addresses.get(0).getAddressLine(0),addresses.get(0).getLocality(),addresses.get(0).getAdminArea(),addresses.get(0).getCountryName(),addresses.get(0).getPostalCode());
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+
+        return user;
     }
 
     /**
