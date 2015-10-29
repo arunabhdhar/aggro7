@@ -10,10 +10,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
-import com.app.Updateable;
 import com.app.aggro.R;
-import com.app.appfragement.fragment.RecyclerViewFragment;
-import com.github.florent37.materialviewpager.MaterialViewPager;
 
 import java.util.List;
 

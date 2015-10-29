@@ -16,6 +16,8 @@ public class AggroCategory extends Model{
     public String categoryName;
     @Column(name = "CategoryImage")
     public int categoryImage;
+    @Column(name = "Recommendation")
+    public int reccomendation;
 
 
     public AggroCategory(){
@@ -33,7 +35,12 @@ public class AggroCategory extends Model{
                 .executeSingle();
     }
 
+    public static List<AggroCategory> getSingleEntryByRecommenadion(){
+        return new Select().from(AggroCategory.class).orderBy("Recommendation DESC")
+                .execute();
+    }
+
     public static List<AggroCategory> getAll() {
-        return new Select().from(AggroCategory.class).orderBy("CategoryName ASC").execute();
+        return new Select().from(AggroCategory.class).execute();
     }
 }

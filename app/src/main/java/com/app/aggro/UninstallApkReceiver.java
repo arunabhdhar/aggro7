@@ -34,7 +34,7 @@ public class UninstallApkReceiver extends BroadcastReceiver {
                   AppTracker appTracker = localApptracker.load(AppTracker.class,localApptracker.getId());
 
                  localApptracker.deleteSingleEntry(packageName);
-                 Intent i = new Intent(context,Menu.class);
+                 Intent i = new Intent(context,MainActivity.class);
                  i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                  context.getApplicationContext().startActivity(i);
 

@@ -86,4 +86,8 @@ dependencies {
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
     compile files('libs/App42_ANDROID_SDK_3.0.1.jar')
     compile 'com.github.quentin7b:android-location-tracker:3.0'
+    compile 'com.github.gabrielemariotti.cards:cardslib-core:2.1.0'
+    compile 'com.github.gabrielemariotti.cards:cardslib-cards:2.1.0'
+    compile 'com.github.gabrielemariotti.cards:cardslib-recyclerview:2.1.0'
+    compile 'com.nhaarman.listviewanimations:lib-core:3.1.0@aar'
 }

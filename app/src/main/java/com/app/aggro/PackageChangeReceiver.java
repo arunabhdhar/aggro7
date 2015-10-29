@@ -51,6 +51,7 @@ public class PackageChangeReceiver extends BroadcastReceiver {
             else{
                 AppTracker appTracker = new AppTracker();
                 appTracker.isInstalled = true;
+                appTracker.isSystenApp = true;
                 appTracker.packageName = packageName;
                 appTracker.appName = Utility.readUserInfoFromPrefs(context,context.getResources().getString(R.string.aggro_downloaded_app_name));
                 appTracker.catName = Utility.readUserInfoFromPrefs(context,context.getResources().getString(R.string.aggro_downloaded_app_category));

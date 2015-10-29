@@ -9,4 +9,6 @@ public class ChildItem {
     public String mPackageName;
     public int isFavourite;
     public float mRating;
+    public Drawable systemAppIcon;
+    public boolean isSystenApp = false;
 }

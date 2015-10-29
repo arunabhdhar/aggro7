@@ -1,76 +1,149 @@
 package com.app.adapter;
 
-import java.util.ArrayList;
-
 import android.content.Context;
-import android.view.LayoutInflater;
+import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.TextView;
 
-import com.app.aggro.R;
-import com.app.gridcategory.SquareImageView;
-import com.app.holder.ChildHolder;
-import com.app.holder.ChildItem;
-import com.app.holder.GroupItem;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
+import it.gmariotti.cardslib.library.internal.Card;
+import it.gmariotti.cardslib.library.recyclerview.internal.CardArrayRecyclerViewAdapter;
 
 /**
- * Created by C-ShellWin on 12/28/2014.
+ * Created by ericbasendra on 20/10/15.
  */
-public class AppLibrary extends BaseAdapter {
+public class AppLibrary extends CardArrayRecyclerViewAdapter {
 
-	private Context mContext;
-	private GroupItem groupitem;
-	private LayoutInflater inflater;
+	/**
+	 * Internal objects
+	 */
+	protected List<Card> mCards;
+	/**
+	 * Constructor
+	 *
+	 * @param context The current context.
+	 * @param cards   The cards to represent in the ListView.
+	 */
 
-	public AppLibrary(Context mContext, GroupItem groupitem) {
-		this.mContext = mContext;
-		this.groupitem = groupitem;
-		inflater = LayoutInflater.from(mContext);
-	}
 
-	@Override
-	public int getCount() {
-		if (groupitem != null)
-			return groupitem.items.size();
-		else
-			return 0;
-	}
-
-	@Override
-	public ChildItem getItem(int position) {
-		return groupitem.items.get(position);
-	}
-
-	@Override
-	public long getItemId(int position) {
-		return position;
-	}
-
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		ChildHolder holder = null;
-		ChildItem item = getItem(position);
-		if (convertView == null) {
-			convertView = inflater.inflate(R.layout.lib_item, parent,
-					false);
-			holder = new ChildHolder();
-			convertView.setTag(holder);
+	public AppLibrary(Context context, List<Card> cards) {
+		super(context, cards);
+		if (cards != null) {
+			mCards = cards;
 		} else {
-			holder = (ChildHolder) convertView.getTag();
+			mCards = new ArrayList<Card>();
 		}
-
-		holder.mAppImageView = (SquareImageView) convertView
-				.findViewById(R.id.app_icon);
-		holder.mAppName = (TextView)convertView.findViewById(R.id.app_name);
-		holder.mAppCategory = (TextView)convertView.findViewById(R.id.app_cat);
-
-//		holder.mAppImageView.setImageResource(item.mAppIconUrl);
-		holder.mAppName.setText(item.mAppname);
-		holder.mAppCategory.setText(item.mAppCategory);
-
-		return convertView;
 	}
+
+	// -------------------------------------------------------------
+	// Methods
+	// -------------------------------------------------------------
+
+	@Override
+	public int getItemCount() {
+		return mCards.size();
+	}
+
+
+	@Override
+	public Card getItem(int position) {
+		return mCards.get(position);
+	}
+
+	/**
+	 * Sets the card's list
+	 * @param cards list
+	 */
+	public void setCards(List<Card> cards) {
+		mCards = cards;
+	}
+
+
+	/**
+	 * Appends the specified element to the end of the {@code List}.
+	 *
+	 * @param card the object to add.
+	 *
+	 * @return always true.
+	 */
+	@Override
+	public boolean add(@NonNull final Card card) {
+		boolean result = mCards.add(card);
+		notifyDataSetChanged();
+		return result;
+	}
+
+	/**
+	 * Appends the specified element into the index specified {@code List}.
+	 * @param index
+	 * @param card
+	 */
+	@Override
+	public void add(final int index, @NonNull final Card card) {
+		mCards.add(index, card);
+		notifyItemInserted(index);
+	}
+
+	/**
+	 * Adds the objects in the specified collection to the end of this List. The objects are added in the order in which they are returned from the collection's iterator.
+	 *
+	 * @param collection the collection of objects.
+	 *
+	 * @return {@code true} if this {@code List} is modified, {@code false} otherwise.
+	 */
+	public boolean addAll(@NonNull final Collection<? extends Card> collection) {
+		boolean result = mCards.addAll(collection);
+		notifyDataSetChanged();
+		return result;
+	}
+
+	/**
+	 * Check if the list contains the element
+	 * @param card
+	 * @return
+	 */
+	@Override
+	public boolean contains(final Card card) {
+		return mCards.contains(card);
+	}
+
+	/**
+	 * Clears the list
+	 */
+	@Override
+	public void clear() {
+		mCards.clear();
+		notifyDataSetChanged();
+	}
+
+	/**
+	 * Removes the specified element
+	 * @param card
+	 * @return
+	 */
+	@Override
+	public boolean remove(@NonNull final Card card) {
+		boolean result = mCards.remove(card);
+		notifyDataSetChanged();
+		return result;
+	}
+
+	/**
+	 * Removes the element at position
+	 * @param position
+	 * @return
+	 */
+	@NonNull
+	@Override
+	public Card remove(final int position) {
+		Card result = mCards.remove(position);
+		notifyItemRemoved(position);
+		return result;
+	}
+
+
 }

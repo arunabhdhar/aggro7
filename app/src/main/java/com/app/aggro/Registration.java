@@ -3,8 +3,12 @@ package com.app.aggro;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -92,7 +96,8 @@ public class Registration extends Activity {
         setContentView(R.layout.activity_registration);
         init();
         saveCategoryInDatabaseFirstTime();
-        initLocalApptracer();
+//        initLocalApptracer();
+        getInstalledApps();
         trackLocation();
         addItemToSpinner();
         addListenerToSpinner();
@@ -103,8 +108,6 @@ public class Registration extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-//        if (gpsTracker != null)
-//        gpsTracker.stopUsingGPS();
 
         if(myTracker != null) {
             myTracker.stopListen();
@@ -297,6 +300,8 @@ public class Registration extends Activity {
         mItems.add(new ImageItem(getString(R.string.cat_game_word), R.mipmap.entertainment));
         mItems.add(new ImageItem(getString(R.string.cat_app_wallpaper), R.mipmap.entertainment));
         mItems.add(new ImageItem(getString(R.string.cat_app_widget), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_pick_recomendation), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_recomendation), R.mipmap.entertainment));
 
         return mItems;
     }
@@ -308,6 +313,7 @@ public class Registration extends Activity {
             ImageItem imageItem = defaultCategoryLoad().get(i);
             aggroCategory.categoryName = imageItem.getTitle();
             aggroCategory.categoryImage = imageItem.getImage();
+            aggroCategory.reccomendation = 0;
             aggroCategory.save();
         }
     }
@@ -360,8 +366,7 @@ public class Registration extends Activity {
     private void trackLocation(){
        Log.e("GPS", "" + fr.quentinklein.slt.LocationUtils.isGpsProviderEnabled(Registration.this));
         Log.e("NETWORK", "" + fr.quentinklein.slt.LocationUtils.isNetworkProviderEnabled(Registration.this));
-
-
+        location_ed.setText("PATNA");
             final TrackerSettings settings =
                     new TrackerSettings()
                             .setUseGPS(true)
@@ -494,18 +499,81 @@ public class Registration extends Activity {
 
  private void initLocalApptracer(){
      if (count == 0){
-         AppTracker appTracker = new AppTracker();
-         appTracker.isInstalled = true;
-         appTracker.packageName = "xxx";
-         appTracker.appName = "xxx";
-         appTracker.catName = "xxx";
-         appTracker.marketUrl = "xxx";
-         appTracker.appIconUrl = "xxx";
-         appTracker.save();
+//         AppTracker appTracker = new AppTracker();
+//         appTracker.isInstalled = true;
+//         appTracker.packageName = "xxx";
+//         appTracker.appName = "xxx";
+//         appTracker.catName = "xxx";
+//         appTracker.marketUrl = "xxx";
+//         appTracker.appIconUrl = "xxx";
+//         appTracker.save();
+
+         final PackageManager pm = getPackageManager();
+         //get a list of installed apps.
+         List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+
+         for (ApplicationInfo packageInfo : packages) {
+             Log.d(TAG, "Installed package :" + packageInfo.packageName);
+             Log.d(TAG, "Source dir : " + packageInfo.sourceDir);
+             Log.d(TAG, "Launch Activity :" + pm.getLaunchIntentForPackage(packageInfo.packageName));
+
+             try {
+                 AppTracker appTracker = new AppTracker();
+                 appTracker.isInstalled = true;
+                 appTracker.isSystenApp = true;
+                 appTracker.packageName = packageInfo.packageName;
+                 appTracker.appName = packageInfo.loadLabel(getPackageManager()).toString();;
+                 appTracker.catName = "Phone app";
+                 appTracker.marketUrl = "xxx";
+                 appTracker.appIconUrl = "xxx";
+                 appTracker.save();
+             }catch (Exception ne){
+                 ne.printStackTrace();
+             }
+
+
+         }
+// the getLaunchIntentForPackage returns an intent that you can use with startActivity()
      }
 
      count = count + 1;
  }
+
+    private void getInstalledApps(){
+        if (count == 0){
+            List<PackageInfo> PackList = getPackageManager().getInstalledPackages(0);
+
+            for (int i=0; i < PackList.size(); i++)
+            {
+                try {
+                    PackageInfo PackInfo = PackList.get(i);
+                    if (  (PackInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0)
+                    {
+//                        Drawable appIcon = PackInfo.applicationInfo.loadIcon(getPackageManager());
+
+                        AppTracker appTracker = new AppTracker();
+                        appTracker.isInstalled = true;
+                        appTracker.isSystenApp = true;
+                        appTracker.packageName = PackInfo.packageName;
+                        appTracker.appName = PackInfo.applicationInfo.loadLabel(getPackageManager()).toString();
+                        appTracker.catName = "Phone app";
+                        appTracker.marketUrl = "xxx";
+                        appTracker.appIconUrl = "xxx";
+//                        Utility.writeDrawableToSdCard(Registration.this,appIcon,PackInfo.applicationInfo.loadLabel(getPackageManager()).toString());
+//                        Log.e("App № " + Integer.toString(i), "" + appIcon);
+                        appTracker.save();
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+            }
+
+        }else{
+          count = count + 1;
+        }
+    }
+
 
     private HashMap prepareHasMap(){
         HashMap<String,String> hm = new HashMap<String,String>();

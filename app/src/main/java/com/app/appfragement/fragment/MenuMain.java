@@ -23,8 +23,11 @@ import android.view.ViewGroup;
 import android.support.design.widget.TabLayout;
 import android.widget.ImageView;
 
+import com.app.adapter.AppLibrary;
 import com.app.aggro.MyApplication;
 import com.app.aggro.R;
+import com.app.appfragement.AppFragement;
+import com.app.appfragement.FavFragement;
 import com.app.slideradapter.MyFragmentAdapter;
 import com.github.florent37.materialviewpager.MaterialViewPager;
 
@@ -147,9 +150,9 @@ public class MenuMain extends Fragment{
         Bundle page = new Bundle();
         page.putString("url", "d");
 
-        fragments.add(Fragment.instantiate(getActivity(), RecyclerViewFragment.class.getName(), page));
+        fragments.add(Fragment.instantiate(getActivity(), AppFragement.class.getName(), page));
         fragments.add(Fragment.instantiate(getActivity(), RecyclerViewGridFragment.class.getName(), page));
-        fragments.add(Fragment.instantiate(getActivity(), RecyclerViewThreeWayGridFragment.class.getName(), page));
+        fragments.add(Fragment.instantiate(getActivity(), FavFragement.class.getName(), page));
 
 //after adding all the fragments write the below lines
         mPager = (ViewPager)view. findViewById(R.id.htab_viewpager);

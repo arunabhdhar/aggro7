@@ -89,6 +89,8 @@
     <string name="cat_game_word">GAME_WORD</string>
     <string name="cat_app_wallpaper">APP_WALLPAPER</string>
     <string name="cat_app_widget">APP_WIDGETS</string>
+    <string name="cat_pick_recomendation">Pick place \u0026 recommendation</string>
+    <string name="cat_recomendation">Recommendation</string>
 
     <!-- TODO: Ctaegory GAME -->
     <string name="name_one">Subway Sutfer</string>
@@ -197,9 +199,36 @@
     <string name="settings_aggro">Aggro</string>
     <string name="settings_aggro_version">Version 1.0</string>
 
+    <!--TODO:PICK AND RECOMMENDATION SCREEN
+    -->
+    
+    <string name="choose_place_type">Select Place type and get recommended app</string>
+
     <!--TODO:Parse-->
     <string name="app_hq_app_id">3f5d8c696ef4f23d51a53284e3b502c11b8c251fe186a7f8f09bfa0c9c3ddabb</string>
     <string name="app_hq_client_key">52ec18c784e005c6c93f28e3f4e51f8e9e6aa190bf6a9372366a07fb2abc2eba</string>
     <string name="google_project_number">229356881953</string>
+    
+    <!--TODO HELP & RECOMMENDATION-->
+    <string-array name="pick_recommendation_array">
+        <item>Airport</item>
+        <item>Hospital</item>
+        <item>Amusement park</item>
+        <item>ATM</item>
+        <item>Art Gallery</item>
+        <item>Bakery</item>
+        <item>Library</item>
+        <item>Bank</item>
+        <item>Bar</item>
+        <item>Beauty Salon</item>
+        <item>Lodging</item>
+        <item>Book Store</item>
+        <item>Meal Takeaway</item>
+        <item>Movie Rental</item>
+        <item>Car Dealer</item>
+        <item>Night Club</item>
+        <item>park</item>
+        <item>Food</item>
+    </string-array>
     
 </resources>

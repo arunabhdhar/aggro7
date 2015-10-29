@@ -145,54 +145,6 @@ public class RecyclerViewGridFragment extends Fragment {
      */
 
     private ArrayList<ImageItem> getData() {
-//        final ArrayList<ImageItem> mItems = new ArrayList<>();
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_bussiness),R.mipmap.games));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_lifestyle),R.mipmap.games));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_news),   R.mipmap.news));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_education),R.mipmap.teaching));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_transporation),R.mipmap.games));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_productiity),R.mipmap.games));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_games),R.mipmap.games));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_travel),R.mipmap.games));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_sports), R.mipmap.sports));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_health), R.mipmap.health));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_entertainment), R.mipmap.entertainment));
-//
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_comics), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_communication), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_finance), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_media_video), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_medical), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_personilazation), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_photography), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_shopping), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_social), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_tool), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_wheather), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_lib_demo), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_arcade), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_puzzle), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_card), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_casual), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_racing), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_sport), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_action), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_adventure), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_board), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_casino), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_educational), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_family), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_music), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_role_playing), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_simulation), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_strategy), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_trivia), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_game_word), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_app_wallpaper), R.mipmap.entertainment));
-//        mItems.add(new ImageItem(getActivity().getResources().getString(R.string.cat_app_widget), R.mipmap.entertainment));
-//        return mItems;
-
-
         List<AggroCategory>aggroCategoriesList = AggroCategory.getAll();
         for (int i = 0; i < aggroCategoriesList.size();i++){
             AggroCategory aggroCategory = aggroCategoriesList.get(i);
@@ -222,6 +174,7 @@ public class RecyclerViewGridFragment extends Fragment {
                     aggroCategory1.categoryName = nameOfCategory;
                     aggroCategory1.categoryImage = R.mipmap.games;
                     aggroCategory1.save();
+
 
                     getData();
                     mAdapter.notifyDataSetChanged();

@@ -2,10 +2,13 @@ package com.app.appfragement;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.view.*;
 import android.view.Menu;
 import android.view.inputmethod.EditorInfo;
@@ -17,10 +20,16 @@ import android.widget.Toast;
 
 import com.app.adapter.AppLibrary;
 import com.app.aggro.R;
+import com.app.cards.CustomCards;
 import com.app.holder.ChildItem;
 import com.app.holder.GroupItem;
+import com.app.local.database.AppTracker;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import it.gmariotti.cardslib.library.internal.Card;
+import it.gmariotti.cardslib.library.recyclerview.view.CardRecyclerView;
 
 /**
  * Created by sonal on 7/2/2015.
@@ -28,10 +37,9 @@ import java.util.ArrayList;
 public class AppFragement extends Fragment {
 
 
-    private GroupItem groupItem;
-    private AppLibrary adpapter;
-    private ListView listView;
-
+    List<Card> cards;
+    CardRecyclerView mRecyclerView;
+    AppLibrary myAdapter;
 
     public static AppFragement newInstance(String imageUrl) {
 
@@ -59,60 +67,62 @@ public class AppFragement extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate and locate the main ImageView
         final View v = inflater.inflate(R.layout.fragement_app, container, false);
-
         init(v);
-        preareList();
-        setListviewToAdapter();
+        createcard(v);
         return v;
     }
 
 
 
     private void init(View view) {
-        groupItem = new GroupItem();
-        listView = (ListView)view.findViewById(R.id.app_lib_list);
+
     }
 
-    private void preareList() {
-         ArrayList<String> list = new ArrayList<String>();
-        ArrayList<Integer> imageList = new ArrayList<Integer>();
-        list.add(getActivity().getResources().getString(
-                R.string.name_one));
-        list.add(getActivity().getResources().getString(
-                R.string.name_two));
-        list.add(getActivity().getResources().getString(R.string.name_three));
-        list.add(getActivity().getResources().getString(
-                R.string.name_one));
-        list.add(getActivity().getResources().getString(
-                R.string.name_two));
-        list.add(getActivity().getResources().getString(
-                R.string.name_three));
 
-        imageList.add(R.mipmap.sports);
-        imageList.add(R.mipmap.health);
-        imageList.add(R.mipmap.teaching);
-        imageList.add(R.mipmap.sports);
-        imageList.add(R.mipmap.health);
-        imageList.add(R.mipmap.teaching);
 
-            for (int i = 0; i < list.size(); i++) {
-                ChildItem childItem = new ChildItem();
-//                childItem.mAppIcon = imageList.get(i);
-                childItem.mAppname = list.get(i).toString();
-                childItem.mAppCategory = "Games";
-                groupItem.items.add(childItem);
+    private void createcard(View v) {
+        cards = new ArrayList<>();
+        //Create a Card
+        myAdapter = new AppLibrary(getActivity(),cards);
+
+        List<AppTracker> eventList = null;
+        eventList = AppTracker.getAllByLast();
+
+        for (int i = 0; i < eventList.size(); i++){
+            try {
+                AppTracker event =  eventList.get(i);
+                CustomCards customCards = new CustomCards(getActivity(),myAdapter);
+                customCards.setIsSystemApp(event.isSystenApp);
+                customCards.setmTitle(event.appName);
+                customCards.setmCategory(event.catName);
+                customCards.setIsFavourite(event.isFavourite);
+                if (event.isFavourite == 0)
+                    customCards.setFavResource(R.mipmap.star_green);
+                else
+                    customCards.setFavResource(R.mipmap.star_orange);
+                customCards.setmPackageName(event.packageName);
+                customCards.setPosition(i);
+                Drawable icon = getActivity().getPackageManager().getApplicationIcon(event.packageName);
+                customCards.setImageResources(icon);
+                customCards.setmRating(4);
+                cards.add(customCards);
+            }catch (PackageManager.NameNotFoundException e){
+                e.printStackTrace();
             }
-    }
 
-    private void setListviewToAdapter() {
-        if (groupItem != null) {
-            adpapter = new AppLibrary(getActivity(), groupItem);
-            listView.setAdapter(adpapter);
-        } else {
-            Toast.makeText(
-                    getActivity(),
-                    "No Games found",
-                    Toast.LENGTH_LONG).show();
         }
+
+        myAdapter.notifyDataSetChanged();
+
+        //Staggered grid view
+        mRecyclerView = (CardRecyclerView) v.findViewById(R.id.carddemo_recyclerview);
+        mRecyclerView.setHasFixedSize(false);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        //Set the empty view
+        if (mRecyclerView != null) {
+            mRecyclerView.setAdapter(myAdapter);
+        }
+
     }
 }

@@ -1,5 +1,7 @@
 package com.app.local.database;
 
+import android.graphics.drawable.Drawable;
+
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
@@ -29,6 +31,8 @@ public class AppTracker extends Model{
     public float rating;
     @Column(name = "IsFavourite")
     public int isFavourite = 0;
+    @Column(name = "IsSystenApp")
+    public boolean isSystenApp = false;
 
     public AppTracker(){
         super();
@@ -49,7 +53,7 @@ public class AppTracker extends Model{
         return new Select().from(AppTracker.class).orderBy("PackageName DESC").execute();
     }
 
-    public static List<AppTracker> getAllByLast(AppTracker event) {
+    public static List<AppTracker> getAllByLast() {
         return new Select().from(AppTracker.class).orderBy("Id DESC").execute();
     }
 
@@ -61,7 +65,7 @@ public class AppTracker extends Model{
                 .execute();
     }
 
-    public List<AppTracker> getAllByFav(int fav) {
+    public static List<AppTracker> getAllByFav(int fav) {
         return new Select()
                 .from(AppTracker.class)
                 .where("IsFavourite = ?", fav)

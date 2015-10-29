@@ -1,6 +1,8 @@
 package com.app.adapter;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,6 +19,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.app.OnClick;
 import com.app.Utility.ColoredRatingBar;
 import com.app.Utility.CustomVolleyRequestQueue;
+import com.app.Utility.Utility;
 import com.app.aggro.R;
 import com.app.gridcategory.ImageItem;
 import com.app.gridcategory.SquareImageView;
@@ -103,7 +106,16 @@ public class AggroRecyclerViewAdapter extends RecyclerView.Adapter<AggroRecycler
 
     private void bindItemCardCell(int position,ItemViewHolder holder){
 
-        Log.e("fedf", "" + "d ");
+        Log.e("fedf", "" + contents.get(position).mAppname);
+        if (contents.get(position).isSystenApp == true){
+            try {
+                Drawable icon = context.getPackageManager().getApplicationIcon(contents.get(position).mPackageName);
+                holder.mAppImageView.setBackground(icon);
+            }catch (PackageManager.NameNotFoundException e){
+                  e.printStackTrace();
+            }
+        }
+        else
             holder.mAppImageView.setImageUrl(contents.get(position).mAppIconUrl, holder.mImageLoader);
             holder.mAppName.setText(contents.get(position).mAppname);
             holder.mAppCategory.setText(contents.get(position).mAppCategory);

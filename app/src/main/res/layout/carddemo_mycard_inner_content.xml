@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix"
+    xmlns:rb="http://schemas.android.com/tools">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
+
+
+            <com.android.volley.toolbox.NetworkImageView
+                android:id="@+id/app_icon"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/lib_cell_image_margin_left"
+                android:scaleType="centerCrop"
+                class="com.app.gridcategory.SquareImageView"
+                android:src="@mipmap/games"/>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/app_icon"
+                android:layout_marginLeft="10dp">
+
+                <TextView
+                    android:id="@+id/app_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:paddingTop="10dp"
+                    android:textColor="#343434"
+                    android:singleLine="true"
+                    android:text="Subway Surf"
+                    android:textSize="13sp"
+                    fontPath="fonts/Helvetica Neue CE 75 Bold.ttf"/>
+
+                <TextView
+                    android:id="@+id/app_cat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/app_name"
+                    android:layout_alignParentLeft="true"
+                    android:text="Subway Surf"
+                    android:textSize="11sp"
+                    fontPath="fonts/Helvetica Neue CE 55 Roman.ttf"
+                    android:textColor="#9f9f9f"
+                    android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+                <com.app.Utility.ColoredRatingBar
+                    android:id="@+id/coloredRatingBar1"
+                    style="@style/coloredRatingBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="10dp"
+                    android:background="@android:color/transparent"
+                    rb:rating="3.8" />
+
+                <RelativeLayout
+                    android:id="@+id/rel_add_app"
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentRight="true">
+
+                    <ImageView
+                        android:id="@+id/plus_circle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@mipmap/checkbox_marked_circle_outline"
+                        android:layout_marginRight="10dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rel_fav_app"
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="5dp"
+                    android:layout_toLeftOf="@+id/rel_add_app">
+
+                    <ImageView
+                        android:id="@+id/fav_star"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@mipmap/star_green"
+                        android:layout_marginRight="10dp"
+                        android:layout_centerVertical="true"/>
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:id="@+id/progressbar" android:visibility="gone"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true" />
+
+        </RelativeLayout>
+
+</FrameLayout>

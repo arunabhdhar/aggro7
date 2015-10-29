@@ -51,5 +51,12 @@
     <dimen name="codelab_fab_margin_right">16dp</dimen>
     <dimen name="codelab_fab_margin_bottom">16dp</dimen>
 
+    <dimen name="carddemo_extras_gplay_grid_columnwidth">140dp</dimen>
+    <dimen name="carddemo_extras_gplay_grid_columnwidth_card">125dp</dimen>
+
+    <dimen name="carddemo_gplay_height">300dp</dimen>
+
+
+
 
 </resources>

@@ -6,19 +6,42 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Environment;
 import android.provider.Settings;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import com.app.aggro.MyApplication;
 import com.app.aggro.R;
+import com.app.cards.CustomCards;
+import com.app.holder.ChildItem;
+import com.library.storage.SimpleStorage;
+import com.library.storage.Storage;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.lang.reflect.Method;
 
 /**
  * Created by ericbasendra on 09/08/15.
  */
 public class Utility {
+
+    public static final String AGGRO_DRAWABLE_DIRECTORY =  "AggroImage";
 
     public void setupUI(View view,final Context mContext) {
 
@@ -158,4 +181,76 @@ public class Utility {
         alertDialog.show();
     }
 
+    public static void setMobileDataState(boolean mobileDataEnabled,Context context)
+    {
+        try
+        {
+            TelephonyManager telephonyService = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+
+            Method setMobileDataEnabledMethod = telephonyService.getClass().getDeclaredMethod("setDataEnabled", boolean.class);
+
+            if (null != setMobileDataEnabledMethod)
+            {
+                setMobileDataEnabledMethod.invoke(telephonyService, mobileDataEnabled);
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.e("ERROR", "Error setting mobile data state", ex);
+        }
+    }
+
+    public static boolean getMobileDataState(Context context)
+    {
+        try
+        {
+            TelephonyManager telephonyService = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+
+            Method getMobileDataEnabledMethod = telephonyService.getClass().getDeclaredMethod("getDataEnabled");
+
+            if (null != getMobileDataEnabledMethod)
+            {
+                boolean mobileDataEnabled = (Boolean) getMobileDataEnabledMethod.invoke(telephonyService);
+
+                return mobileDataEnabled;
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.e("TAG", "Error getting mobile data state", ex);
+        }
+
+        return false;
+    }
+
+    /**
+     * Return whether the given PackgeInfo represents a system package or not.
+     * User-installed packages (Market or otherwise) should not be denoted as
+     * system packages.
+     *
+     * @param pkgInfo
+     * @return
+     */
+    public static boolean isSystemPackage(PackageInfo pkgInfo) {
+        return ((pkgInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) ? true : false;
+    }
+
+    public static boolean openDownloadedApp(Context mContext ,String packageName) {
+        PackageManager manager = mContext.getPackageManager();
+        try {
+            Intent i = manager.getLaunchIntentForPackage(packageName);
+            if (i == null) {
+//                return false;
+                throw new PackageManager.NameNotFoundException();
+            }
+            i.addCategory(Intent.CATEGORY_LAUNCHER);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mContext.startActivity(i);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            MyApplication.getInstance().trackException(e);
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

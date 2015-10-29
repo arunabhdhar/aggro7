@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +20,15 @@ import com.app.aggro.MainActivity;
 import com.app.aggro.R;
 import com.app.api.Category;
 import com.app.appfragement.CustomAppFragment;
+import com.app.appfragement.PickAndRecommandation;
 import com.app.appfragement.SearchAppFragement;
 import com.app.appfragement.ShowCatAppFragement;
 import com.app.getterAndSetter.MyCategory;
 import com.app.gridcategory.ImageItem;
 import com.app.gridcategory.SquareImageView;
 import com.app.holder.GroupItem;
+import com.app.local.database.AggroCategory;
+import com.google.android.gms.plus.model.people.Person;
 
 import java.util.List;
 
@@ -44,6 +48,19 @@ public class AggroRecyclerGridViewAdapter extends RecyclerView.Adapter<AggroRecy
         this.mContext = mContext;
     }
 
+    public void add(ImageItem s,int position) {
+        position = position == -1 ? getItemCount()  : position;
+        contents.add(position,s);
+        notifyItemInserted(position);
+    }
+
+    public void remove(int position){
+        if (position < getItemCount()  ) {
+            contents.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
     @Override
     public int getItemViewType(int position) {
         switch (position) {
@@ -61,6 +78,8 @@ public class AggroRecyclerGridViewAdapter extends RecyclerView.Adapter<AggroRecy
         else
             return 1;
     }
+
+
 
     @Override
     public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -90,8 +109,10 @@ public class AggroRecyclerGridViewAdapter extends RecyclerView.Adapter<AggroRecy
 
         switch (getItemViewType(position)) {
             case TYPE_HEADER:
+                holder.card_view.setVisibility(View.GONE);
                 break;
             case TYPE_CELL:
+                holder.card_view.setVisibility(View.VISIBLE);
                 bindItemCardCell(position,holder);
                 break;
         }
@@ -127,21 +148,6 @@ public class AggroRecyclerGridViewAdapter extends RecyclerView.Adapter<AggroRecy
 
 
     private void selectshowCatApp(String local, Category.AggroCategory level) {
-        // update the main content by replacing fragments
-//        Fragment fragment = ShowCatAppFragement.newInstance(local, level);
-//        android.support.v4.app.FragmentManager fragmentManager = ((AppCompatActivity)mContext).getSupportFragmentManager();
-//        android.support.v4.app.FragmentTransaction transaction  = fragmentManager.beginTransaction();
-////        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
-//        // Replace whatever is in the fragment_container view with this fragment,
-//        // and add the transaction to the back stack so the user can navigate back
-//        transaction.add(R.id.main_content, fragment);
-//        transaction.addToBackStack(null);
-//
-//        // Commit the transaction
-//        transaction.commit();
-//
-//        ((Activity)mContext).invalidateOptionsMenu();
-
         Fragment fragment = ShowCatAppFragement.newInstance(local, level);
         FragmentManager fragmentManager = ((AppCompatActivity)mContext).getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
@@ -154,23 +160,18 @@ public class AggroRecyclerGridViewAdapter extends RecyclerView.Adapter<AggroRecy
 
 
     private void selectCustomCategoryApp(String local){
-        // update the main content by replacing fragments
-//        Fragment fragment = CustomAppFragment.newInstance(local);
-//        android.support.v4.app.FragmentManager fragmentManager = ((AppCompatActivity)mContext).getSupportFragmentManager();
-//        android.support.v4.app.FragmentTransaction transaction  = fragmentManager.beginTransaction();
-////        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
-//        // Replace whatever is in the fragment_container view with this fragment,
-//        // and add the transaction to the back stack so the user can navigate back
-//        transaction.add(R.id.main_content, fragment);
-//        transaction.addToBackStack(null);
-//
-//        // Commit the transaction
-//        transaction.commit();
-//
-//        ((Activity)mContext).invalidateOptionsMenu();
-
-
         Fragment fragment = CustomAppFragment.newInstance(local);
+        FragmentManager fragmentManager = ((AppCompatActivity)mContext).getSupportFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.add(R.id.main_content, fragment);
+        MainActivity.fragmentStack.lastElement().onPause();
+        ft.hide(MainActivity.fragmentStack.lastElement());
+        MainActivity.fragmentStack.push(fragment);
+        ft.commit();
+    }
+
+    private void selectPickandRecommendation(){
+        Fragment fragment = PickAndRecommandation.newInstance("","");
         FragmentManager fragmentManager = ((AppCompatActivity)mContext).getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         ft.add(R.id.main_content, fragment);
@@ -181,6 +182,7 @@ public class AggroRecyclerGridViewAdapter extends RecyclerView.Adapter<AggroRecy
     }
     private void selectItem(String category) {
         // update the main content by replacing fragments
+        AggroCategory localAggrocategory = null;
         String localvariable = null;
         Category.AggroCategory catLevel = null;
         if (category.trim().equals(mContext.getResources().getString(R.string.cat_bussiness))) {
@@ -314,13 +316,31 @@ public class AggroRecyclerGridViewAdapter extends RecyclerView.Adapter<AggroRecy
         }else if (category.trim().equals(mContext.getResources().getString(R.string.cat_app_widget))) {
             localvariable = mContext.getResources().getString(R.string.cat_app_widget);
             catLevel = Category.AggroCategory.APP_WIDGETS;
-        }else {
+        }
+        else if (category.trim().equals(mContext.getResources().getString(R.string.cat_recomendation))) {
+            List<AggroCategory> localAggrocategory1 = AggroCategory.getSingleEntryByRecommenadion();
+            localvariable = localAggrocategory1.get(0).categoryName;
+            catLevel = Category.AggroCategory.RECOMMENDATION;
+            MyCategory.setIsCustomcategory(false);
+            selectshowCatApp(localvariable,catLevel);
+            return;
+        }
+        else if(category.trim().equals(mContext.getResources().getString(R.string.cat_pick_recomendation))){
+            selectPickandRecommendation();
+            return;
+        }
+
+        else {
             //custom category
             MyCategory.setIsCustomcategory(true);
             MyCategory.setCategoryName(category);
             selectCustomCategoryApp(category);
             return;
         }
+
+        localAggrocategory = AggroCategory.getSingleEntry(localvariable);
+        localAggrocategory.reccomendation = localAggrocategory.reccomendation + 1;
+        localAggrocategory.save();
         MyCategory.setIsCustomcategory(false);
         selectshowCatApp(localvariable,catLevel);
     }

@@ -543,6 +543,9 @@ public class ShowCatAppFragement extends Fragment implements OnClick{
             case APP_WIDGETS:
                 getTopSellingApps(getActivity().getResources().getString(R.string.cat_app_widget));
                 break;
+            case RECOMMENDATION:
+                getTopSellingApps(getActivity().getResources().getString(R.string.cat_app_widget));
+                break;
 
             default:
                 System.out.println("Not comes under the predefined category");
