@@ -1,12 +1,10 @@
 package com.app.appfragement.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,25 +21,13 @@ import com.android.volley.toolbox.Volley;
 import com.app.AppConstant;
 import com.app.Utility.CustomCategoryDialog;
 import com.app.Utility.CustomRecyclerView;
-import com.app.Utility.Utility;
 import com.app.adapter.AggroRecyclerGridViewAdapter;
-import com.app.adapter.AggroRecyclerViewAdapter;
-import com.app.aggro.MyApplication;
 import com.app.aggro.R;
-import com.app.aggro.Registration;
 import com.app.api.GsonRequest;
-import com.app.api.VolleyErrorHelper;
-import com.app.getterAndSetter.MyToolBar;
 import com.app.gridcategory.ImageItem;
-import com.app.holder.ChildItem;
 import com.app.holder.GroupItem;
 import com.app.local.database.AggroCategory;
 import com.app.local.database.UserInfo;
-import com.app.response.Msg;
-import com.app.response.RegisterResponse;
-import com.github.florent37.materialviewpager.MaterialViewPagerHelper;
-import com.github.florent37.materialviewpager.adapter.RecyclerViewMaterialAdapter;
-import com.google.android.gms.analytics.HitBuilders;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -83,15 +69,10 @@ public class RecyclerViewGridFragment extends Fragment {
 
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(),2);
         mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setHasFixedSize(true);
 
-        mAdapter = new RecyclerViewMaterialAdapter(new AggroRecyclerGridViewAdapter(getData(),getActivity()));
+        mAdapter = new AggroRecyclerGridViewAdapter(getData(),getActivity());
 
         mRecyclerView.setAdapter(mAdapter);
-
-
-
-        MaterialViewPagerHelper.registerRecyclerView(getActivity(), mRecyclerView, null);
     }
 
 
@@ -101,7 +82,6 @@ public class RecyclerViewGridFragment extends Fragment {
         pinkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 createCustomCategory();
             }
         });
@@ -174,8 +154,6 @@ public class RecyclerViewGridFragment extends Fragment {
                     aggroCategory1.categoryName = nameOfCategory;
                     aggroCategory1.categoryImage = R.mipmap.games;
                     aggroCategory1.save();
-
-
                     getData();
                     mAdapter.notifyDataSetChanged();
                 }

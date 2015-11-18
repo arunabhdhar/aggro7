@@ -6,16 +6,10 @@ import android.support.multidex.MultiDex;
 
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.app.Application;
-import com.app.parsepush.AppConfig;
-import com.app.parsepush.ParseUtils;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.StandardExceptionParser;
 import com.google.android.gms.analytics.Tracker;
-import com.parse.Parse;
-import com.parse.ParseACL;
-import com.parse.ParseInstallation;
-import com.parse.ParseUser;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 

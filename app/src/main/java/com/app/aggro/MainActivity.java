@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements MyDetailsFragemen
                 getResources().getString(R.string.app_hq_app_id),
                 getResources().getString(R.string.app_hq_client_key));
         App42Log.setDebug(true);
-        App42API.setLoggedInUser(UserInfo.getRandom().userName) ;
+//        App42API.setLoggedInUser(UserInfo.getRandom().userName) ;
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         drawerToggle = new ActionBarDrawerToggle(MainActivity.this, drawerLayout, R.string.hello_world, R.string.hello_world){
             @Override

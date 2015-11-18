@@ -59,12 +59,8 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:23.0.1'
-    compile('com.mikepenz:materialdrawer:3.0.9@aar') {
-        transitive = true
-    }
-    compile('com.github.florent37:materialviewpager:1.1.0@aar') {
-        transitive = true
-    }
+
+
     compile('com.crashlytics.sdk.android:crashlytics:2.4.0@aar') {
         transitive = true;
     }
@@ -75,14 +71,10 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:22.2.0'
     compile 'com.android.support:cardview-v7:23.0.1'
     compile 'com.jpardogo.googleprogressbar:library:1.2.0'
-    compile 'com.quinny898.library.persistentsearch:library:1.0.0-SNAPSHOT'
     compile project(':storage')
     compile 'com.getbase:floatingactionbutton:1.10.0'
     compile 'com.android.support:design:23.0.1'
-    compile 'it.neokree:MaterialTabs:0.11'
     compile 'com.miguelcatalan:materialsearchview:1.2.0'
-    compile 'com.parse:parse-android:1.10.3'
-    compile 'com.parse.bolts:bolts-android:1.+'
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
     compile files('libs/App42_ANDROID_SDK_3.0.1.jar')
     compile 'com.github.quentin7b:android-location-tracker:3.0'

@@ -8,13 +8,9 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.os.Build;
-import android.os.NetworkOnMainThreadException;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -30,7 +26,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -40,11 +35,8 @@ import com.android.volley.toolbox.Volley;
 import com.app.AppConstant;
 import com.app.Utility.Utility;
 import com.app.Validator.EmptyTextListener;
-import com.app.Validator.InputValidator;
 import com.app.address.User;
 import com.app.api.GsonRequest;
-import com.app.api.VolleyErrorHelper;
-import com.app.error.Generic;
 import com.app.gps.GPSTracker;
 import com.app.gridcategory.ImageItem;
 import com.app.local.database.AggroCategory;
@@ -55,21 +47,18 @@ import com.app.response.RegisterResponse;
 import com.app.spinneradapter.NothingSelectedSpinnerAdapter;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.parse.ParseAnalytics;
 
 import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
-import fr.quentinklein.slt.*;
+import fr.quentinklein.slt.LocationTracker;
 import fr.quentinklein.slt.LocationUtils;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+import fr.quentinklein.slt.TrackerSettings;
 
 public class Registration extends Activity {
     LocationTracker myTracker;
@@ -256,11 +245,11 @@ public class Registration extends Activity {
 
     private ArrayList<ImageItem> defaultCategoryLoad(){
         final ArrayList<ImageItem> mItems = new ArrayList<>();
-        mItems.add(new ImageItem(getString(R.string.cat_bussiness),R.mipmap.games));
-        mItems.add(new ImageItem(getString(R.string.cat_lifestyle),R.mipmap.games));
+        mItems.add(new ImageItem(getString(R.string.cat_bussiness),R.drawable.business));
+        mItems.add(new ImageItem(getString(R.string.cat_lifestyle),R.drawable.icon_lifestyle));
         mItems.add(new ImageItem(getString(R.string.cat_news),   R.mipmap.news));
         mItems.add(new ImageItem(getString(R.string.cat_education),R.mipmap.teaching));
-        mItems.add(new ImageItem(getString(R.string.cat_transporation),R.mipmap.games));
+        mItems.add(new ImageItem(getString(R.string.cat_transporation),R.drawable.transportaion));
         mItems.add(new ImageItem(getString(R.string.cat_productiity),R.mipmap.games));
         mItems.add(new ImageItem(getString(R.string.cat_games),R.mipmap.games));
         mItems.add(new ImageItem(getString(R.string.cat_travel),R.mipmap.games));
@@ -268,18 +257,18 @@ public class Registration extends Activity {
         mItems.add(new ImageItem(getString(R.string.cat_health), R.mipmap.health));
         mItems.add(new ImageItem(getString(R.string.cat_entertainment), R.mipmap.entertainment));
 
-        mItems.add(new ImageItem(getString(R.string.cat_comics), R.mipmap.entertainment));
-        mItems.add(new ImageItem(getString(R.string.cat_communication), R.mipmap.entertainment));
-        mItems.add(new ImageItem(getString(R.string.cat_finance), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_comics), R.drawable.comics));
+        mItems.add(new ImageItem(getString(R.string.cat_communication), R.drawable.communication));
+        mItems.add(new ImageItem(getString(R.string.cat_finance), R.drawable.finance));
         mItems.add(new ImageItem(getString(R.string.cat_media_video), R.mipmap.entertainment));
-        mItems.add(new ImageItem(getString(R.string.cat_medical), R.mipmap.entertainment));
-        mItems.add(new ImageItem(getString(R.string.cat_personilazation), R.mipmap.entertainment));
-        mItems.add(new ImageItem(getString(R.string.cat_photography), R.mipmap.entertainment));
-        mItems.add(new ImageItem(getString(R.string.cat_shopping), R.mipmap.entertainment));
-        mItems.add(new ImageItem(getString(R.string.cat_social), R.mipmap.entertainment));
-        mItems.add(new ImageItem(getString(R.string.cat_tool), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_medical), R.drawable.medical));
+        mItems.add(new ImageItem(getString(R.string.cat_personilazation), R.drawable.personalization));
+        mItems.add(new ImageItem(getString(R.string.cat_photography), R.drawable.photography));
+        mItems.add(new ImageItem(getString(R.string.cat_shopping), R.drawable.shopping));
+        mItems.add(new ImageItem(getString(R.string.cat_social), R.drawable.social));
+        mItems.add(new ImageItem(getString(R.string.cat_tool), R.drawable.tool));
         mItems.add(new ImageItem(getString(R.string.cat_wheather), R.mipmap.entertainment));
-        mItems.add(new ImageItem(getString(R.string.cat_lib_demo), R.mipmap.entertainment));
+        mItems.add(new ImageItem(getString(R.string.cat_lib_demo), R.drawable.library_demo));
         mItems.add(new ImageItem(getString(R.string.cat_game_arcade), R.mipmap.entertainment));
         mItems.add(new ImageItem(getString(R.string.cat_game_puzzle), R.mipmap.entertainment));
         mItems.add(new ImageItem(getString(R.string.cat_game_card), R.mipmap.entertainment));
@@ -364,9 +353,6 @@ public class Registration extends Activity {
     }
 
     private void trackLocation(){
-       Log.e("GPS", "" + fr.quentinklein.slt.LocationUtils.isGpsProviderEnabled(Registration.this));
-        Log.e("NETWORK", "" + fr.quentinklein.slt.LocationUtils.isNetworkProviderEnabled(Registration.this));
-        location_ed.setText("PATNA");
             final TrackerSettings settings =
                     new TrackerSettings()
                             .setUseGPS(true)
@@ -390,8 +376,6 @@ public class Registration extends Activity {
                 }
 
             };
-
-
     }
 
     public User getAddress(Context context ,double latitude, double longitude){
@@ -446,12 +430,7 @@ public class Registration extends Activity {
             return;
         }
         else {
-            //submit
-//            Utility.writeUserInfoToPrefs(mContext,name_ed.getText().toString(),user_name_ed.getText().toString(),email_ed.getText().toString().trim(),gender,location_ed.getText().toString(),age_ed.getText().toString());
-//            startActivity(new Intent(Registration.this, com.app.aggro.Menu.class));
-//            finish();
-
-            String url = "http://jarvisme.com/customapp/register.php";
+            String url = "http://oxiloindia.com/aggro/register.php";
             RequestQueue mRequestQueue = Volley.newRequestQueue(mContext);
             GsonRequest<RegisterResponse> myReq = new GsonRequest<RegisterResponse>(
                     Request.Method.POST,
@@ -497,48 +476,6 @@ public class Registration extends Activity {
         return false;
     }
 
- private void initLocalApptracer(){
-     if (count == 0){
-//         AppTracker appTracker = new AppTracker();
-//         appTracker.isInstalled = true;
-//         appTracker.packageName = "xxx";
-//         appTracker.appName = "xxx";
-//         appTracker.catName = "xxx";
-//         appTracker.marketUrl = "xxx";
-//         appTracker.appIconUrl = "xxx";
-//         appTracker.save();
-
-         final PackageManager pm = getPackageManager();
-         //get a list of installed apps.
-         List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
-
-         for (ApplicationInfo packageInfo : packages) {
-             Log.d(TAG, "Installed package :" + packageInfo.packageName);
-             Log.d(TAG, "Source dir : " + packageInfo.sourceDir);
-             Log.d(TAG, "Launch Activity :" + pm.getLaunchIntentForPackage(packageInfo.packageName));
-
-             try {
-                 AppTracker appTracker = new AppTracker();
-                 appTracker.isInstalled = true;
-                 appTracker.isSystenApp = true;
-                 appTracker.packageName = packageInfo.packageName;
-                 appTracker.appName = packageInfo.loadLabel(getPackageManager()).toString();;
-                 appTracker.catName = "Phone app";
-                 appTracker.marketUrl = "xxx";
-                 appTracker.appIconUrl = "xxx";
-                 appTracker.save();
-             }catch (Exception ne){
-                 ne.printStackTrace();
-             }
-
-
-         }
-// the getLaunchIntentForPackage returns an intent that you can use with startActivity()
-     }
-
-     count = count + 1;
- }
-
     private void getInstalledApps(){
         if (count == 0){
             List<PackageInfo> PackList = getPackageManager().getInstalledPackages(0);
@@ -549,8 +486,6 @@ public class Registration extends Activity {
                     PackageInfo PackInfo = PackList.get(i);
                     if (  (PackInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0)
                     {
-//                        Drawable appIcon = PackInfo.applicationInfo.loadIcon(getPackageManager());
-
                         AppTracker appTracker = new AppTracker();
                         appTracker.isInstalled = true;
                         appTracker.isSystenApp = true;
@@ -559,8 +494,6 @@ public class Registration extends Activity {
                         appTracker.catName = "Phone app";
                         appTracker.marketUrl = "xxx";
                         appTracker.appIconUrl = "xxx";
-//                        Utility.writeDrawableToSdCard(Registration.this,appIcon,PackInfo.applicationInfo.loadLabel(getPackageManager()).toString());
-//                        Log.e("App № " + Integer.toString(i), "" + appIcon);
                         appTracker.save();
                     }
                 }catch (Exception e){
@@ -581,6 +514,7 @@ public class Registration extends Activity {
         hm.put("lastName", name_ed.getText().toString());
         hm.put("userName", user_name_ed.getText().toString());
         hm.put("email", email_ed.getText().toString());
+        hm.put("age", age_ed.getText().toString().trim());
         hm.put("location", location_ed.getText().toString());
         hm.put("gender", gender);
         return hm;

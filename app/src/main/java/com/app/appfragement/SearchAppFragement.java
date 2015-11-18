@@ -64,8 +64,6 @@ import com.app.thin.downloadmanager.DownloadManager;
 import com.app.thin.downloadmanager.DownloadRequest;
 import com.app.thin.downloadmanager.DownloadStatusListener;
 import com.app.thin.downloadmanager.ThinDownloadManager;
-import com.balysv.materialmenu.MaterialMenu;
-import com.balysv.materialmenu.MaterialMenuDrawable;
 import com.google.android.gms.analytics.HitBuilders;
 import com.library.storage.SimpleStorage;
 import com.library.storage.Storage;
@@ -74,8 +72,6 @@ import com.marshalchen.ultimaterecyclerview.ObservableScrollViewCallbacks;
 import com.marshalchen.ultimaterecyclerview.URLogs;
 import com.marshalchen.ultimaterecyclerview.UltimateRecyclerView;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
-import com.quinny898.library.persistentsearch.SearchBox;
-import com.quinny898.library.persistentsearch.SearchResult;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -386,7 +382,7 @@ public class SearchAppFragement extends Fragment implements OnClick {
         int limit = 6;
         String country = countryCodeValue;
         RequestQueue mRequestQueue = Volley.newRequestQueue(getActivity());
-        String url = "http://jarvisme.com/api/search.php?q=" + search + "&limit=" + limit + "&page=" + count + "&access_token=" + getActivity().getResources().getString(R.string.aggro_access_token);
+        String url = "http://oxiloindia.com/aggro/json.php?q=" + search + "&limit=" + limit + "&page=" + count + "&access_token=" + getActivity().getResources().getString(R.string.aggro_access_token);
 
 //        String url = "https://42matters.com/api/1/apps/search.json?q=" + edtSeach.getText().toString().trim() + "&limit=" + limit + "&page=" + count + "&access_token=" + getActivity().getResources().getString(R.string.aggro_access_token);
         Log.e("URL", "" + count);

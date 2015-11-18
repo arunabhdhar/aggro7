@@ -1,42 +1,29 @@
 package com.app.appfragement.fragment;
 
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.design.widget.TabLayout;
 import android.widget.ImageView;
 
-import com.app.adapter.AppLibrary;
 import com.app.aggro.MyApplication;
 import com.app.aggro.R;
 import com.app.appfragement.AppFragement;
 import com.app.appfragement.FavFragement;
 import com.app.slideradapter.MyFragmentAdapter;
-import com.github.florent37.materialviewpager.MaterialViewPager;
 
 import java.util.List;
 import java.util.Vector;
-
-import it.neokree.materialtabs.MaterialTab;
-import it.neokree.materialtabs.MaterialTabHost;
-import it.neokree.materialtabs.MaterialTabListener;
 
 /**
  * A simple {@link Fragment} subclass.

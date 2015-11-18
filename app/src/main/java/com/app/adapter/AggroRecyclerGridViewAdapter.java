@@ -62,16 +62,6 @@ public class AggroRecyclerGridViewAdapter extends RecyclerView.Adapter<AggroRecy
     }
 
     @Override
-    public int getItemViewType(int position) {
-        switch (position) {
-            case 0:
-                return TYPE_HEADER;
-            default:
-                return TYPE_CELL;
-        }
-    }
-
-    @Override
     public int getItemCount() {
         if (contents != null)
             return contents.size();
@@ -79,51 +69,27 @@ public class AggroRecyclerGridViewAdapter extends RecyclerView.Adapter<AggroRecy
             return 1;
     }
 
-
-
     @Override
     public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = null;
-
-        switch (viewType) {
-            case TYPE_HEADER: {
-                view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.list_item_card_big, parent, false);
-                return new ItemViewHolder(view);
-            }
-            case TYPE_CELL: {
-                view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.list_item_card_grid_small, parent, false);
+        View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.grid_item, parent, false);
                 ItemViewHolder vh = new ItemViewHolder(view);
                 vh.card_view.setTag(vh);
                 vh.card_view.setOnClickListener(clickItemListener());
-                return vh;
-            }
-        }
-        return null;
+        return vh;
+
     }
 
 
     @Override
     public void onBindViewHolder(final ItemViewHolder holder, int position) {
-
-        switch (getItemViewType(position)) {
-            case TYPE_HEADER:
-                holder.card_view.setVisibility(View.GONE);
-                break;
-            case TYPE_CELL:
-                holder.card_view.setVisibility(View.VISIBLE);
-                bindItemCardCell(position,holder);
-                break;
-        }
+        holder.card_view.setVisibility(View.VISIBLE);
+        bindItemCardCell(position,holder);
     }
 
     private void bindItemCardCell(int position,ItemViewHolder holder){
-        if (position < getItemCount()) {
             holder.image.setImageResource(contents.get(position).getImage());
             holder.imageTitle.setText(contents.get(position).getTitle());
-        }
-
     }
 
     private View.OnClickListener clickItemListener(){
@@ -132,10 +98,8 @@ public class AggroRecyclerGridViewAdapter extends RecyclerView.Adapter<AggroRecy
             @Override
             public void onClick(View view) {
                 ItemViewHolder holder = (ItemViewHolder) view.getTag();
-                int id = holder.getPosition();
+                int id = holder.getLayoutPosition();
                 if (view.getId() == holder.card_view.getId()){
-                    id = id- 1;
-//                    Toast.makeText(mContext, "imageIV onClick at" + id, Toast.LENGTH_SHORT).show();
                    selectItem(contents.get(id).getTitle());
                 } else {
                     Toast.makeText(mContext, "RecyclerView Item onClick at " + id, Toast.LENGTH_SHORT).show();
@@ -352,8 +316,8 @@ public class AggroRecyclerGridViewAdapter extends RecyclerView.Adapter<AggroRecy
         public ItemViewHolder(View convertView){
             super(convertView);
             card_view = (CardView)convertView.findViewById(R.id.card_view);
-            imageTitle = (TextView)convertView.findViewById(R.id.text);
-            image = (ImageView)convertView.findViewById(R.id.picture);
+            imageTitle = (TextView)convertView.findViewById(R.id.tv_species);
+            image = (ImageView)convertView.findViewById(R.id.img_thumbnail);
         }
     }
 }
