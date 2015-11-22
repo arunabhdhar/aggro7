@@ -382,10 +382,10 @@ public class SearchAppFragement extends Fragment implements OnClick {
         int limit = 6;
         String country = countryCodeValue;
         RequestQueue mRequestQueue = Volley.newRequestQueue(getActivity());
-        String url = "http://oxiloindia.com/aggro/json.php?q=" + search + "&limit=" + limit + "&page=" + count + "&access_token=" + getActivity().getResources().getString(R.string.aggro_access_token);
+        String url = "http://oxiloindia.com/aggro/search.php?q=" + search + "&limit=" + limit + "&page=" + count + "&access_token=" + getActivity().getResources().getString(R.string.aggro_access_token);
 
 //        String url = "https://42matters.com/api/1/apps/search.json?q=" + edtSeach.getText().toString().trim() + "&limit=" + limit + "&page=" + count + "&access_token=" + getActivity().getResources().getString(R.string.aggro_access_token);
-        Log.e("URL", "" + count);
+        Log.e("URL", "" + url);
         GsonRequest<SearchDetail> myReq = new GsonRequest<SearchDetail>(
                 Request.Method.GET,
                 url,
